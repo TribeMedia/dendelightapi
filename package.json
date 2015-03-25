@@ -17,6 +17,7 @@
   "homepage": "https://github.com/jakejarrett/oseam-app",
   "dependencies": {
     "react": "^0.13.1",
+    "react-bootstrap": "^0.18.0",
     "react-jsx": "^0.13.0",
     "sails": "^0.11.0"
   }
