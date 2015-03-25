@@ -5,12 +5,13 @@ var passport = require('passport'),
 passport.use(new LocalStrategy({
         usernameField: 'email',
         passwordField: 'password'
-    },
+      },
     function(email, password, done) {
-        User.findOne({email: email}).done(function(err, user) {
+        User.findOne({email: email}, function(err, user) {
             if (err) {
                 return done(err, null);
-            } else if (!user) {
+            } 
+            if (!user) {
                 return done(null, false, {
                     message: 'Incorrect User'
                 });

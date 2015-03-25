@@ -18,6 +18,9 @@ module.exports = {
   		required: true,
   		minLength: 6
   	},
+    username: {
+      type: 'string',
+    },
   	access_token: {
   		type: 'string'
   	}

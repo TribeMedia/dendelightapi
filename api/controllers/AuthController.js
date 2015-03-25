@@ -16,7 +16,7 @@ module.exports = {
                 });
                 return; 
             };
-            if (user === false) {
+            if (user == false) {
             	res.send({
             		error: info,
             	});
