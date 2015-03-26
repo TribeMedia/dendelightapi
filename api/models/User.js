@@ -23,7 +23,10 @@ module.exports = {
     },
   	access_token: {
   		type: 'string'
-  	}
+  	},
+    provider: {
+      type: 'string',
+    }
   },
 
   beforeCreate: function (attrs, next) {

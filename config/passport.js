@@ -1,5 +1,6 @@
 var passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy,
+    FacebookStrategy = require('passport-facebook').Strategy;
     bcrypt = require('bcryptjs');
 
 passport.use(new LocalStrategy({
@@ -29,6 +30,37 @@ passport.use(new LocalStrategy({
         });
     })
 );
+// Facebook auth only work online
+passport.use(new FacebookStrategy({
+    clientID: '1719770144916231',
+    clientSecret: 'd111e359635a625f8d40b3e04218c7a3',
+    callbackURL: "http://oseam.co/auth/facebook/callback"
+  },
+  function(accessToken, refreshToken, profile, done) {
+    User.findOne({email: profile.email}, function(err, user) {
+      if (err) { return done(err, null); }
+      if (!user) {
+        User.create({
+            provider: Facebook,
+            email: profile.email,
+            password: profile.id,
+        }).done(function (err, user) {
+            if (user) {
+                return done(null, user, {
+                  message: 'Logged In Successfully'
+                });
+            } else {
+                return done(err, null, {
+                  message: 'There was an error logging you in with Facebook'
+                });
+            }
+        });
+      } else {
+        return done(null, user);
+      }
+    });
+  }
+));
 
 module.exports = {
     http: {

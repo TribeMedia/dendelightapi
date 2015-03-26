@@ -30,6 +30,21 @@ module.exports = {
             }
         })(req, res);
     },
+// Redirect to fb for authentication
+    facebook: function(req, res) {
+        passport.authenticate('facebook')(req, res);
+    },
+// Callback from fb authentication and issue access_token
+    facebook_callback: function(req, res) {
+        passport.authenticate('facebook', function (err, user, info) {
+            var token = jwt.sign(user, secret, { expiresInMinutes: 60*24 });
+            res.send({
+                success: true,
+                user: user,
+                token: token
+            })
+        })(req,res);
+    },
 
     logout: function(req, res) {
         req.logout();

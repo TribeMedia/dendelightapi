@@ -32,8 +32,10 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
-  'post /login': 'AuthController.login',
-  'post /logout': 'AuthController.logout'
+  'post /api/v1/login': 'AuthController.login',
+  'post /api/v1/logout': 'AuthController.logout',
+  'get /api/v1/auth/facebook': 'AuthController.facebook',
+  'get /api/v1/auth/facebook/callback': 'AuthController.facebook_callback'
 
   /***************************************************************************
   *                                                                          *
