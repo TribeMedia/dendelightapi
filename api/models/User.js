@@ -26,6 +26,10 @@ module.exports = {
   	},
     provider: {
       type: 'string',
+    },
+    active: {
+      type: 'boolean',
+      default: false,
     }
   },
 
