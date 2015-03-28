@@ -10,6 +10,7 @@ var secret = '6ab198087a16e6d49b438a7aa514731f';/**
 module.exports = {
 	login: function(req, res) {
         passport.authenticate('local', function(err, user, info) {
+                    console.log(user);
             if ((err) || (!user)) {
                 res.send({
                     error: err,
@@ -22,8 +23,7 @@ module.exports = {
             	});
             }else{                  
                     var token = jwt.sign(user, secret, { expiresInMinutes: 60*24 });
-                    res.send({
-                        success: true,
+                    return res.status(200).json({
                         user: user,
                         token: token
                     });
@@ -48,8 +48,7 @@ module.exports = {
 
     logout: function(req, res) {
         req.logout();
-        res.send({
-            success: true,
+        return res.status(204).json({
             message: 'logoutSuccessful'
         });
     },

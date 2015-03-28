@@ -23,7 +23,7 @@ describe('UserController', function() {
 				.expect(countIsOne)
 				.end(done);
 		function countIsOne (res) {
-			if (res.body.length != 1) return "count is" + res.body.length;
+			if (res.body.length != 2) return "count is" + res.body.length;
 		};
 		})
 	});
@@ -46,8 +46,8 @@ describe('UserController', function() {
 				.end(done);
 		});
 		function hasEmailAndPasswordKeys(res) {
-		  if (!('email' in res.body)) return "missing next key";
-		  if (!('password' in res.body)) throw new Error("missing prev key");
+		  if (!('email' in res.body)) return "missing email key";
+		  if (!('password' in res.body)) throw new Error("missing password key");
 	}	
 
 	});

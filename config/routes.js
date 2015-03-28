@@ -31,7 +31,7 @@ module.exports.routes = {
   * `assets` directory)                                                      *
   *                                                                          *
   ***************************************************************************/
-
+  'post /api/v1/user': 'UserController.create',
   'post /api/v1/login': 'AuthController.login',
   'post /api/v1/logout': 'AuthController.logout',
   'get /api/v1/auth/facebook': 'AuthController.facebook',
