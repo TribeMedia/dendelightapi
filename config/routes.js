@@ -31,12 +31,39 @@ module.exports.routes = {
   * `assets` directory)                                                      *
   *                                                                          *
   ***************************************************************************/
-  'post /api/v1/user': 'UserController.create',
-  'post /api/v1/login': 'AuthController.login',
-  'post /api/v1/logout': 'AuthController.logout',
-  'get /api/v1/auth/facebook': 'AuthController.facebook',
-  'get /api/v1/auth/facebook/callback': 'AuthController.facebook_callback'
+  // Set Authorization: 'Bearer' + token to get access to routes (except signup, login)
+  // Carefull with json response in Array or Object format
 
+  'post /api/v1/login': 'AuthController.login',
+  // Logout
+  'post /api/v1/logout': 'AuthController.logout',
+  // Login with fb
+  'get /api/v1/auth/facebook': 'AuthController.facebook',
+  'get /api/v1/auth/facebook/callback': 'AuthController.facebook_callback',
+  // Create occasion
+  'post /api/v1/occasion': 'OccasionController.create',
+  // Find particular occasion by id. Findall() by /api/v1/occasion
+  'get /api/v1/occasion/:id?': 'OccasionController.find',
+  // Update occasion
+  'put /api/v1/occasion/:id?': 'OccasionController.update',
+  // Delete occasion
+  'delete /api/v1/occasion/:id?': 'OccasionController.destroy',
+  // Create size
+  'post /api/v1/occasion_size': 'OccasionSizeController.create',
+  // Find size
+  'get /api/v1/occasion_size/:id?': 'OccasionSizeController.find',
+  // Update size
+  'put /api/v1/occasion_size/:id?': 'OccasionSizeController.update',
+  // Delete size
+  'delete /api/v1/occasion_size/:id?': 'OccasionSizeController.destroy',
+  // Create service
+  'post /api/v1/service': 'ServiceController.create',
+  // Find service
+  'get /api/v1/service/:id?': 'ServiceController.find',
+  // Update service
+  'put /api/v1/service/:id?': 'ServiceController.update',
+  // Delete service
+  'delete /api/v1/service/:id?': 'ServiceController.destroy'
   /***************************************************************************
   *                                                                          *
   * Custom routes here...                                                    *
