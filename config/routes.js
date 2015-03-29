@@ -34,6 +34,8 @@ module.exports.routes = {
   // Set Authorization: 'Bearer' + token to get access to routes (except signup, login)
   // Carefull with json response in Array or Object format
 
+  'put /api/v1/confirm/:id?': 'AuthController.confirm',
+
   'post /api/v1/login': 'AuthController.login',
   // Logout
   'post /api/v1/logout': 'AuthController.logout',

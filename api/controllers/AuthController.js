@@ -8,7 +8,25 @@ var secret = '6ab198087a16e6d49b438a7aa514731f';/**
  */
 
 module.exports = {
-	login: function(req, res) {
+    confirm: function (req, res, next) {
+
+        var id = req.param('id');
+
+        if (!id) {
+            return res.badRequest('No id provided.');
+        }
+
+        User.update(id, {verified: true}, function (err, user) {
+
+            if(user.length === 0) return res.notFound();
+
+            if (err) return next(err);
+
+            res.status(200).json(user);
+
+        });
+    },
+    login: function(req, res) {
         passport.authenticate('local', function(err, user, info) {
                     console.log(user);
             if ((err) || (!user)) {

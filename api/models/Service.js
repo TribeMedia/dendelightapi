@@ -15,9 +15,46 @@ module.exports = {
   	},
     verified: {
       type: 'boolean',
-      default: false,
+      defaultsTo: false,
     }
   },
-
+  seedData:[
+      {
+        name:"Personal chef",
+        verified: true
+      },
+      {
+        name:"Decoration artist",
+        verified: true
+      },
+      {
+        name:"Musician",
+        verified: true
+      },
+      {
+        name:"Cleaner",
+        verified: true
+      },
+      {
+        name:"Master of ceremony (MC)",
+        verified: true
+      },
+      {
+        name:"Cake",
+        verified: true
+      },
+      {
+        name:"Personal shopper",
+        verified: true
+      },
+      {
+        name:"Private teacher",
+        verified: true
+      },
+      {
+        name:"Baby sitter",
+        verified: true
+      }
+    ]
 };
 

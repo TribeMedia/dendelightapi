@@ -15,9 +15,30 @@ module.exports = {
   	},
     verified: {
       type: 'boolean',
-      default: false,
+      defaultsTo: false,
     }
   },
-
+  seedData:[
+      {
+        size:"1 to 5",
+        verified: true
+      },
+      {
+        size:"6 to 10",
+        verified: true
+      },
+      {
+        size:"11 to 20",
+        verified: true
+      },
+      {
+        size:"21 - 50",
+        verified: true
+      },
+      {
+        size:"> 50",
+        verified: true
+      }
+    ]
 };
 
