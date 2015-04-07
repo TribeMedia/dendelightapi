@@ -18,13 +18,26 @@ module.exports = {
   		required: true,
   		minLength: 6
   	},
-    username: {
+    firstname: {
+      type: 'string',
+    },
+    lastname: {
+      type: 'string',
+    },
+    businessname: {
       type: 'string',
     },
   	access_token: {
   		type: 'string'
   	},
+    service: {
+      type: 'string',
+    },
     verified: {
+      type: 'boolean',
+      defaultsTo: false
+    },
+    stripe: {
       type: 'boolean',
       defaultsTo: false
     }

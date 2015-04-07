@@ -42,6 +42,9 @@ module.exports.routes = {
   // Login with fb
   'get /api/v1/auth/facebook': 'AuthController.facebook',
   'get /api/v1/auth/facebook/callback': 'AuthController.facebook_callback',
+  // Stripe 
+  'get /api/v1/auth/stripe': 'AuthController.stripe',
+  'get /api/v1/auth/stripe/callback': 'AuthController.stripe_callback',
   // Create occasion
   'post /api/v1/occasion': 'OccasionController.create',
   // Find particular occasion by id. Findall() by /api/v1/occasion
@@ -65,7 +68,9 @@ module.exports.routes = {
   // Update service
   'put /api/v1/service/:id?': 'ServiceController.update',
   // Delete service
-  'delete /api/v1/service/:id?': 'ServiceController.destroy'
+  'delete /api/v1/service/:id?': 'ServiceController.destroy',
+  // Payment with Stripe
+  'post /api/v1/charge': 'PaymentController.charge'
   /***************************************************************************
   *                                                                          *
   * Custom routes here...                                                    *
