@@ -12,7 +12,8 @@ var request = require("request");
  */
 
 module.exports = {
-    confirm: function (req, res, next) {
+//User confirm 
+    user_confirm: function (req, res, next) {
 
         var id = req.param('id');
 
@@ -30,8 +31,28 @@ module.exports = {
 
         });
     },
-    login: function(req, res) {
-        passport.authenticate('local', function(err, user, info) {
+// Provider confirm
+    provider_confirm: function (req, res, next) {
+
+        var id = req.param('id');
+
+        if (!id) {
+            return res.badRequest('No id provided.');
+        }
+
+        Provider.update(id, {verified: true}, function (err, provider) {
+
+            if(provider.length === 0) return res.notFound();
+
+            if (err) return next(err);
+
+            res.status(200).json(provider);
+
+        });
+    },
+// User login with passport local
+    user_login: function(req, res) {
+        passport.authenticate('user-local', function(err, user, info) {
                     console.log(user);
             if ((err) || (!user)) {
                 res.send({
@@ -52,11 +73,35 @@ module.exports = {
             }
         })(req, res);
     },
-// Redirect to fb for authentication
+// Service provider login with passport local
+    provider_login: function(req, res) {
+        passport.authenticate('provider-local', function(err, provider, info) {
+                    console.log(provider);
+            if ((err) || (!provider)) {
+                res.send({
+                    error: err,
+                });
+                return; 
+            };
+            if (provider == false) {
+                res.send({
+                    error: info,
+                });
+            }else{                  
+                    var token = jwt.sign(provider, secret, { expiresInMinutes: 60*24 });
+                    return res.status(200).json({
+                        provider: provider,
+                        token: token
+                    });
+            }
+        })(req, res);
+    },
+
+// Redirect to fb for authentication. User only
     facebook: function(req, res) {
         passport.authenticate('facebook')(req, res);
     },
-// Callback from fb authentication and issue access_token
+// Callback from fb authentication and issue access_token. User Only
     facebook_callback: function(req, res) {
         passport.authenticate('facebook', function (err, user, info) {
             var token = jwt.sign(user, secret, { expiresInMinutes: 60*24 });
@@ -67,7 +112,7 @@ module.exports = {
             })
         })(req,res);
     },
-// Redirect to Stripe /oath/authorize endpoint
+// Redirect to Stripe /oath/authorize endpoint. Provider Only
     stripe: function(req, res) {
         res.redirect('https://connect.stripe.com/oauth/authorize?' + qs.stringify({
             response_type: 'code',
@@ -76,7 +121,7 @@ module.exports = {
             state: req.email
         }));
     },
-// Callback from Stripe
+// Callback from Stripe. Provider Only
     stripe_callback: function(req, res) {
         var code = res.code;
         var user_email = res.state;
@@ -110,7 +155,7 @@ module.exports = {
         })
 
     },
-
+// For both User and Provider. Clear access_token after receive '204' status
     logout: function(req, res) {
         req.logout();
         return res.status(204).json({

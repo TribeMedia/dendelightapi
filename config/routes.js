@@ -34,9 +34,31 @@ module.exports.routes = {
   // Set Authorization: 'Bearer' + token to get access to routes (except signup, login)
   // Carefull with json response in Array or Object format
 
-  'put /api/v1/confirm/:id?': 'AuthController.confirm',
+  // Create user
+  'post /api/v1/user': 'UserController.create',
+  // Find user
+  'get /api/v1/user/:id?': 'UserController.find',
+  // Update user
+  'put /api/v1/user/:id?': 'UserController.update',
+  // Delete user
+  'delete /api/v1/user/:id?': 'UserController.destroy',
+  // User confirm
+  'put /api/v1/user_confirm/:id?': 'AuthController.user_confirm',
 
-  'post /api/v1/login': 'AuthController.login',
+  // Create provider
+  'post /api/v1/provider': 'ProviderController.create',
+  // Find provider
+  'get /api/v1/provider/:id?': 'ProviderController.find',
+  // Update provider
+  'put /api/v1/provider/:id?': 'ProviderController.update',
+  // Delete provider
+  'delete /api/v1/provider/:id?': 'ProviderController.destroy',
+  // Provider confirm
+  'put /api/v1/provider_confirm/:id?': 'AuthController.provider_confirm',
+  // User login
+  'post /api/v1/user_login': 'AuthController.user_login',
+  // Provider login 
+  'post /api/v1/provider_login': 'AuthController.provider_login',
   // Logout
   'post /api/v1/logout': 'AuthController.logout',
   // Login with fb
@@ -45,22 +67,7 @@ module.exports.routes = {
   // Stripe 
   'get /api/v1/auth/stripe': 'AuthController.stripe',
   'get /api/v1/auth/stripe/callback': 'AuthController.stripe_callback',
-  // Create occasion
-  'post /api/v1/occasion': 'OccasionController.create',
-  // Find particular occasion by id. Findall() by /api/v1/occasion
-  'get /api/v1/occasion/:id?': 'OccasionController.find',
-  // Update occasion
-  'put /api/v1/occasion/:id?': 'OccasionController.update',
-  // Delete occasion
-  'delete /api/v1/occasion/:id?': 'OccasionController.destroy',
-  // Create size
-  'post /api/v1/occasion_size': 'OccasionSizeController.create',
-  // Find size
-  'get /api/v1/occasion_size/:id?': 'OccasionSizeController.find',
-  // Update size
-  'put /api/v1/occasion_size/:id?': 'OccasionSizeController.update',
-  // Delete size
-  'delete /api/v1/occasion_size/:id?': 'OccasionSizeController.destroy',
+
   // Create service
   'post /api/v1/service': 'ServiceController.create',
   // Find service

@@ -10,8 +10,29 @@ Installing dependencies is simply running ```npm install``` in Terminal/Powershe
 sails lift
 ```
 
-# Register
-http://localhost:1337/user
+# User Register
+http://localhost:1337/api/v1/user
+Required parameters: email, password
 
-# Login
-http://localhost:1337/login
+# User Login
+http://localhost:1337/api/v1/user_login
+
+# User info (only available with authorization header for user)
+http://localhost:1337/api/v1/user/:id
+
+# All users (only available with authorization header for user)
+http://locahost:1337/api/v1/user
+
+# Provider Register
+http://localhost:1337/api/v1/provider
+Required parameters: email, password
+
+# Provider Login
+http://localhost:1337/api/v1/provider_login
+
+# Provider info (only available with authorization header for provider)
+http://localhost:1337/api/v1/provider/:id
+
+# All providers (only available with authorization header for provider)
+http://locahost:1337/api/v1/provider
+

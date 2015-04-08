@@ -1,35 +1,38 @@
-/**
-* User.js
-*
-* @description :: TODO: You might write a short summary of how this model works and what it represents here.
-* @docs        :: http://sailsjs.org/#!documentation/models
-*/
-
+// Service provider model
 module.exports = {
 
   attributes: {
   	email: {
-  		type: 'string',
+  		type: 'email',
   		unique: true,
   		required: true
   	},
   	password: {
   		type: 'string',
   		required: true,
-  		minLength: 6
+  		minLength: 6,
   	},
-    firstname: {
+    firstName: {
       type: 'string',
+      required: true,
+      maxLength: 15
     },
-    lastname: {
+    lastName: {
       type: 'string',
+      required: true,
+      maxLength: 15
+    },
+    fullName: function() {
+      return this.firstName + ' ' + this.lastName
     },
     businessname: {
       type: 'string',
+      maxLength: 20
     },
-  	access_token: {
-  		type: 'string'
-  	},
+    address: {
+      type: 'string',
+      maxLength: 30
+    },
     service: {
       type: 'string',
     },
@@ -37,7 +40,7 @@ module.exports = {
       type: 'boolean',
       defaultsTo: false
     },
-    stripe: {
+    stripe_account: {
       type: 'boolean',
       defaultsTo: false
     }
@@ -49,7 +52,7 @@ module.exports = {
   	
   	bcrypt.genSalt(10, function(err, salt) {
   		if (err) return next(err);
-
+      // Hash password
   		bcrypt.hash(attrs.password, salt, function(err, hash) {
   			if (err) return next(err);
 
@@ -80,7 +83,7 @@ module.exports = {
         to: attrs.email, // list of receivers
         subject: 'Welcome', // Subject line
         text: 'Welcome', // plaintext body
-        html: 'http://localhost:1337/api/v1/confirm/' + attrs.id // html body
+        html: 'http://localhost:1337/api/v1/provider_confirm/' + attrs.id // html body
     };
 
 

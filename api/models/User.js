@@ -9,7 +9,7 @@ module.exports = {
 
   attributes: {
   	email: {
-  		type: 'string',
+  		type: 'email',
   		unique: true,
   		required: true
   	},
@@ -18,12 +18,19 @@ module.exports = {
   		required: true,
   		minLength: 6
   	},
-    username: {
+    firstName: {
       type: 'string',
     },
-  	access_token: {
-  		type: 'string'
-  	},
+    lastName: {
+      type: 'string',
+    },
+    fullName: function() {
+      return this.firstName + ' ' + this.lastName
+    },
+    address: {
+      type: 'string',
+      maxLength: 30
+    },
     verified: {
       type: 'boolean',
       defaultsTo: false
@@ -36,7 +43,7 @@ module.exports = {
   	
   	bcrypt.genSalt(10, function(err, salt) {
   		if (err) return next(err);
-
+      // Hash password
   		bcrypt.hash(attrs.password, salt, function(err, hash) {
   			if (err) return next(err);
 
@@ -67,7 +74,7 @@ module.exports = {
         to: attrs.email, // list of receivers
         subject: 'Welcome', // Subject line
         text: 'Welcome', // plaintext body
-        html: 'http://localhost:1337/api/v1/confirm/' + attrs.id // html body
+        html: 'http://localhost:1337/api/v1/user_confirm/' + attrs.id // html body
     };
 
 

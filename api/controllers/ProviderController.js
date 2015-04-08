@@ -1,5 +1,5 @@
 /**
- * Occasion.js
+ * Provider.js
  *
  * @description :: Server-side logic for managing comments.
  */
@@ -7,20 +7,20 @@
 module.exports = {
 
   /**
-   * Occasion.create()
+   * Provider.create()
    */
   create: function (req, res) {
     var params = req.params.all();
-    Occasion.create(params).exec(function(err, occasion) {
-      if ((err) || (!occasion)) {
+    Provider.create(params).exec(function(err, provider) {
+      if ((err) || (!provider)) {
         return res.status(400).json({error: err})
       } else {
-        return res.status(201).json(occasion)
+        return res.status(201).json({provider: provider})
       }
     });
   },
 
-  // Occasion.find(). Return 1 object from id
+  // Provider.find(). Return 1 object from id
   find: function (req, res, next) {
     var id = req.param('id');
 
@@ -32,13 +32,13 @@ module.exports = {
 
     if (id) {
 
-        Occasion.findOne(id, function(err, occasion) {
+        Provider.findOne(id, function(err, provider) {
 
-            if(occasion === undefined) return res.notFound();
+            if(provider === undefined) return res.notFound();
 
             if (err) return next(err);
 
-            res.status(200).json(occasion);
+            res.status(200).json(provider);
 
         });
 
@@ -75,13 +75,13 @@ module.exports = {
           };
 
           console.log("This is the options", options);
-         Occasion.find(options, function(err, occasion) {
+         Provider.find(options, function(err, provider) {
 
-            if(occasion === undefined) return res.notFound();
+            if(provider === undefined) return res.notFound();
 
             if (err) return next(err);
 
-            res.json(occasion);
+            res.json(provider);
 
         });
 
@@ -107,13 +107,13 @@ module.exports = {
             return res.badRequest('No id provided.');
         }
 
-        Occasion.update(id, criteria, function (err, occasion) {
+        Provider.update(id, criteria, function (err, provider) {
 
-            if(occasion.length === 0) return res.notFound();
+            if(provider.length === 0) return res.notFound();
 
             if (err) return next(err);
 
-            res.status(200).json(occasion);
+            res.status(200).json(provider);
 
         });
     },
@@ -127,12 +127,12 @@ module.exports = {
               return res.badRequest('No id provided.');
           }
 
-          Occasion.findOne(id).exec(function(err, result) {
+          Provider.findOne(id).exec(function(err, result) {
               if (err) return res.serverError(err);
 
               if (!result) return res.notFound();
 
-              Occasion.destroy(id, function (err) {
+              Provider.destroy(id, function (err) {
 
                   if (err) return next (err);
 

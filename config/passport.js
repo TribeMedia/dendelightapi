@@ -2,8 +2,8 @@ var passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy,
     FacebookStrategy = require('passport-facebook').Strategy;
     bcrypt = require('bcryptjs');
-
-passport.use(new LocalStrategy({
+// Passport auth for user
+passport.use('user-local', new LocalStrategy({
         usernameField: 'email',
         passwordField: 'password'
       },
@@ -24,6 +24,34 @@ passport.use(new LocalStrategy({
                         });
                     } else {
                         return done(null, user);
+                    }
+                });
+            }
+        });
+    })
+);
+// Passport auth for service provider
+passport.use('provider-local', new LocalStrategy({
+        usernameField: 'email',
+        passwordField: 'password'
+      },
+    function(email, password, done) {
+        Provider.findOne({email: email}, function(err, provider) {
+            if (err) {
+                return done(err, null);
+            } 
+            if (!provider) {
+                return done(null, false, {
+                    message: 'Incorrect Provider'
+                });
+            } else {
+                bcrypt.compare(password, provider.password, function(err, res) {
+                    if (err) {
+                        return done(null, false, {
+                            message: 'Invalid Password'
+                        });
+                    } else {
+                        return done(null, provider);
                     }
                 });
             }
