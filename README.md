@@ -10,29 +10,44 @@ Installing dependencies is simply running ```npm install``` in Terminal/Powershe
 sails lift
 ```
 
-# User Register
-http://localhost:1337/api/v1/user
-Required parameters: email, password
+### User Register
+POST http://localhost:1337/api/v1/user
 
-# User Login
-http://localhost:1337/api/v1/user_login
+*Required parameters: email, password*
 
-# User info (only available with authorization header for user)
-http://localhost:1337/api/v1/user/:id
+### User Login
+POST http://localhost:1337/api/v1/user_login
 
-# All users (only available with authorization header for user)
-http://locahost:1337/api/v1/user
+*Required parameters: email, password*
 
-# Provider Register
-http://localhost:1337/api/v1/provider
-Required parameters: email, password, firstName, lastName
+### User info (authorized user only)
+GET http://localhost:1337/api/v1/user/:id
 
-# Provider Login
-http://localhost:1337/api/v1/provider_login
+### All users (authorized user only)
+GET http://locahost:1337/api/v1/user
 
-# Provider info (only available with authorization header for provider)
-http://localhost:1337/api/v1/provider/:id
+### Update user (authorized user only)
+PUT http://localhost:1337/api/v1/user
 
-# All providers (only available with authorization header for provider)
-http://locahost:1337/api/v1/provider
+*Parameters: email, firstName, lastName, address*
 
+### Provider Register
+POST http://localhost:1337/api/v1/provider
+
+*Required parameters: email, password, firstName, lastName*
+
+### Provider Login
+POST http://localhost:1337/api/v1/provider_login
+
+*Required parameters: email, password*
+
+### Provider info (authorized provider only)
+GET http://localhost:1337/api/v1/provider/:id
+
+### All providers (authorized provider only)
+GET http://locahost:1337/api/v1/provider
+
+### Update provider (authorized provider only)
+PUT http://localhost:1337/api/v1/provider
+
+*Parameters: email, firstName, lastName, address, service*

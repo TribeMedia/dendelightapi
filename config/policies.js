@@ -30,10 +30,12 @@ module.exports.policies = {
   UserController: {
     "create": true,
     "find": "isUser",
+    "update": "isUser"
   },
   ProviderController: {
     "create": true,
     "find": "isProvider",
+    "update": "isProvider"
   },
   AuthController: {
     '*': true,
