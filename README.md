@@ -25,7 +25,7 @@ http://locahost:1337/api/v1/user
 
 # Provider Register
 http://localhost:1337/api/v1/provider
-Required parameters: email, password
+Required parameters: email, password, firstName, lastName
 
 # Provider Login
 http://localhost:1337/api/v1/provider_login
