@@ -28,17 +28,22 @@ module.exports.policies = {
 
   // '*': "hasToken",
   UserController: {
-    "create": true,
-    "find": "isUser",
-    "update": "isUser"
+    create: true,
+    find: 'isUser',
+    update: 'isUser',
+    destroy: 'isUser'
   },
   ProviderController: {
-    "create": true,
-    "find": "isProvider",
-    "update": "isProvider"
+    create: true,
+    find: 'isProvider',
+    update: 'isProvider',
+    destroy: 'isProvider'
   },
   AuthController: {
     '*': true,
+  }, 
+  PaymentController: {
+    charge: 'isUser'
   }
   /***************************************************************************
   *                                                                          *

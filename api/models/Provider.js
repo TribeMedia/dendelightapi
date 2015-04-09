@@ -94,6 +94,8 @@ module.exports = {
         }else{
             console.log('Message sent: ' + info.response);
         }
-    });  }
+    });
+  }
+  
 };
 

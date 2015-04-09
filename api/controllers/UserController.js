@@ -1,16 +1,14 @@
 /**
  * User.js
  *
- * @description :: Server-side logic for managing comments.
  */
 
 module.exports = {
 
-  /**
-   * User.create()
-   */
+  // User.create()
   create: function (req, res) {
     var params = req.params.all();
+    
     User.create({email: params.email, password: params.password}).exec(function(err, user) {
       if ((err) || (!user)) {
         return res.status(400).json({error: err})
@@ -28,27 +26,24 @@ module.exports = {
 
     if (idShortCut === true) {
         return next();
-    }
+    };
 
     if (id) {
+      User.findOne(id, function(err, user) {
+        if(user === undefined) return res.notFound();
 
-        User.findOne(id, function(err, user) {
+        if (err) return next(err);
 
-            if(user === undefined) return res.notFound();
+        res.status(200).json(user);
 
-            if (err) return next(err);
-
-            res.status(200).json(user);
-
-        });
+      });
 
     } else {
+      var where = req.param('where');
 
-        var where = req.param('where');
-
-        if (_.isString(where)) {
-                where = JSON.parse(where);
-        }
+      if (_.isString(where)) {
+        where = JSON.parse(where);
+      }
       // This allows you to put something like id=2 to work.
         // if (!where) {
 
@@ -74,71 +69,68 @@ module.exports = {
                   where: where || undefined
           };
 
-          console.log("This is the options", options);
-         User.find(options, function(err, user) {
+      console.log("This is the options", options);
+      User.find(options, function(err, user) {
 
-            if(user === undefined) return res.notFound();
+      if(user === undefined) return res.notFound();
 
-            if (err) return next(err);
+      if (err) return next(err);
 
-            res.json(user);
+      res.json(user);
 
-        });
+    });
 
-        function isShortcut(id) {
-        if (id === 'find'   ||  id === 'update' ||  id === 'create' ||  id === 'destroy') {
+    function isShortcut(id) {
+      if (id === 'find'   ||  id === 'update' ||  id === 'create' ||  id === 'destroy') {
         return true;
-        };
+      };
       }
     }   
 
   },   
 
   // an UPDATE action . Return object in array
-    update: function (req, res, next) {
+  update: function (req, res, next) {
+    var criteria = {};
 
-        var criteria = {};
+    criteria = _.merge({}, req.params.all(), req.body);
 
-        criteria = _.merge({}, req.params.all(), req.body);
+    var id = req.param('id');
 
-        var id = req.param('id');
+    if (!id) {
+      return res.badRequest('No id provided.');
+      };
 
-        if (!id) {
-            return res.badRequest('No id provided.');
-        }
+    User.update(id, criteria, function (err, user) {
+      if(user.length === 0) return res.notFound();
 
-        User.update(id, criteria, function (err, user) {
+      if (err) return next(err);
 
-            if(user.length === 0) return res.notFound();
+      res.status(200).json(user);
 
-            if (err) return next(err);
-
-            res.status(200).json(user);
-
-        });
-    },
+    });
+  },
 
   // a DESTROY action. Return 204 status
-      destroy: function (req, res, next) {
+  destroy: function (req, res, next) {
+    var id = req.param('id');
 
-          var id = req.param('id');
+    if (!id) {
+      return res.badRequest('No id provided.');
+    };
 
-          if (!id) {
-              return res.badRequest('No id provided.');
-          }
+    User.findOne(id).exec(function(err, result) {
+      if (err) return res.serverError(err);
 
-          User.findOne(id).exec(function(err, result) {
-              if (err) return res.serverError(err);
+      if (!result) return res.notFound();
 
-              if (!result) return res.notFound();
+      User.destroy(id, function (err) {
+        if (err) return next (err);
 
-              User.destroy(id, function (err) {
+        return res.status(204);
+      });
 
-                  if (err) return next (err);
-
-                  return res.status(204);
-              });
-
-          });
-      },
+    });
+  },
+  
 };

@@ -76,6 +76,7 @@ module.exports.routes = {
   'put /api/v1/service/:id?': 'ServiceController.update',
   // Delete service
   'delete /api/v1/service/:id?': 'ServiceController.destroy',
+  
   // Payment with Stripe
   'post /api/v1/charge': 'PaymentController.charge'
   /***************************************************************************

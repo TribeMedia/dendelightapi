@@ -9,7 +9,9 @@ Installing dependencies is simply running ```npm install``` in Terminal/Powershe
 ```
 sails lift
 ```
-
+```
+To access authorize location, set Authorization header with 'Bearer' + token.
+```
 ### User Register
 POST http://localhost:1337/api/v1/user
 

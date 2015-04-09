@@ -1,63 +1,67 @@
 var passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy,
-    FacebookStrategy = require('passport-facebook').Strategy;
+    FacebookStrategy = require('passport-facebook').Strategy,
     bcrypt = require('bcryptjs');
+
 // Passport auth for user
 passport.use('user-local', new LocalStrategy({
-        usernameField: 'email',
-        passwordField: 'password'
-      },
+      usernameField: 'email',
+      passwordField: 'password'
+    },
     function(email, password, done) {
-        User.findOne({email: email}, function(err, user) {
+      User.findOne({email: email}, function(err, user) {
+        if (err) {
+          return done(err, null);
+        }; 
+        if (!user) {
+          return done(null, false, {
+            message: 'Incorrect User'
+          });
+        } else {
+          bcrypt.compare(password, user.password, function(err, res) {
             if (err) {
-                return done(err, null);
-            } 
-            if (!user) {
-                return done(null, false, {
-                    message: 'Incorrect User'
-                });
+              return done(null, false, {
+                message: 'Invalid Password'
+              });
             } else {
-                bcrypt.compare(password, user.password, function(err, res) {
-                    if (err) {
-                        return done(null, false, {
-                            message: 'Invalid Password'
-                        });
-                    } else {
-                        return done(null, user);
-                    }
-                });
+              return done(null, user);
             }
-        });
+          });
+        }
+      });
     })
 );
+
 // Passport auth for service provider
 passport.use('provider-local', new LocalStrategy({
-        usernameField: 'email',
-        passwordField: 'password'
-      },
+      usernameField: 'email',
+      passwordField: 'password'
+    },
     function(email, password, done) {
-        Provider.findOne({email: email}, function(err, provider) {
+      Provider.findOne({email: email}, function(err, provider) {
+        if (err) {
+          return done(err, null);
+        };
+
+        if (!provider) {
+          return done(null, false, {
+            message: 'Incorrect Provider'
+          });
+        } else {
+          bcrypt.compare(password, provider.password, function(err, res) {
             if (err) {
-                return done(err, null);
-            } 
-            if (!provider) {
-                return done(null, false, {
-                    message: 'Incorrect Provider'
-                });
+              return done(null, false, {
+                message: 'Invalid Password'
+              });
             } else {
-                bcrypt.compare(password, provider.password, function(err, res) {
-                    if (err) {
-                        return done(null, false, {
-                            message: 'Invalid Password'
-                        });
-                    } else {
-                        return done(null, provider);
-                    }
-                });
+              return done(null, provider);
             }
-        });
+          });
+        }
+      });
     })
 );
+
 // Facebook auth only work online
 passport.use(new FacebookStrategy({
     clientID: '1719770144916231',
@@ -69,19 +73,19 @@ passport.use(new FacebookStrategy({
       if (err) { return done(err, null); }
       if (!user) {
         User.create({
-            provider: Facebook,
-            email: profile.email,
-            password: profile.id,
+          provider: Facebook,
+          email: profile.email,
+          password: profile.id,
         }).done(function (err, user) {
-            if (user) {
-                return done(null, user, {
-                  message: 'Logged In Successfully'
-                });
-            } else {
-                return done(err, null, {
-                  message: 'There was an error logging you in with Facebook'
-                });
-            }
+          if (user) {
+            return done(null, user, {
+              message: 'Logged In Successfully'
+            });
+          } else {
+            return done(err, null, {
+              message: 'There was an error logging you in with Facebook'
+            });
+          }
         });
       } else {
         return done(null, user);

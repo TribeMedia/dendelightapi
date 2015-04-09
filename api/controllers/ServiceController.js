@@ -1,16 +1,14 @@
 /**
  * Service.js
  *
- * @description :: Server-side logic for managing comments.
  */
 
 module.exports = {
 
-  /**
-   * Service.create()
-   */
+  // Service.create()
   create: function (req, res) {
     var params = req.params.all();
+    
     Service.create(params).exec(function(err, service) {
       if ((err) || (!service)) {
         return res.status(400).json({error: err})
@@ -23,32 +21,26 @@ module.exports = {
   // Service.find(). Return 1 object from id
   find: function (req, res, next) {
     var id = req.param('id');
-
     var idShortCut = isShortcut(id);
 
     if (idShortCut === true) {
-        return next();
-    }
+      return next();
+    };
 
     if (id) {
+      Service.findOne(id, function(err, service) {
+        if(service === undefined) return res.notFound();
 
-        Service.findOne(id, function(err, service) {
+        if (err) return next(err);
 
-            if(service === undefined) return res.notFound();
-
-            if (err) return next(err);
-
-            res.status(200).json(service);
-
-        });
-
+        res.status(200).json(service);
+      });
     } else {
+      var where = req.param('where');
 
-        var where = req.param('where');
-
-        if (_.isString(where)) {
-                where = JSON.parse(where);
-        }
+      if (_.isString(where)) {
+        where = JSON.parse(where);
+      }
       // This allows you to put something like id=2 to work.
         // if (!where) {
 
@@ -74,18 +66,16 @@ module.exports = {
                   where: where || undefined
           };
 
-          console.log("This is the options", options);
-         Service.find(options, function(err, service) {
+      console.log("This is the options", options);
+      Service.find(options, function(err, service) {
+        if(service === undefined) return res.notFound();
 
-            if(service === undefined) return res.notFound();
+        if (err) return next(err);
 
-            if (err) return next(err);
+        res.json(service);
+      });
 
-            res.json(service);
-
-        });
-
-        function isShortcut(id) {
+      function isShortcut(id) {
         if (id === 'find'   ||  id === 'update' ||  id === 'create' ||  id === 'destroy') {
         return true;
         };
@@ -95,50 +85,46 @@ module.exports = {
   },   
 
   // an UPDATE action . Return object in array
-    update: function (req, res, next) {
+  update: function (req, res, next) {
+    var criteria = {};
 
-        var criteria = {};
+    criteria = _.merge({}, req.params.all(), req.body);
 
-        criteria = _.merge({}, req.params.all(), req.body);
+    var id = req.param('id');
 
-        var id = req.param('id');
+    if (!id) {
+      return res.badRequest('No id provided.');
+      };
 
-        if (!id) {
-            return res.badRequest('No id provided.');
-        }
+    Service.update(id, criteria, function (err, service) {
+      if(service.length === 0) return res.notFound();
 
-        Service.update(id, criteria, function (err, service) {
+      if (err) return next(err);
 
-            if(service.length === 0) return res.notFound();
+      res.status(200).json(service);
 
-            if (err) return next(err);
-
-            res.status(200).json(service);
-
-        });
-    },
+    });
+  },
 
   // a DESTROY action. Return 204 status
-      destroy: function (req, res, next) {
+  destroy: function (req, res, next) {
+    var id = req.param('id');
 
-          var id = req.param('id');
+    if (!id) {
+      return res.badRequest('No id provided.');
+    };
 
-          if (!id) {
-              return res.badRequest('No id provided.');
-          }
+    Service.findOne(id).exec(function(err, result) {
+      if (err) return res.serverError(err);
 
-          Service.findOne(id).exec(function(err, result) {
-              if (err) return res.serverError(err);
+      if (!result) return res.notFound();
 
-              if (!result) return res.notFound();
+      Service.destroy(id, function (err) {
+        if (err) return next (err);
 
-              Service.destroy(id, function (err) {
+        return res.status(204);
+      });
 
-                  if (err) return next (err);
-
-                  return res.status(204);
-              });
-
-          });
-      },
+    });
+  },
 };
