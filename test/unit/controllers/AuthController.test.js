@@ -15,7 +15,7 @@ describe('AuthController', function() {
 				.expect(hasUserAndToken)
 				.end(done);
 		function hasUserAndToken (res) {
-			if (!('name') in res.body) return "missing name key";
+			if (!('user') in res.body) return "missing user key";
 			if (!('token') in res.body) return "missing token";
 		};
 		})
@@ -30,12 +30,28 @@ describe('AuthController', function() {
 				.post('/api/v1/provider_login')
 				.send({email: 'hi@gmail.com', password: '14491992'})
 				.expect(200)
-				.expect(hasUserAndToken)
+				.expect(hasProviderAndToken)
 				.end(done);
-		function hasUserAndToken (res) {
-			if (!('name') in res.body) return "missing name key";
+		function hasProviderAndToken (res) {
+			if (!('provider') in res.body) return "missing provider key";
 			if (!('token') in res.body) return "missing token";
 		};
 		})
 	});
+
+	describe('#admin_login()', function() {
+		it('should parse json response and auth token', function(done) {
+			request(sails.hooks.http.app)
+				.post('/api/administrator')
+				.send({email: 'vuongngo.pd@gmail.com', password: 'admin12345'})
+				.expect(200)
+				.expect(hasAdminAndToken)
+				.end(done);
+		function hasAdminAndToken (res) {
+			if (!('admin') in res.body) return "missing admin key";
+			if (!('token') in res.body) return "missing token";
+		};
+		})
+	});
+
 });

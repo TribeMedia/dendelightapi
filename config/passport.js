@@ -62,6 +62,36 @@ passport.use('provider-local', new LocalStrategy({
     })
 );
 
+// Admin auth for service admin
+passport.use('admin-local', new LocalStrategy({
+      usernameField: 'email',
+      passwordField: 'password'
+    },
+    function(email, password, done) {
+      Admin.findOne({email: email}, function(err, admin) {
+        if (err) {
+          return done(err, null);
+        };
+
+        if (!admin) {
+          return done(null, false, {
+            message: 'Incorrect Admin'
+          });
+        } else {
+          bcrypt.compare(password, admin.password, function(err, res) {
+            if (err) {
+              return done(null, false, {
+                message: 'Invalid Password'
+              });
+            } else {
+              return done(null, admin);
+            }
+          });
+        }
+      });
+    })
+);
+
 // Facebook auth only work online
 passport.use(new FacebookStrategy({
     clientID: '1719770144916231',

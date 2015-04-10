@@ -100,6 +100,34 @@ module.exports = {
     })(req, res);
   },
 
+  // Admin login with passport local
+  admin_login: function(req, res) {
+    passport.authenticate('admin-local', function(err, admin, info) {
+      if ((err) || (!admin)) {
+        res.status(400)
+          .json({
+            error: err
+          });
+        
+        return; 
+      };
+      
+      if (admin === false) {
+        res.status(400)
+          .json({
+            error: info
+          });
+      } else {                  
+        var token = jwt.sign(admin, secret, { expiresInMinutes: 60*24 });
+        
+        return res.status(200).json({
+          admin: admin,
+          token: token
+        });
+      }
+    })(req, res);
+  },
+
   // Redirect to fb for authentication. User only
   facebook: function(req, res) {
     passport.authenticate('facebook')(req, res);
