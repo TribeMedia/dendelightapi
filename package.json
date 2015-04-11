@@ -27,10 +27,11 @@
     "jsonwebtoken": "4.2.1",
     "passport": "0.2.1",
     "passport-local": "1.0.0",
-    "express-jwt": "2.1.0"
+    "express-jwt": "2.1.0",
+    "forever": "~"
   },
   "scripts": {
-    "start": "node app.js",
+    "start": "forever start app.js --prod",
     "debug": "node debug app.js"
   },
   "main": "app.js",
