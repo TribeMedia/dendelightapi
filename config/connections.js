@@ -75,7 +75,7 @@ module.exports.connections = {
   //   },
   // },
 
-  'oseam': {
+  'oseamDb': {
     adapter: 'sails-mongo',
     url: process.env.MONGOLAB_URI
   },
