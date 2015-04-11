@@ -63,7 +63,8 @@ module.exports.routes = {
   // Provider login 
   'post /api/v1/provider_login': 'AuthController.provider_login',
   // Logout
-  'post /api/v1/logout': 'AuthController.logout',
+  'get /api/v1/logout': 'AuthController.logout',
+
   // Login with fb
   'get /api/v1/auth/facebook': 'AuthController.facebook',
   'get /api/v1/auth/facebook/callback': 'AuthController.facebook_callback',

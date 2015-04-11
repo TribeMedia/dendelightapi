@@ -1,4 +1,5 @@
-var stripe = require('stripe')('sk_test_oPJOrwhkdFhK8pWfMRLXBaqv');
+var TEST_SECRET = sails.config.stripe.testSecretKey;
+var stripe = require('stripe')(TEST_SECRET);
 
 module.exports = {
   charge: function (req, res, next) {
@@ -8,7 +9,7 @@ module.exports = {
 
     Provider.findOne(provider, function(err, provider) {
       if (err) {
-        res.status(400).json(err);
+        res.badRequest(err);
       } else {
         stripe_seller_id = provider.stripe_user_id;
 
@@ -21,9 +22,9 @@ module.exports = {
           description: "Charge for test@example.com"
           }, function(err, charge) {
             if (err) {
-              res.status(400).json(err);
+              res.badRequest(err);
             } else {
-              res.status(200).json(charge);
+              res.ok(charge);
             }
           });             
       }

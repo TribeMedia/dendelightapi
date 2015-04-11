@@ -11,7 +11,7 @@ module.exports = {
   
     Provider.create(params).exec(function(err, provider) {
       if ((err) || (!provider)) {
-        return res.status(400).json({error: err})
+        return res.badRequest(err);
       } else {
         return res.status(201).json({provider: provider})
       }
@@ -19,7 +19,7 @@ module.exports = {
   },
 
   // Provider.find(). Return 1 object from id
-  find: function (req, res, next) {
+  find: function (req, res) {
     var id = req.param('id');
     var idShortCut = isShortcut(id);
 
@@ -33,7 +33,7 @@ module.exports = {
 
         if (err) return next(err);
 
-        res.status(200).json(provider);
+        res.ok({provider: provider});
 
       });
     } else {
@@ -71,9 +71,9 @@ module.exports = {
       Provider.find(options, function(err, provider) {
         if(provider === undefined) return res.notFound();
 
-        if (err) return next(err);
+        if (err) return res.badRequest(err);
 
-        res.json(provider);
+        res.ok({providers: provider});
       });
 
       function isShortcut(id) {
@@ -86,7 +86,7 @@ module.exports = {
   },   
 
   // an UPDATE action . Return object in array
-  update: function (req, res, next) {
+  update: function (req, res) {
     var criteria = {};
 
     criteria = _.merge({}, req.params.all(), req.body);
@@ -100,31 +100,23 @@ module.exports = {
     Provider.update(id, criteria, function (err, provider) {
       if(provider.length === 0) return res.notFound();
 
-      if (err) return next(err);
+      if (err) return badRequest(err);
 
-      res.status(200).json(provider);
+      res.ok({provider: provider});
     });
   },
 
   // a DESTROY action. Return 204 status
-  destroy: function (req, res, next) {
+  destroy: function (req, res) {
     var id = req.param('id');
 
     if (!id) {
       return res.badRequest('No id provided.');
     };
-
-    Provider.findOne(id).exec(function(err, result) {
+    Provider.destroy(id).exec(function (err, provider) {
       if (err) return res.serverError(err);
 
-      if (!result) return res.notFound();
-
-      Provider.destroy(id, function (err) {
-        if (err) return next (err);
-
-        return res.status(204);
-      });
-
+      return res.status(204).json(provider);
     });
   },
 };

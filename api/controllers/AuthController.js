@@ -1,8 +1,8 @@
 var passport = require("passport");
 var jwt = require('jsonwebtoken');
-var secret = '6ab198087a16e6d49b438a7aa514731f';
-var TEST_ID = 'ca_60rzt4IsHzlWikredHVTxZHAlNDhDvaC';
-var TEST_SECRET = 'sk_test_oPJOrwhkdFhK8pWfMRLXBaqv';
+var secret = sails.config.session.secret;
+var TEST_ID = sails.config.stripe.testClientId;
+var TEST_SECRET = sails.config.stripe.testSecretKey;
 var request = require("request");
 /**
  * AuthController
@@ -11,36 +11,36 @@ var request = require("request");
 
 module.exports = {
   //User confirm 
-  user_confirm: function (req, res, next) {
+  user_confirm: function (req, res) {
     var id = req.param('id');
 
     if (!id) {
-      return res.badRequest('No id provided.');
+      return res.badRequest('No user id provided.');
       };
 
     User.update(id, {verified: true}, function (err, user) {
       if(user.length === 0) return res.notFound();
 
-      if (err) return next(err);
+      if (err) return res.badRequest(err);
 
-      res.status(200).json(user);
+      res.ok({user: user});
     });
   },
     
   // Provider confirm
-  provider_confirm: function (req, res, next) {
+  provider_confirm: function (req, res) {
     var id = req.param('id');
 
     if (!id) {
-      return res.badRequest('No id provided.');
+      return res.badRequest('No provider id provided.');
     };
 
     Provider.update(id, {verified: true}, function (err, provider) {
       if(provider.length === 0) return res.notFound();
 
-      if (err) return next(err);
+      if (err) return res.badRequest(err);
 
-      res.status(200).json({provider: provider});
+      res.ok({provider: provider});
     });
   },
 
@@ -48,23 +48,17 @@ module.exports = {
   user_login: function(req, res) {
     passport.authenticate('user-local', function(err, user, info) {
       if ((err) || (!user)) {
-        res.status(400)
-          .json({
-            error: err
-          });
+        res.badRequest(err);
         
         return; 
       };
       
-      if (user == false) {
-        res.status(400)
-          .json({
-            error: info
-          });
+      if (user === false) {
+        res.badRequest(info);
       } else {                  
         var token = jwt.sign(user, secret, { expiresInMinutes: 60*24 });
         
-        return res.status(200).json({
+        return res.ok({
           user: user,
           token: token
         });
@@ -76,23 +70,17 @@ module.exports = {
   provider_login: function(req, res) {
     passport.authenticate('provider-local', function(err, provider, info) {
       if ((err) || (!provider)) {
-        res.status(400)
-          .json({
-            error: err
-          });
+        res.badRequest(err);
         
         return; 
       };
       
       if (provider === false) {
-        res.status(400)
-          .json({
-            error: info
-          });
+        res.notFound;
       } else {                  
         var token = jwt.sign(provider, secret, { expiresInMinutes: 60*24 });
         
-        return res.status(200).json({
+        return res.ok({
           provider: provider,
           token: token
         });
@@ -104,23 +92,17 @@ module.exports = {
   admin_login: function(req, res) {
     passport.authenticate('admin-local', function(err, admin, info) {
       if ((err) || (!admin)) {
-        res.status(400)
-          .json({
-            error: err
-          });
+        res.badRequest(err);
         
         return; 
       };
       
       if (admin === false) {
-        res.status(400)
-          .json({
-            error: info
-          });
+        res.notFound;
       } else {                  
         var token = jwt.sign(admin, secret, { expiresInMinutes: 60*24 });
         
-        return res.status(200).json({
+        return res.ok({
           admin: admin,
           token: token
         });
@@ -138,8 +120,9 @@ module.exports = {
     passport.authenticate('facebook', function (err, user, info) {
       var token = jwt.sign(user, secret, { expiresInMinutes: 60*24 });
       
-      res.status(200)
-        .json({
+      if (err) return res.badRequest(err);
+
+      res.ok({
           success: true,
           user: user,
           token: token
@@ -174,7 +157,7 @@ module.exports = {
           }
         }, function(err, r, body){
           if (err) {
-            res.status(400).json(err);
+            res.badRequest(err);
           } else {
             var access_token = JSON.parse(body).access_token;
             var stripe_user_id = JSON.parse(body).stripe_user_id;
@@ -182,11 +165,11 @@ module.exports = {
           
             Provider.update({email: user_email}, {stripe_access_token: access_token, stripe_user_id: stripe_user_id, stripe_refresh_token: refresh_token}, function (err, provider) {
 
-            if(occasion.length === 0) return res.status(404);
+            if(occasion.length === 0) return res.notFound;
 
-            if (err) return res.status(400).json(err);
+            if (err) return res.badRequest(err);
 
-            res.status(200).json(occasion_size);
+            res.ok({provider: provider});
 
         });
       }

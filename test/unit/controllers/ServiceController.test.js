@@ -36,7 +36,7 @@ describe('ServiceController', function() {
 				.set('Authorization', 'Bearer ' + token)
 				.send({name: 'cleaning'})
 				.expect(201)
-				.expect(hasName)
+				.expect(hasService)
 				.end(done);
 
 		});
@@ -49,8 +49,8 @@ describe('ServiceController', function() {
 				.expect(400)
 				.end(done);
 		});
-		function hasName(res) {
-		  if (!('name' in res.body)) return "missing name key";
+		function hasService(res) {
+		  if (!('service' in res.body)) return "missing service key";
 	}	
 
 	});

@@ -3,14 +3,77 @@ var request = require('supertest');
 
 describe('AuthController', function() {
 
+	describe('#user_confirm()', function() {
+		var userId;
+		before(function(done) {
+			User.create({email: 'user_confirm_test1@gmail.com', password: '14491992'}, function(err, user) { 
+				userId = user.id;
+				done(); })
+		});
+		it('should update and confirm user', function(done) {
+			request(sails.hooks.http.app)
+				.put('/api/v1/user_confirm/' + userId)
+				.expect(200)
+				.expect(hasUser)
+				.end(done);
+		function hasUser (res) {
+			if (!('user') in res.body) return "missing user key";
+		};
+		});
+		it('should return badRequest', function(done){
+			request(sails.hooks.http.app)
+				.put('/api/v1/user_confirm/')
+				.expect(400)
+				.end(done);
+		});
+		it('should return notFound', function(done) {
+			request(sails.hooks.http.app)
+				.put('/api/v1/user_confirm/1' + userId)
+				.expect(404)
+				.end(done);
+		})
+	});
+
+	describe('#provider_confirm()', function() {
+		var providerId;
+		before(function(done) {
+			Provider.create({email: 'provider_confirm_test1@gmail.com', password: '14491992', firstName: 'Tom', lastName: 'Henry'}, function(err, provider) { 
+				providerId = provider.id;
+				done(); })
+		});
+		it('should update and confirm provider', function(done) {
+			request(sails.hooks.http.app)
+				.put('/api/v1/provider_confirm/' + providerId)
+				.expect(200)
+				.expect(hasProvider)
+				.end(done);
+		function hasProvider (res) {
+			if (!('provider') in res.body) return "missing provider key";
+		};
+		});
+		it('should return badRequest', function(done){
+			request(sails.hooks.http.app)
+				.put('/api/v1/user_confirm/')
+				.expect(400)
+				.end(done);
+		});
+		it('should return notFound', function(done) {
+			request(sails.hooks.http.app)
+				.put('/api/v1/user_confirm/1' + providerId)
+				.expect(404)
+				.end(done);
+		})
+
+	});
+
 	describe('#user_login()', function() {
-		beforeEach(function(done) {
-			User.create({email: 'hello@gmail.com', password: '14491992'}, function(req, res) { done(); })
+		before(function(done) {
+			User.create({email: 'user_login_test@gmail.com', password: '14491992'}, function(req, res) { done(); })
 		});
 		it('should parse json response and auth token', function(done) {
 			request(sails.hooks.http.app)
 				.post('/api/v1/user_login')
-				.send({email: 'hello@gmail.com', password: '14491992'})
+				.send({email: 'user_login_test@gmail.com', password: '14491992'})
 				.expect(200)
 				.expect(hasUserAndToken)
 				.end(done);
@@ -18,6 +81,21 @@ describe('AuthController', function() {
 			if (!('user') in res.body) return "missing user key";
 			if (!('token') in res.body) return "missing token";
 		};
+		});
+		it('should return badRequest', function(done){
+			request(sails.hooks.http.app)
+				.post('/api/v1/user_login')
+				.send({email: 'user_login_test@gmail.com'})
+				.expect(400)
+				.end(done);
+		});
+		it('should return badRequest', function(done){
+			request(sails.hooks.http.app)
+				.post('/api/v1/user_login')
+				.send({email: 'user_login_test@gmail.com', password: '123456'})
+				.expect(400)
+				.expect(invalidPassword)
+				.end(done);
 		})
 	});	
 
@@ -36,7 +114,23 @@ describe('AuthController', function() {
 			if (!('provider') in res.body) return "missing provider key";
 			if (!('token') in res.body) return "missing token";
 		};
+		});
+		it('should return badRequest', function(done){
+			request(sails.hooks.http.app)
+				.post('/api/v1/provider_login')
+				.send({email: 'user_login_test@gmail.com'})
+				.expect(400)
+				.end(done);
+		});
+		it('should return badRequest', function(done){
+			request(sails.hooks.http.app)
+				.post('/api/v1/provider_login')
+				.send({email: 'provider_login_test@gmail.com', password: '123456'})
+				.expect(400)
+				.expect(invalidPassword)
+				.end(done);
 		})
+
 	});
 
 	describe('#admin_login()', function() {
@@ -51,7 +145,35 @@ describe('AuthController', function() {
 			if (!('admin') in res.body) return "missing admin key";
 			if (!('token') in res.body) return "missing token";
 		};
+		});
+		it('should return badRequest', function(done){
+			request(sails.hooks.http.app)
+				.post('/api/administrator')
+				.send({email: 'vuongngo.pd@gmail.com'})
+				.expect(400)
+				.end(done);
+		});
+		it('should return badRequest', function(done){
+			request(sails.hooks.http.app)
+				.post('/api/administrator')
+				.send({email: 'vuongngo.pd@gmail.com', password: '123456'})
+				.expect(400)
+				.expect(invalidPassword)
+				.end(done);
+		})
+
+	});
+
+	describe('#logout()', function() {
+		it('should logout successfully', function(done) {
+			request(sails.hooks.http.app)
+				.get('/api/v1/logout')
+				.expect(204)
+				.end(done);
 		})
 	});
 
+	function invalidPassword (res) {
+		if (res.body.message === 'Invalid Password') return 'invalid password';
+	}
 });

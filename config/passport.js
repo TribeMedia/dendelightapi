@@ -19,7 +19,7 @@ passport.use('user-local', new LocalStrategy({
           });
         } else {
           bcrypt.compare(password, user.password, function(err, res) {
-            if (err) {
+            if (!res) {
               return done(null, false, {
                 message: 'Invalid Password'
               });
@@ -49,7 +49,7 @@ passport.use('provider-local', new LocalStrategy({
           });
         } else {
           bcrypt.compare(password, provider.password, function(err, res) {
-            if (err) {
+            if (!res) {
               return done(null, false, {
                 message: 'Invalid Password'
               });
@@ -79,7 +79,7 @@ passport.use('admin-local', new LocalStrategy({
           });
         } else {
           bcrypt.compare(password, admin.password, function(err, res) {
-            if (err) {
+            if (!res) {
               return done(null, false, {
                 message: 'Invalid Password'
               });

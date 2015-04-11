@@ -11,7 +11,7 @@ module.exports = {
     
     User.create({email: params.email, password: params.password}).exec(function(err, user) {
       if ((err) || (!user)) {
-        return res.status(400).json({error: err})
+        return res.badRequest(err);
       } else {
         return res.status(201).json({user: user})
       }
@@ -19,7 +19,7 @@ module.exports = {
   },
 
   // User.find(). Return 1 object from id
-  find: function (req, res, next) {
+  find: function (req, res) {
     var id = req.param('id');
 
     var idShortCut = isShortcut(id);
@@ -32,9 +32,9 @@ module.exports = {
       User.findOne(id, function(err, user) {
         if(user === undefined) return res.notFound();
 
-        if (err) return next(err);
+        if (err) return badRequest(err);
 
-        res.status(200).json(user);
+        res.ok({user: user});
 
       });
 
@@ -74,9 +74,9 @@ module.exports = {
 
       if(user === undefined) return res.notFound();
 
-      if (err) return next(err);
+      if (err) return res.badRequest(err);
 
-      res.json(user);
+      res.ok({users: user});
 
     });
 
@@ -90,7 +90,7 @@ module.exports = {
   },   
 
   // an UPDATE action . Return object in array
-  update: function (req, res, next) {
+  update: function (req, res) {
     var criteria = {};
 
     criteria = _.merge({}, req.params.all(), req.body);
@@ -104,32 +104,25 @@ module.exports = {
     User.update(id, criteria, function (err, user) {
       if(user.length === 0) return res.notFound();
 
-      if (err) return next(err);
+      if (err) return res.badRequest(err);
 
-      res.status(200).json(user);
+      res.ok({user: user});
 
     });
   },
 
   // a DESTROY action. Return 204 status
-  destroy: function (req, res, next) {
+  destroy: function (req, res) {
     var id = req.param('id');
 
     if (!id) {
       return res.badRequest('No id provided.');
     };
 
-    User.findOne(id).exec(function(err, result) {
-      if (err) return res.serverError(err);
+    User.destroy(id, function (err, user) {
+      if (err) return res.forbidden(err);
 
-      if (!result) return res.notFound();
-
-      User.destroy(id, function (err) {
-        if (err) return next (err);
-
-        return res.status(204);
-      });
-
+      return res.status(204).json(user);
     });
   },
   

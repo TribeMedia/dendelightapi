@@ -11,15 +11,15 @@ module.exports = {
     
     Service.create(params).exec(function(err, service) {
       if ((err) || (!service)) {
-        return res.status(400).json({error: err})
+        return res.badRequest(err);
       } else {
-        return res.status(201).json(service)
+        return res.status(201).json({service: service})
       }
     });
   },
 
   // Service.find(). Return 1 object from id
-  find: function (req, res, next) {
+  find: function (req, res) {
     var id = req.param('id');
     var idShortCut = isShortcut(id);
 
@@ -31,9 +31,9 @@ module.exports = {
       Service.findOne(id, function(err, service) {
         if(service === undefined) return res.notFound();
 
-        if (err) return next(err);
+        if (err) return res.badRequest(err);
 
-        res.status(200).json(service);
+        res.ok({service: service});
       });
     } else {
       var where = req.param('where');
@@ -70,9 +70,9 @@ module.exports = {
       Service.find(options, function(err, service) {
         if(service === undefined) return res.notFound();
 
-        if (err) return next(err);
+        if (err) return res.badRequest(err);
 
-        res.json(service);
+        res.ok({services: service});
       });
 
       function isShortcut(id) {
@@ -85,7 +85,7 @@ module.exports = {
   },   
 
   // an UPDATE action . Return object in array
-  update: function (req, res, next) {
+  update: function (req, res) {
     var criteria = {};
 
     criteria = _.merge({}, req.params.all(), req.body);
@@ -99,32 +99,26 @@ module.exports = {
     Service.update(id, criteria, function (err, service) {
       if(service.length === 0) return res.notFound();
 
-      if (err) return next(err);
+      if (err) return res.badRequest(err);
 
-      res.status(200).json(service);
+      res.ok({service: service});
 
     });
   },
 
   // a DESTROY action. Return 204 status
-  destroy: function (req, res, next) {
+  destroy: function (req, res) {
     var id = req.param('id');
 
     if (!id) {
       return res.badRequest('No id provided.');
     };
 
-    Service.findOne(id).exec(function(err, result) {
-      if (err) return res.serverError(err);
+    Service.destroy(id, function (err, service) {
+      if (err) return res.forbidden(err);
 
-      if (!result) return res.notFound();
-
-      Service.destroy(id, function (err) {
-        if (err) return next (err);
-
-        return res.status(204);
-      });
-
+      return res.status(204).json(service);
     });
+
   },
 };
