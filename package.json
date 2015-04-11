@@ -30,7 +30,7 @@
     "express-jwt": "2.1.0"
   },
   "scripts": {
-    "start": "sails lift --production",
+    "start": "npm start",
     "debug": "node debug app.js"
   },
   "main": "app.js",
