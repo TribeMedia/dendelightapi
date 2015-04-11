@@ -74,10 +74,10 @@ module.exports.connections = {
       socketTimeoutMS: 30000
     },
   },
-  var mongodb_url = "mongodb://heroku_app35771948:97p3q0a9ijseabvgjlr4e4c2mg@ds061621.mongolab.com:61621/heroku_app35771948?replicaSet=rs-ds061621"
+
   oseam: {
     adapter: 'sails-mongo',
-    url: process.production.mongodb_url
+    url: "mongodb://heroku_app35771948:97p3q0a9ijseabvgjlr4e4c2mg@ds061621.mongolab.com:61621/heroku_app35771948?replicaSet=rs-ds061621"
 
         // Server Options
     ssl: false,
@@ -85,8 +85,8 @@ module.exports.connections = {
     socketOptions: {
       noDelay: true,
       keepAlive: 1,
-      connectTimeoutMS: 30000,
-      socketTimeoutMS: 30000
+      connectTimeoutMS: 60000,
+      socketTimeoutMS: 60000
     },
   },
   /***************************************************************************
