@@ -6,7 +6,7 @@ module.exports.models = {
   * connections (see `config/connections.js`)                                *
   *                                                                          *
   ***************************************************************************/
-  connection: 'oseamDb',
+  // connection: 'oseamDb',
 
   /***************************************************************************
   *                                                                          *
