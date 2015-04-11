@@ -19,7 +19,7 @@ module.exports = {
 
   models: {
     connection: 'oseam',
-     migrate: 'alter'
+     migrate: 'safe'
   },
 
   /***************************************************************************
