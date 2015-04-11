@@ -77,7 +77,7 @@ module.exports.connections = {
 
   oseam: {
     adapter: 'sails-mongo',
-    url: 'mongodb://heroku_app35771948:97p3q0a9ijseabvgjlr4e4c2mg@ds061621.mongolab.com:61621/heroku_app35771948'
+    url: process.env.MONGOLAB_URI
   },
   /***************************************************************************
   *                                                                          *
