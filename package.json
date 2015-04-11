@@ -38,6 +38,9 @@
     "type": "git",
     "url": "git://github.com/tuiqwe/hackathon.git"
   },
+  "engines": {
+     "node": "0.12.x"
+   },
   "author": "tuiqwe",
   "license": ""
 }
