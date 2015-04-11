@@ -77,17 +77,7 @@ module.exports.connections = {
 
   oseam: {
     adapter: 'sails-mongo',
-    url: "mongodb://heroku_app35771948:97p3q0a9ijseabvgjlr4e4c2mg@ds061621.mongolab.com:61621/heroku_app35771948?replicaSet=rs-ds061621"
-
-        // Server Options
-    ssl: false,
-    poolSize: 10,
-    socketOptions: {
-      noDelay: true,
-      keepAlive: 1,
-      connectTimeoutMS: 60000,
-      socketTimeoutMS: 60000
-    },
+    url: 'mongodb://heroku_app35771948:97p3q0a9ijseabvgjlr4e4c2mg@ds061621.mongolab.com:61621/heroku_app35771948?replicaSet=rs-ds061621'
   },
   /***************************************************************************
   *                                                                          *
