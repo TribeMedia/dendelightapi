@@ -100,23 +100,20 @@ passport.use(new FacebookStrategy({
     profileFields: ['emails', 'id', 'displayName', 'photos']
   },
   function(accessToken, refreshToken, profile, done) {
-    User.findOne({email: profile.emails[0]}, function(err, user) {
-      if (err) return done(err, null);
-      if (!user) {
-        User.create({
-          apiProvider: 'Facebook',
-          email: profile.emails[0],
-          password: profile.id,
-        }, function (err, user) {
-          if (user) {
-            return done(null, user);
-          } else {
-            return done(err, null);
-          }
-        });
-      };
+    User.findOne({email: profile.emails[0].value}, function(err, user) {
+      if (err) throw(err);
 
-      return done(null, user);
+      if (!err && user != null)      return done(null, user);
+
+      User.create({
+        apiProvider: 'Facebook',
+        email: profile.emails[0].value,
+        password: profile.id,
+      }, function (err, user) {
+        if (err) return done(err, null);
+        
+        return done(null, user);
+      });
     });
   }
 ));
