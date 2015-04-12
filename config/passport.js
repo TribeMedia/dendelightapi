@@ -97,10 +97,10 @@ passport.use(new FacebookStrategy({
     clientID: '1727951520764760',
     clientSecret: 'b6033191cfad82890dbc2162e9976839',
     callbackURL: "http://oseam.herokuapp.com/api/v1/auth/facebook/callback",
-    profileFields: ['email', 'id', 'displayName', 'photos']
+    profileFields: ['emails', 'id', 'displayName', 'photos']
   },
   function(accessToken, refreshToken, profile, done) {
-    User.findOne({email: profile.email}, function(err, user) {
+    User.findOne({email: profile.email[0]}, function(err, user) {
       if (err) return done(err, null);
       if (!user) {
         User.create({
