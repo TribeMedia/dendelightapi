@@ -108,17 +108,13 @@ passport.use(new FacebookStrategy({
           password: profile.id,
         }, function (err, user) {
           if (user) {
-            return done(null, user, {
-              message: 'Logged In Successfully'
-            });
+            return done(null, user);
           } else {
-            return done(err, null, {
-              message: 'There was an error logging you in with Facebook'
-            });
+            return done(err, null);
           }
         });
       };
-      
+
       if (user) {
         return done(null, user);
       }

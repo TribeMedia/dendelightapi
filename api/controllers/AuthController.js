@@ -117,10 +117,11 @@ module.exports = {
 
   // Callback from fb authentication and issue access_token. User Only
   facebook_callback: function(req, res) {
-    passport.authenticate('facebook', { failureRedirect: '/api/v1/user_login' }, function (err, user, info) {
-      var token = jwt.sign(user, secret, { expiresInMinutes: 60*24 });
+    passport.authenticate('facebook', { failureRedirect: '/api/v1/user_login' }, function (err, user) {
       console.log(user);
       if (err) return res.badRequest(err);
+
+      var token = jwt.sign(user, secret, { expiresInMinutes: 60*24 });
 
       res.ok({
           success: true,
