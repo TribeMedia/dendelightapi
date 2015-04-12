@@ -75,7 +75,7 @@ module.exports.connections = {
   //   },
   // },
 
-  'production': {
+  productionDiskDb: {
     adapter: 'sails-mongo',
     url: process.env.MONGOLAB_URI
   },
