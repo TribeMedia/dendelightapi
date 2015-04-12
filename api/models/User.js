@@ -34,6 +34,9 @@ module.exports = {
     verified: {
       type: 'boolean',
       defaultsTo: false
+    },
+    apiProvider: {
+      type: 'string',
     }
   },
 
