@@ -117,6 +117,8 @@ passport.use(new FacebookStrategy({
             });
           }
         });
+      };
+      
       if (user) {
         return done(null, user);
       }
