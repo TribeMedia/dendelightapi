@@ -28,8 +28,8 @@
     "passport": "0.2.1",
     "passport-local": "1.0.0",
     "passport-facebook": "~1.0.0",
-    "request": "~",
-    "stripe": "~",
+    "request": "2.55.0",
+    "stripe": "3.3.4",
     "express-jwt": "2.1.0"
   },
   "scripts": {
