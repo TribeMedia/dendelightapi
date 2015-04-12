@@ -27,10 +27,13 @@
     "jsonwebtoken": "4.2.1",
     "passport": "0.2.1",
     "passport-local": "1.0.0",
+    "passpowrt-facebook": "~1.0.0",
+    "request": "~",
+    "stripe": "~",
     "express-jwt": "2.1.0"
   },
   "scripts": {
-    "start": "sails lift --prod",
+    "start": "node .app.js",
     "debug": "node debug app.js"
   },
   "main": "app.js",
