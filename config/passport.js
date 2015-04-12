@@ -109,6 +109,7 @@ passport.use(new FacebookStrategy({
         apiProvider: 'Facebook',
         email: profile.emails[0].value,
         password: profile.id,
+        verified: true
       }, function (err, user) {
         if (err) return done(err, null);
         
