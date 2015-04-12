@@ -1,1 +1,1 @@
-web: npm stgart
+web: npm start
