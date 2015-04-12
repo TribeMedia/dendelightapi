@@ -103,7 +103,7 @@ passport.use(new FacebookStrategy({
       if (err) { return done(err, null); }
       if (!user) {
         User.create({
-          apiProvider: Facebook,
+          apiProvider: 'Facebook',
           email: profile.email,
           password: profile.id,
         }).done(function (err, user) {
