@@ -100,7 +100,7 @@ passport.use(new FacebookStrategy({
     profileFields: ['emails', 'id', 'displayName', 'photos']
   },
   function(accessToken, refreshToken, profile, done) {
-    User.findOne({email: profile.email[0]}, function(err, user) {
+    User.findOne({email: profile.emails[0].value}, function(err, user) {
       if (err) return done(err, null);
       if (!user) {
         User.create({
