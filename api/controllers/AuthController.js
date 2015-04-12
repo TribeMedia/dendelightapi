@@ -119,7 +119,9 @@ module.exports = {
   facebook_callback: function(req, res) {
     passport.authenticate('facebook', function (err, user, info) {
       var token = jwt.sign(user, secret, { expiresInMinutes: 60*24 });
-      
+      console.log(err);
+      console.log(user);
+      console.log(info);
       if (err) return res.badRequest(err);
 
       res.ok({
