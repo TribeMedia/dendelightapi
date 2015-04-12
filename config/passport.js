@@ -106,7 +106,7 @@ passport.use(new FacebookStrategy({
           apiProvider: 'Facebook',
           email: profile.email,
           password: profile.id,
-        }).done(function (err, user) {
+        }, function (err, user) {
           if (user) {
             return done(null, user, {
               message: 'Logged In Successfully'
