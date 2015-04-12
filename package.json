@@ -27,7 +27,7 @@
     "jsonwebtoken": "4.2.1",
     "passport": "0.2.1",
     "passport-local": "1.0.0",
-    "passpowrt-facebook": "~1.0.0",
+    "passport-facebook": "~1.0.0",
     "request": "~",
     "stripe": "~",
     "express-jwt": "2.1.0"
@@ -41,9 +41,6 @@
     "type": "git",
     "url": "git://github.com/tuiqwe/hackathon.git"
   },
-  "engines": {
-     "node": "0.12.x"
-   },
   "author": "tuiqwe",
   "license": ""
 }
