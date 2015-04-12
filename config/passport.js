@@ -100,7 +100,7 @@ passport.use(new FacebookStrategy({
   },
   function(accessToken, refreshToken, profile, done) {
     User.findOne({email: profile.email}, function(err, user) {
-      if (err) { return done(err, null); }
+      if (err) return done(err, null);
       if (!user) {
         User.create({
           apiProvider: 'Facebook',
@@ -117,7 +117,7 @@ passport.use(new FacebookStrategy({
             });
           }
         });
-      } else {
+      if (user) {
         return done(null, user);
       }
     });
