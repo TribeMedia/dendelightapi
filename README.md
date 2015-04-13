@@ -10,46 +10,54 @@ Installing dependencies is simply running ```npm install``` in Terminal/Powershe
 sails lift
 ```
 ```
-To access authorize location, set Authorization header with 'Bearer' + token.
+To access authorize location, set Authorization header with *'Bearer' + token* .
 ```
-### User Register
-POST http://localhost:1337/api/v1/user
+# User CRUD
 
-*Required parameters: email, password*
+1. Register
+	* POST: /api/v1/user
+	* Parameters: email, password
 
-### User Login
-POST http://localhost:1337/api/v1/user_login
+2. FindOne (authorized user only)
+	* GET: /api/v1/user/:id
 
-*Required parameters: email, password*
+3. FindAll (authorized user only)
+	* GET: /api/v1/user
 
-### User info (authorized user only)
-GET http://localhost:1337/api/v1/user/:id
+4. Update (authorized user only)
+	* PUT: /api/v1/user
+	* Parameters: email, firstName, lastName, address
 
-### All users (authorized user only)
-GET http://locahost:1337/api/v1/user
+# Provider CRUD
 
-### Update user (authorized user only)
-PUT http://localhost:1337/api/v1/user
+1. Register
+	* POST: /api/v1/provider
+	* Parameters: email, password, firstName, lastName
 
-*Parameters: email, firstName, lastName, address*
+2. FindOne (authorized provider only)
+	* GET: /api/v1/provider/:id
 
-### Provider Register
-POST http://localhost:1337/api/v1/provider
+3. FindAll (authorized provider only)
+	* GET: /api/v1/provider
 
-*Required parameters: email, password, firstName, lastName*
+4. Update (authorized provider only)
+	* PUT: /api/v1/provider
+	* Parameters: email, firstName, lastName, address, service
 
-### Provider Login
-POST http://localhost:1337/api/v1/provider_login
+# Authentication
 
-*Required parameters: email, password*
+1. User Login
+	* POST: /api/v1/user_login
+	* Parameters: email, password
+	* Json response: { user: {xxx}, token: xxx }
 
-### Provider info (authorized provider only)
-GET http://localhost:1337/api/v1/provider/:id
+2. Provider Login
+	* POST: /api/v1/provider_login
+	* Parameters: email, password
+	* Json response: { provider: {xxx}, token: xxx }
 
-### All providers (authorized provider only)
-GET http://locahost:1337/api/v1/provider
+3. Facebook oauth
+	* GET: /api/v1/auth/facebook
+	* Automatic callback at: /api/v1/auth/facebook/callback
+	* Json response: { user: {xxx}, token: xxx}
 
-### Update provider (authorized provider only)
-PUT http://localhost:1337/api/v1/provider
-
-*Parameters: email, firstName, lastName, address, service*
