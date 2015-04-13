@@ -28,6 +28,9 @@ To access authorize location, set Authorization header with *'Bearer' + token* .
 	* PUT: /api/v1/user
 	* Parameters: email, firstName, lastName, address
 
+5. Destroy (authorized user only)
+	* DELETE: /api/v1/user/:id
+
 # Provider CRUD
 
 1. Register
@@ -43,6 +46,9 @@ To access authorize location, set Authorization header with *'Bearer' + token* .
 4. Update (authorized provider only)
 	* PUT: /api/v1/provider
 	* Parameters: email, firstName, lastName, address, service
+
+5. Destroy (authorized provider only)
+	* DELETE: /api/v1/provider/:id
 
 # Authentication
 
@@ -61,3 +67,6 @@ To access authorize location, set Authorization header with *'Bearer' + token* .
 	* Automatic callback at: /api/v1/auth/facebook/callback
 	* Json response: { user: {xxx}, token: xxx}
 
+4. Logout
+	* GET: /api/v1/logout
+	* OR: simply clear token in session or local-service
