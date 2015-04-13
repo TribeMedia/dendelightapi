@@ -12,7 +12,10 @@ sails lift
 ```
 To access authorize location, set Authorization header with *'Bearer' + token* .
 ```
-# User CRUD
+# Online API test
+http://oseam.herokuapp.com
+
+## User CRUD
 
 1. Register
 	* POST: /api/v1/user
@@ -31,7 +34,7 @@ To access authorize location, set Authorization header with *'Bearer' + token* .
 5. Destroy (authorized user only)
 	* DELETE: /api/v1/user/:id
 
-# Provider CRUD
+## Provider CRUD
 
 1. Register
 	* POST: /api/v1/provider
@@ -50,7 +53,7 @@ To access authorize location, set Authorization header with *'Bearer' + token* .
 5. Destroy (authorized provider only)
 	* DELETE: /api/v1/provider/:id
 
-# Authentication
+## Authentication
 
 1. User Login
 	* POST: /api/v1/user_login
