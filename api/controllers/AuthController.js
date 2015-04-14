@@ -112,7 +112,7 @@ module.exports = {
 
   // Redirect to fb for authentication. User only
   facebook: function(req, res) {
-    passport.authenticate('facebook', { scope: [ 'email', 'user_id' ] })(req, res);
+    passport.authenticate('facebook', { scope: [ 'email' ] })(req, res);
   },
 
   // Callback from fb authentication and issue access_token. User Only
