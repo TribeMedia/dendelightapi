@@ -25,7 +25,7 @@ module.exports = {
     fullName: function() {
       return this.firstName + ' ' + this.lastName
     },
-    businessname: {
+    businessName: {
       type: 'string',
       maxLength: 20
     },

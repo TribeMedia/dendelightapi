@@ -72,6 +72,25 @@ module.exports.routes = {
   'get /api/v1/auth/stripe': 'AuthController.stripe',
   'get /api/v1/auth/stripe/callback': 'AuthController.stripe_callback',
 
+  // Create booking
+  'post /api/v1/booking': 'BookingController.create',
+  // Find booking
+  'get /api/v1/booking/:id?': 'BookingController.find',
+  // Update booking
+  'put /api/v1/booking/:id?': 'BookingController.update',
+  // Delete booking
+  'delete /api/v1/booking/:id?': 'BookingController.destroy',
+
+  // Create quote
+  'post /api/v1/quote': 'QuoteController.create',
+  // Find quote
+  'get /api/v1/quote/:id?': 'QuoteController.find',
+  // Update quote
+  'put /api/v1/quote/:id?': 'QuoteController.update',
+  // Delete quote
+  'delete /api/v1/quote/:id?': 'QuoteController.destroy',
+
+
   // Create service
   'post /api/v1/service': 'ServiceController.create',
   // Find service

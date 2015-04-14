@@ -1,6 +1,5 @@
 # oseam Application
-This is where everything regarding the application will be placed <br />
-(When working on specifics like backend, frontend use branches like frontend or backend)
+API
 
 # How to install dependencies
 Installing dependencies is simply running ```npm install``` in Terminal/Powershell
@@ -15,7 +14,7 @@ To access authorize location, set Authorization header with *'Bearer' + token* .
 # Online API test
 http://oseam.herokuapp.com
 
-## User CRUD
+## User CRUD (params: email, password, firstName, lastName, address, verified, apiProvider)
 
 1. Register
 	* POST: /api/v1/user
@@ -29,12 +28,11 @@ http://oseam.herokuapp.com
 
 4. Update (authorized user only)
 	* PUT: /api/v1/user
-	* Parameters: email, firstName, lastName, address
 
 5. Destroy (authorized user only)
 	* DELETE: /api/v1/user/:id
 
-## Provider CRUD
+## Provider CRUD (params: email, password, firstName, lastName, businessName, address, service, verified, stripe_account)
 
 1. Register
 	* POST: /api/v1/provider
@@ -48,10 +46,45 @@ http://oseam.herokuapp.com
 
 4. Update (authorized provider only)
 	* PUT: /api/v1/provider
-	* Parameters: email, firstName, lastName, address, service
 
 5. Destroy (authorized provider only)
 	* DELETE: /api/v1/provider/:id
+
+## Booking CRUD (params: userId, providerId, quoteId, service, postcode, bookTime, repeat, duration, completed)
+
+1. Create (authorized user only)
+	* POST: /api/v1/booking
+	* Parameters: userId, service
+
+2. FindOne (admin only)
+	* GET: /api/v1/booking/:id
+
+3. FindAll (admin only)
+	* GET: /api/v1/booking
+
+4. Update (authorized user only)
+	* PUT: /api/v1/booking
+
+5. Destroy (authorized user only)
+	* DELETE: /api/v1/booking/:id
+
+## Quote CRUD (params: service, price, bookingId, providerId, serviceTime, serviceDuration, accepted)
+
+1. Create (authorized provider only)
+	* POST: /api/v1/quote
+	* Parameters: userId, service
+
+2. FindOne (admin only)
+	* GET: /api/v1/quote/:id
+
+3. FindAll (admin only)
+	* GET: /api/v1/quote
+
+4. Update (authorized provider only)
+	* PUT: /api/v1/quote
+
+5. Destroy (authorized provider only)
+	* DELETE: /api/v1/quote/:id
 
 ## Authentication
 

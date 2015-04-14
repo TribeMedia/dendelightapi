@@ -39,6 +39,18 @@ module.exports.policies = {
     update: 'isProvider',
     destroy: 'isProvider'
   },
+  BookingController: {
+    create: 'isUser',
+    find: 'isAdmin',
+    update: 'isUser',
+    destroy: 'isUser'
+  },
+  QuoteController: {
+    create: 'isProvider',
+    find: 'isAdmin',
+    update: 'isProvider',
+    destroy: 'isProvider'
+  },
   AuthController: {
     '*': true,
   }, 
