@@ -12,7 +12,7 @@ describe('BookingController', function() {
 	before(function(done) {
 		User.create({email: "user_test_booking@gmail.com", password: "14491992"}, function(err, user) {
 			userId = user.id;
-			userToken = jwt.sign(user, secret, { expiresInMinutes: 60*24 });
+			userToken = jwt.sign({user: user}, secret, { expiresInMinutes: 60*24 });
 
 			Booking.create({userId: userId, service: "Lawning"}, function(err, booking) {
 				bookingId = booking.id;
@@ -23,7 +23,7 @@ describe('BookingController', function() {
 			providerId = provider.id;
 		});
 		Admin.create({email: "admin_test_booking@gmail.com", password: "14491992"}, function(err, admin) {
-			adminToken = jwt.sign(admin, secret, { expiresInMinutes: 60*24 });
+			adminToken = jwt.sign({admin: admin}, secret, { expiresInMinutes: 60*24 });
 			done();			
 		})
 	});

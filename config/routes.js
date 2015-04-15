@@ -90,6 +90,16 @@ module.exports.routes = {
   // Delete quote
   'delete /api/v1/quote/:id?': 'QuoteController.destroy',
 
+  // View booking info for user
+  'get /api/v1/user_booking_info': 'TransactionController.user_booking_info',
+  // View quote info for user
+  'get /api/v1/user_quote_info': 'TransactionController.user_quote_info',
+  // Accept quote 
+  'post /api/v1/user_quote_accept/:id?': 'TransactionController.user_quote_accept',
+  // View task for provider
+  'get /api/v1/provider_task': 'TransactionController.provider_task',
+  // View quote in queue for provider
+  'get /api/v1/provider_quote_active': 'TransactionController.provider_quote_active',
 
   // Create service
   'post /api/v1/service': 'ServiceController.create',

@@ -8,6 +8,8 @@ module.exports = {
   // Quote.create()
   create: function (req, res) {
     var params = req.params.all();
+    var providerId = req.provider.id;
+    params['providerId'] = providerId;
     
     Quote.create(params).exec(function(err, quote) {
       if ((err) || (!quote)) {

@@ -56,7 +56,7 @@ module.exports = {
       if (user === false) {
         res.badRequest(info);
       } else {                  
-        var token = jwt.sign(user, secret, { expiresInMinutes: 60*24 });
+        var token = jwt.sign({user: user}, secret, { expiresInMinutes: 60*24 });
         
         return res.ok({
           user: user,
@@ -78,7 +78,7 @@ module.exports = {
       if (provider === false) {
         res.notFound;
       } else {                  
-        var token = jwt.sign(provider, secret, { expiresInMinutes: 60*24 });
+        var token = jwt.sign({provider: provider}, secret, { expiresInMinutes: 60*24 });
         
         return res.ok({
           provider: provider,
@@ -100,7 +100,7 @@ module.exports = {
       if (admin === false) {
         res.notFound;
       } else {                  
-        var token = jwt.sign(admin, secret, { expiresInMinutes: 60*24 });
+        var token = jwt.sign({admin: admin}, secret, { expiresInMinutes: 60*24 });
         
         return res.ok({
           admin: admin,

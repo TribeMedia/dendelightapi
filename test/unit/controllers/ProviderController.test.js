@@ -12,7 +12,7 @@ describe('ProviderController', function() {
 			providerId = provider.id;
 			var jwt = require('jsonwebtoken');
 			var secret = '6ab198087a16e6d49b438a7aa514731f';
-			token = jwt.sign(provider, secret, { expiresInMinutes: 60*24 });
+			token = jwt.sign({provider: provider}, secret, { expiresInMinutes: 60*24 });
 			done();
 		});
 	});

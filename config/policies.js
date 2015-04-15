@@ -51,6 +51,13 @@ module.exports.policies = {
     update: 'isProvider',
     destroy: 'isProvider'
   },
+  TransactionController: {
+    user_booking_info: 'isUser',
+    user_quote_info: 'isUser',
+    user_quote_accept: 'isUser',
+    provider_task: 'isProvider',
+    provider_quote_active: 'isProvider'
+  },
   AuthController: {
     '*': true,
   }, 

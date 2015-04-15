@@ -8,6 +8,8 @@ module.exports = {
   // Booking.create()
   create: function (req, res) {
     var params = req.params.all();
+    var userId = req.user.id;
+    params['userId'] = userId;
     
     Booking.create(params).exec(function(err, booking) {
       if ((err) || (!booking)) {
@@ -96,7 +98,7 @@ module.exports = {
       return res.badRequest('No id provided.');
       };
 
-    Booking.update(id, criteria, function (err, booking) {
+    Booking.update({id: id, userId: req.user.id}, criteria, function (err, booking) {
       if(booking.length === 0) return res.notFound();
 
       if (err) return res.badRequest(err);
@@ -114,7 +116,7 @@ module.exports = {
       return res.badRequest('No id provided.');
     };
 
-    Booking.destroy(id, function (err, booking) {
+    Booking.destroy({id: id, userId: req.user.id}, function (err, booking) {
       if (err) return res.forbidden(err);
 
       return res.status(204).json(booking);

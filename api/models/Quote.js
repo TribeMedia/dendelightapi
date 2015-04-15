@@ -33,6 +33,10 @@ module.exports = {
     accepted: {
       type: 'boolean',
       defaultsTo: false,
+    },
+    active: {
+      type: 'boolean',
+      defaultsTo: true,
     }
   },
 };

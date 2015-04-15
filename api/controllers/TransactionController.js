@@ -7,7 +7,7 @@ module.exports = {
   user_booking_info: function (req, res) {
     var userId = req.user.id;
 
-    Booking.find({where: {userId: userId, completed: false, quoteId: null}, sort: 'Created_at DESC'}, function (err, bookings) {
+    Booking.find({where: {userId: userId, completed: false, quoteId: null}, sort: 'createAt DESC'}, function (err, bookings) {
       if(bookings.length === 0) return res.notFound();
 
       if (err) return res.badRequest(err);
@@ -20,7 +20,7 @@ module.exports = {
   user_quote_info: function (req, res) {
     var userId = req.user.id;
 
-    Quote.find({where: {userId: userId, active: true}, sort: 'Created_at DESC'}, function(err, quotes) {
+    Quote.find({where: {userId: userId, active: true}, sort: 'createAt DESC'}, function(err, quotes) {
       if(quotes.length === 0) return res.notFound();
 
       if (err) return res.badRequest(err);
@@ -64,7 +64,7 @@ module.exports = {
   provider_task: function (req, res) {
     var providerId = req.provider.id;
 
-    Booking.find({where: {providerId: providerId, completed: false}, sort: 'bookTime DESC'}, function (err, bookings) {
+    Booking.find({where: {providerId: providerId, completed: false}, sort: 'bookTime ASC'}, function (err, bookings) {
       if(bookings.length === 0) return res.notFound();
 
       if (err) return res.badRequest(err);
@@ -77,7 +77,7 @@ module.exports = {
   provider_quote_active: function (req, res) {
     var providerId = req.provider.id;
 
-    Quote.find({where: {providerId: providerId, active: true}, sort: 'serviceTime DESC'}, function (err, quotes) {
+    Quote.find({where: {providerId: providerId, active: true}, sort: 'serviceTime ASC'}, function (err, quotes) {
       if (quotes.length === 0) return res.notFound;
 
       if (err) return res.badRequest(err);

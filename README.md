@@ -106,3 +106,21 @@ http://oseam.herokuapp.com
 4. Logout
 	* GET: /api/v1/logout
 	* OR: simply clear token in session or local-service
+
+## Transaction
+
+1. View list of previous booking by user (authorized user only)
+	* GET: /api/v1/user_booking_info
+
+2. View list of quotes for service by user (authorized user only)
+	* GET: /api/v1/user_quote_info
+
+3. Accept particular quote by user (authorized user only)
+	* POST: /api/v1/user_quote_accept/:id? (:id => quoteId)
+	* Parameters: booking_id, provider_id
+
+4. View queued tasks by provider (authorized provider only)
+	* GET: /api/v1/provider_task
+
+5. View queued quotes by provider (authorized provider only)
+	* GET: /api/v1/provider_quote_active

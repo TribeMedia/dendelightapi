@@ -11,7 +11,7 @@ describe('UserController', function() {
 			userId = user.id;
 			var jwt = require('jsonwebtoken');
 			var secret = '6ab198087a16e6d49b438a7aa514731f';
-			token = jwt.sign(user, secret, { expiresInMinutes: 60*24 });
+			token = jwt.sign({user: user}, secret, { expiresInMinutes: 60*24 });
 			done();
 		});
 	});

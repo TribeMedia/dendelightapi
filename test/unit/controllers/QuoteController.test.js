@@ -1,7 +1,7 @@
 require("sails-test-helper");
 var request = require('supertest');
 
-describe('QuotingController', function() {
+describe('QuoteController', function() {
 	var adminToken;
 	var providerToken;
 	var userId;
@@ -21,7 +21,7 @@ describe('QuotingController', function() {
 		});
 		Provider.create({email: "provider_test_quote@gmail.com", password: "14491992", firstName: "Tombook", lastName: "Joebook"}, function(err, provider) {
 			providerId = provider.id;
-			providerToken = jwt.sign(provider, secret, { expiresInMinutes: 60*24 });
+			providerToken = jwt.sign({provider: provider}, secret, { expiresInMinutes: 60*24 });
 
 			Quote.create({service: 'Lawning', price: '20', bookingId: 'bookingId', providerId: 'providerId'}, function(err, quote) {
 				quoteId = quote.id;
@@ -29,7 +29,7 @@ describe('QuotingController', function() {
 
 		});
 		Admin.create({email: "admin_test_quote@gmail.com", password: "14491992"}, function(err, admin) {
-			adminToken = jwt.sign(admin, secret, { expiresInMinutes: 60*24 });
+			adminToken = jwt.sign({admin: admin}, secret, { expiresInMinutes: 60*24 });
 			done();			
 		})
 	});
@@ -75,7 +75,7 @@ describe('QuotingController', function() {
 				.post('/api/v1/quote')
 				.set('Content-Type',  'application/json')
 				.set('Authorization', 'Bearer ' + providerToken)
-				.send({bookingId: bookingId, service: 'Lawning', price: '40', providerId: providerId})
+				.send({bookingId: bookingId, service: 'Lawning', price: '40'})
 				.expect(201)
 				.expect(hasQuoteKey)
 				.end(done);
