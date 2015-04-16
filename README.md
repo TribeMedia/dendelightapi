@@ -21,7 +21,6 @@ http://oseam.herokuapp.com
   * POST: /api/v1/user
   * Required params: email, password
   * Json response example
-
 ```json
 {
   "user": {
@@ -37,9 +36,8 @@ http://oseam.herokuapp.com
 
 ##### User Login
 	* POST: /api/v1/user_login
-	* Parameters: email, password
+	* Params: email, password
   * Json response example
-
 ```json
 {
   "user": {
@@ -83,8 +81,7 @@ http://oseam.herokuapp.com
 	* POST: /api/v1/booking
 	* Params: service
   * Json response example
-
-```Json
+```json
 {
     "booking": {
         "service": "cleaning",
@@ -109,8 +106,8 @@ http://oseam.herokuapp.com
 ##### View list of quotes for booking
 	* GET: /api/v1/user_quote_info
 
-##### Accept particular quote
-	* POST: /api/v1/user_quote_accept/:id? (:id => quoteId)
+##### Accept particular quote with quoteId
+	* POST: /api/v1/user_quote_accept/:id?
 	* Params: bookingId, providerId
 
 ##### Logout
@@ -123,8 +120,7 @@ http://oseam.herokuapp.com
   * POST: /api/v1/provider
   * Required params: email, password, firstName, lastName, abn
   * Json response example
-
-```Json
+```json
 {
   "provider": {
     "email": "hello@gmail.com",
@@ -142,7 +138,7 @@ http://oseam.herokuapp.com
   * POST: /api/v1/provider_login
   * Parameters: email, password
   * Json response example
-```Json
+```json
 {
   "provider": {
       "email": "hello@gmail.com",
@@ -157,7 +153,8 @@ http://oseam.herokuapp.com
       "id": "552f849a3917d69f0d9800cc"
   },
   "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm92aWRlciI6eyJlbWFpbCI6InZ1b25nbmdvLnBkQGdtYWlsLmNvbSIsInBhc3N3b3JkIjoiJDJhJDEwJHpWSU5sdm16WWNrYWxCZy56QVNrY2UuT0pDbGlNVy5oSEFHU0FRS2ZsaVNGR2szY2h2QVlTIiwiZmlyc3ROYW1lIjoidnVvbmciLCJsYXN0TmFtZSI6Im5nbyIsImFibiI6IjMxMjEzMiIsInZlcmlmaWVkIjpmYWxzZSwic3RyaXBlX2FjY291bnQiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDE1LTA0LTE2VDEwOjQ1OjEyLjA1MloiLCJ1cGRhdGVkQXQiOiIyMDE1LTA0LTE2VDEwOjQ1OjEyLjA1MloiLCJpZCI6IjU1MmY5MmI4MGM4NTRiODIxNDkxZTJiZCJ9LCJpYXQiOjE0MjkxODExMTYsImV4cCI6MTQyOTI2NzUxNn0.k_ALD-Y8tpeuuM7Wb4FQIHeoZdYawC6tyic6YP1UmWw"
-}```
+}
+```
 
 ##### Update account
   * PUT: /api/v1/provider
