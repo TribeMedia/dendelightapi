@@ -23,17 +23,29 @@ module.exports = {
   		required: true
   	},
   	postcode: {
-  		type: 'number'
+  		type: 'integer'
   	},
+    latitude: {
+      type: 'float'
+    },
+    longitude: {
+      type: 'float'
+    },
+    adress: {
+      type: 'string'
+    },
+    size: {
+      type: 'string'
+    },
+    duration: {
+      type: 'string'
+    },
   	bookTime: {
   		type: 'dateTime'
   	},
   	repeat: {
   		type: 'string',
   		defaultsTo: null
-  	},
-  	duration: {
-  		type: 'string'
   	},
     completed: {
       type: 'boolean',

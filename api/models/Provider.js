@@ -40,6 +40,10 @@ module.exports = {
       type: 'boolean',
       defaultsTo: false
     },
+    abn: {
+      type: 'string',
+      required: true
+    },
     stripe_account: {
       type: 'boolean',
       defaultsTo: false

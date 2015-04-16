@@ -32,8 +32,8 @@ module.exports = {
   // quote_accept /api/v1/quote_accept/:id?. TODO: use for accepting a quote
   user_quote_accept: function(req, res) {
     var quoteId = req.param('id');
-    var bookingId = req.param('booking_id');
-    var providerId = req.param('provider_id');
+    var bookingId = req.param('bookingId');
+    var providerId = req.param('providerId');
 
     Quote.update({bookingId: bookingId}, {active: false}, function(err, quotes) {
       if (err) return res.notFound();

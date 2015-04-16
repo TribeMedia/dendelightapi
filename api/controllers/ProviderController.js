@@ -9,7 +9,7 @@ module.exports = {
   create: function (req, res) {
     var params = req.params.all();
   
-    Provider.create(params).exec(function(err, provider) {
+    Provider.create({email: params.email, password: params.password, firstName: params.firstName, lastName: params.lastName, abn: params.abn}).exec(function(err, provider) {
       if ((err) || (!provider)) {
         return res.badRequest(err);
       } else {
