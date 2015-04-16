@@ -94,7 +94,7 @@ http://oseam.herokuapp.com
     }
 }
 ```
-##### Update (authorized user only)
+##### Update booking
 	* PUT: /api/v1/booking
 
 ##### Destroy booking
