@@ -20,6 +20,8 @@ http://oseam.herokuapp.com
 1. Register account
   * POST: /api/v1/user
   * Required params: email, password
+  * Json response example
+  
 ```json
 {
   "user": {
@@ -36,6 +38,8 @@ http://oseam.herokuapp.com
 2. User Login
 	* POST: /api/v1/user_login
 	* Parameters: email, password
+  * Json response example
+
 ```json
 {
   "user": {
@@ -52,6 +56,7 @@ http://oseam.herokuapp.com
 3. Facebook oauth
 	* GET: /api/v1/auth/facebook
 	* Automatic callback at: /api/v1/auth/facebook/callback
+  * Json response example
 ```json
 {	
   "success": true,
@@ -70,26 +75,16 @@ http://oseam.herokuapp.com
 
 4. Update account
 	* PUT: /api/v1/user/:id
-```json
-{
-  "user": {
-    "email": "goodbye@gmail.com",
-    "password": "$2a$10$oDTKkwnz7y6QuRt26u4hjb9XjSj8mm4nzRphGUiERc0fgArFG",
-    "verified": true,
-    "createdAt": "2015-04-16T08:37:49.375Z",
-    "updatedAt": "2015-04-16T08:37:49.375Z",
-    "id": "552f74dd3917d69f0d9800ca"
-  },
-  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7ImVtYWlsIjoidnVvbmduZ28ucGRAZ21haWwuY29tIiwicGFzc3dvcmQiOiIkMmEkMTAkb2dPZElEVEtrd256N3k2UXVSdDI2dTRoamI5WGpTajhtbTRuelJwaEdVaUVSYzBmZ0FyRkciLCJ2ZXJpZmllZCI6ZmFsc2UsImNyZWF0ZWRBdCI6IjIwMTUtMDQtMTZUMDg6Mzc6NDkuMzc1WiIsInVwZGF0ZWRBdCI6IjIwMTUtMDQtMTZUMDg6Mzc6NDkuMzc1WiIsImlkIjoiNTUyZjc0ZGQzOTE3ZDY5ZjBkOTgwMGNhIn0sImlhdCI6MTQyOTE3MzU2MCwiZXhwIjoxNDI5MjU5OTYwfQ.5Z_FLhf7Uvv1TO5_YOWRbRE88hF094StMpdcU3pahoE"
-}
-```
+
 5. Destroy account
 	* DELETE: /api/v1/user/:id
 
 6. Create booking
 	* POST: /api/v1/booking
 	* Params: service
-```
+  * Json response example
+
+```Json
 {
     "booking": {
         "service": "cleaning",
@@ -127,6 +122,7 @@ http://oseam.herokuapp.com
 1. Register account
   * POST: /api/v1/provider
   * Required params: email, password, firstName, lastName, abn
+  * Json response example
 
 ```Json
 {
@@ -145,23 +141,23 @@ http://oseam.herokuapp.com
 2. Provider Login
   * POST: /api/v1/provider_login
   * Parameters: email, password
-  * Json response: { provider: {xxx}, token: xxx }
-
+  * Json response example
 ```Json
 {
   "provider": {
-    "email": "hello@gmail.com",
-    "password": "$2a$10$VJFSBiYf5IRbZN/iml4Hbux8lJ6By1kHQ0xll9KLUK4lcVNEpCfVO",
-    "firstName": "Tom",
-    "lastName": "Ngo",
-    "verified": true,
-    "stripe_account": false,
-    "createdAt": "2015-04-16T09:44:58.650Z",
-    "updatedAt": "2015-04-16T09:44:58.650Z",
-    "id": "552f849a3917d69f0d9800cc"
-  }
-}
-```
+      "email": "hello@gmail.com",
+      "password": "$2a$10$zVINlvmzYckalBg.zASkce.OJCliMW.hHAGSAQKfliSFGk3chvAYS",
+      "firstName": "Tome",
+      "lastName": "Ngo",
+      "abn": "312132",
+      "verified": true,
+      "stripe_account": false,
+      "createdAt": "2015-04-16T10:45:12.052Z",
+      "updatedAt": "2015-04-16T10:45:12.052Z",
+      "id": "552f849a3917d69f0d9800cc"
+  },
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm92aWRlciI6eyJlbWFpbCI6InZ1b25nbmdvLnBkQGdtYWlsLmNvbSIsInBhc3N3b3JkIjoiJDJhJDEwJHpWSU5sdm16WWNrYWxCZy56QVNrY2UuT0pDbGlNVy5oSEFHU0FRS2ZsaVNGR2szY2h2QVlTIiwiZmlyc3ROYW1lIjoidnVvbmciLCJsYXN0TmFtZSI6Im5nbyIsImFibiI6IjMxMjEzMiIsInZlcmlmaWVkIjpmYWxzZSwic3RyaXBlX2FjY291bnQiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDE1LTA0LTE2VDEwOjQ1OjEyLjA1MloiLCJ1cGRhdGVkQXQiOiIyMDE1LTA0LTE2VDEwOjQ1OjEyLjA1MloiLCJpZCI6IjU1MmY5MmI4MGM4NTRiODIxNDkxZTJiZCJ9LCJpYXQiOjE0MjkxODExMTYsImV4cCI6MTQyOTI2NzUxNn0.k_ALD-Y8tpeuuM7Wb4FQIHeoZdYawC6tyic6YP1UmWw"
+}```
 
 3. Update account
   * PUT: /api/v1/provider
