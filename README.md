@@ -16,7 +16,6 @@ http://oseam.herokuapp.com
 
 # User flow 
 
-
 ##### Register account
   * POST: /api/v1/user
   * Required params: email, password
