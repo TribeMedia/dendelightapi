@@ -25,5 +25,14 @@ module.exports = {
       res.ok(body);
     })
   },
-    
+  address_lookup: function (req, res) {
+    var geocoder = require('geocoder');
+    var address = req.param('address');
+
+    // Geocoding
+    geocoder.geocode(address, function ( err, data ) {
+      if (err) return res.notFound();
+      res.ok(data);
+    });
+  }
 }

@@ -10,6 +10,12 @@ module.exports = {
     var params = req.params.all();
     var userId = req.user.id;
     params['userId'] = userId;
+    if (params.address) {
+      var geocoder = require('geocoder');
+      geocoder.geocode("Atlanta, GA", function ( err, data ) {
+        
+      });
+    }
     
     Booking.create(params).exec(function(err, booking) {
       if ((err) || (!booking)) {

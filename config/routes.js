@@ -35,6 +35,8 @@ module.exports.routes = {
   // Carefull with json response in Array or Object format
   // Get location by IP
   'get /api/v1/location': 'LocationController.ip_lookup',
+  // Get latlong by address
+  'post /api/v1/latlong': 'LocationController.address_lookup',
   // Create user
   'post /api/v1/user': 'UserController.create',
   // Find user
