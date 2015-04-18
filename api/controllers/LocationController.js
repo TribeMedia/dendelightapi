@@ -32,7 +32,7 @@ module.exports = {
     // Geocoding
     geocoder.geocode(address, function ( err, data ) {
       if (err) return res.notFound();
-      res.ok(data);
+      res.ok(data.results[0].geometry);
     });
   },
   latlng_lookup: function (req, res) {
