@@ -33,7 +33,8 @@ module.exports.routes = {
   ***************************************************************************/
   // Set Authorization: 'Bearer' + token to get access to routes (except signup, login)
   // Carefull with json response in Array or Object format
-
+  // Get location by IP
+  'get /api/v1/location': 'LocationController.ip_lookup',
   // Create user
   'post /api/v1/user': 'UserController.create',
   // Find user
