@@ -18,11 +18,12 @@ module.exports = {
     // if (!geo) return res.notFound();
 
     // res.ok(geo);
-      url = 'http://freegeoip.net/json/' + ip
-      request.get(url, function(error, response, body) {
-        if (error) return res.notFound();
-        res.ok(body);
-      }
+    url = 'http://freegeoip.net/json/' + ip
+
+    request.get(url, function(error, response, body) {
+      if (error) return res.notFound();
+      res.ok(body);
+    })
   },
     
 }
