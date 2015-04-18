@@ -32,6 +32,16 @@ module.exports = {
     // Geocoding
     geocoder.geocode(address, function ( err, data ) {
       if (err) return res.notFound();
+      res.ok(data.results.geometry.location);
+    });
+  },
+  latlng_lookup: function (req, res) {
+    var geocoder = require('geocoder');
+    var lat = req.param('lat');
+    var lng = req.param('lng');
+
+    geocoder.reverseGeocode(lat, lng, function ( err, data ) {
+      if (err) return res.notFound();
       res.ok(data);
     });
   }

@@ -13,7 +13,10 @@ module.exports = {
     if (params.address) {
       var geocoder = require('geocoder');
       geocoder.geocode("Atlanta, GA", function ( err, data ) {
-        
+        if (data) {
+          params['latitude'] = data.results.geometry.location.lat;
+          params['longitude'] = data.results.geometry.location.lng;
+        }
       });
     }
     
