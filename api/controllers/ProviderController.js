@@ -8,14 +8,24 @@ module.exports = {
   // Provider.create()
   create: function (req, res) {
     var params = req.params.all();
-  
-    Provider.create({email: params.email, password: params.password, firstName: params.firstName, lastName: params.lastName, abn: params.abn}).exec(function(err, provider) {
-      if ((err) || (!provider)) {
-        return res.badRequest(err);
-      } else {
-        return res.status(201).json({provider: provider})
-      }
-    });
+    if ((params.address) && (!params.lat)) {
+      var geocoder = require('geocoder');
+      geocoder.geocode(params.address, function ( err, data ) {
+        if (data) {
+          params['lat'] = data.results[0].geometry.location.lat;
+          params['lng'] = data.results[0].geometry.location.lng;
+          params['postcode'] = data.results[0].address_components[5].long_name;
+
+          Provider.create(params).exec(function(err, provider) {
+            if ((err) || (!provider)) {
+              return res.badRequest(err);
+            } else {
+              return res.status(201).json({provider: provider})
+            }
+          });
+        }
+      });
+    };  
   },
 
   // Provider.find(). Return 1 object from id

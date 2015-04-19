@@ -10,23 +10,33 @@ module.exports = {
     var params = req.params.all();
     var userId = req.user.id;
     params['userId'] = userId;
-    if (params.address) {
+    if ((params.address) && (!params.lat)) {
       var geocoder = require('geocoder');
-      geocoder.geocode("Atlanta, GA", function ( err, data ) {
+      geocoder.geocode(params.address, function ( err, data ) {
         if (data) {
-          params['latitude'] = data.results.geometry.location.lat;
-          params['longitude'] = data.results.geometry.location.lng;
+          params['lat'] = data.results[0].geometry.location.lat;
+          params['lng'] = data.results[0].geometry.location.lng;
+          params['postcode'] = data.results[0].address_components[5].long_name;
+
+          Booking.create(params).exec(function(err, booking) {
+            if ((err) || (!booking)) {
+              return res.badRequest(err);
+            } else {
+              Provider.find({postcode: booking.postcode}, function (err, providers) {
+                if (err) return res.notFound(err);
+                for (var i = 0; i < providers.length; i++) {
+                  ProviderNotification.create({providerId: providers[i].id, bookingId: booking.id, service: booking.service}, function (err, providernote) {
+                    if (err) return res.badRequest(err);
+                  })
+                }
+              });
+              return res.status(201).json({booking: booking})
+            }
+          });
         }
       });
-    }
+    };
     
-    Booking.create(params).exec(function(err, booking) {
-      if ((err) || (!booking)) {
-        return res.badRequest(err);
-      } else {
-        return res.status(201).json({booking: booking})
-      }
-    });
   },
 
   // Booking.find(). Return 1 object from id

@@ -31,7 +31,20 @@ module.exports = {
     },
     address: {
       type: 'string',
-      maxLength: 30
+      maxLength: 30,
+      required: true
+    },
+    postcode: {
+      type: 'string',
+      required: true
+    },
+    lat: {
+      type: 'float',
+      required: true
+    },
+    lng: {
+      type: 'float',
+      required: true
     },
     service: {
       type: 'string',

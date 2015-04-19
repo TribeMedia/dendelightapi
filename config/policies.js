@@ -51,6 +51,12 @@ module.exports.policies = {
     update: 'isProvider',
     destroy: 'isProvider'
   },
+  ServiceController: {
+    create: 'isAdmin',
+    find: 'isAdmin',
+    update: 'isAdmin',
+    destroy: 'isAdmin'
+  },
   TransactionController: {
     user_booking_info: 'isUser',
     user_quote_info: 'isUser',
@@ -63,6 +69,10 @@ module.exports.policies = {
   }, 
   PaymentController: {
     charge: 'isUser'
+  },
+  NotificationController: {
+    provider_notification: 'isProvider',
+    provider_read_notification: 'isProvider'
   }
   /***************************************************************************
   *                                                                          *

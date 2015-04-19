@@ -13,7 +13,13 @@ module.exports = {
       if ((err) || (!user)) {
         return res.badRequest(err);
       } else {
-        return res.status(201).json({user: user})
+        return res.status(201).json({user: 
+                                      {
+                                        email: user.email,
+                                        verified: user.verified,
+                                        updatedAt: user.updatedAt,
+                                        id: user.id
+                                       }})
       }
     });
   },

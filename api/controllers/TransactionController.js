@@ -46,7 +46,7 @@ module.exports = {
 
           var mes = 'Your quote has been accepted';
 
-          ProviderNote.create({message: mes}, function(err, providernote) {
+          ProviderNotification.create({providerId: providerId, bookingId: bookingId, mes: mes}, function(err, providernote) {
             if (err) return res.badRequest(err);
 
             var kue = require('kue')

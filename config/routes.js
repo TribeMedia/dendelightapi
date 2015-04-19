@@ -115,6 +115,11 @@ module.exports.routes = {
   // Delete service
   'delete /api/v1/service/:id?': 'ServiceController.destroy',
   
+  // View notification
+  'get /api/v1/provider_notification': 'NotificationController.provider_notification',
+  // Update notification to read
+  'put /api/v1/provider_read_notification': 'NotificationController.provider_read_notification',
+  
   // Payment with Stripe
   'post /api/v1/charge': 'PaymentController.charge'
   /***************************************************************************

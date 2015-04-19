@@ -25,14 +25,15 @@ module.exports = {
   	postcode: {
   		type: 'integer'
   	},
-    latitude: {
+    lat: {
       type: 'float'
     },
-    longitude: {
+    lng: {
       type: 'float'
     },
-    adress: {
-      type: 'string'
+    address: {
+      type: 'string',
+      required: true
     },
     size: {
       type: 'string'

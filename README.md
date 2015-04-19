@@ -14,6 +14,19 @@ To access authorize location, set Authorization header with *'Bearer' + token* .
 # Online API test
 http://oseam.herokuapp.com
 
+# Location
+
+##### Get lat, lng and postcode by address
+  * POST: /api/v1/latlng
+  * Required params: address
+
+##### Get address by latlng
+  * GET: /api/v1/address
+  * Params: lat, lng
+
+##### Get location info by ip
+  * GET: /api/v1/location
+
 # User flow 
 
 ##### Register account
@@ -24,16 +37,14 @@ http://oseam.herokuapp.com
 {
   "user": {
     "email": "hello@gmail.com",
-    "password": "$2a$10$oDTKkwnz7y6QuRt26u4hjb9XjSj8mm4nzRphGUiERc0fgArFG",
     "verified": false,
-    "createdAt": "2015-04-16T08:37:49.375Z",
     "updatedAt": "2015-04-16T08:37:49.375Z",
     "id": "552f74dd3917d69f0d9800ca"
   }
 }
 ```
 
-##### User Login
+##### User Login. NOTE: in development, login with out verifying account.
 	* POST: /api/v1/user_login
 	* Params: email, password
   * Json response example
@@ -78,7 +89,8 @@ http://oseam.herokuapp.com
 
 ##### Create booking
 	* POST: /api/v1/booking
-	* Params: service
+	* Required params: service, size, duration, address, bookTime
+  * Additional params: postcode, lat, lng, repeat
   * Json response example
 ```json
 {
@@ -117,7 +129,8 @@ http://oseam.herokuapp.com
 
 ##### Register account
   * POST: /api/v1/provider
-  * Required params: email, password, firstName, lastName, abn
+  * Required params: email, password, firstName, lastName, abn, address
+  * Additional params: businessName, postcode, lat, lng, service
   * Json response example
 ```json
 {
