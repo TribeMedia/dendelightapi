@@ -27,6 +27,11 @@ http://oseam.herokuapp.com
 ##### Get location info by ip
   * GET: /api/v1/location
 
+# Get different service information
+
+##### Get service duration (mowing, leaf_removal, weed_control, yard_cleaning) by size
+  * Example GET: /api/v1/duration/mowing?size=20
+
 # User flow 
 
 ##### Register account
@@ -194,9 +199,17 @@ http://oseam.herokuapp.com
   * GET: /api/v1/logout
   * OR: simply clear token in session or local-service
 
+##### Socket io for real-time push notification
+  * EXAMPLE
+```javascript
+var socket = io('/provider_' + providerId);
+socket.on('notification', function(data) {
+  console.log(data);
+});
+```
 
 # Admin flow
-##### Provider Login
+##### Admin Login
   * POST: /api/administrator
   * Parameters: email, password
   * Json response: { provider: {xxx}, token: xxx }
@@ -225,4 +238,9 @@ http://oseam.herokuapp.com
 ##### Find all quotes
   * GET: /api/v1/quote
 
+##### CRUD different services (mowing, leaf_removal, weed_control, yard_cleaning)
+  * GET: /api/v1/mowing
+  * POST: /api/v1/mowing (params: size, duration)
+  * PUT: /api/v1/mowing
+  * DELETE: /api/v1/mowing
 

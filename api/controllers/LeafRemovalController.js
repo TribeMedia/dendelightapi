@@ -1,49 +1,24 @@
 /**
- * Booking.js
+ * LeafRemovalController.js
  *
  */
 
 module.exports = {
 
-  // Booking.create()
+  // LeafRemovalController.create()
   create: function (req, res) {
     var params = req.params.all();
-    var userId = req.user.id;
-    params['userId'] = userId;
-    if ((params.address) && (!params.lat)) {
-      var geocoder = require('geocoder');
-      geocoder.geocode(params.address, function ( err, data ) {
-        if (data) {
-          params['lat'] = data.results[0].geometry.location.lat;
-          params['lng'] = data.results[0].geometry.location.lng;
-          params['postcode'] = data.results[0].address_components[5].long_name;
-        }
-      });
-    };
-
-    Booking.create(params).exec(function(err, booking) {
-      if ((err) || (!booking)) {
+    
+    LeafRemovalController.create(params).exec(function(err, leafremoval) {
+      if ((err) || (!leafremoval)) {
         return res.badRequest(err);
       } else {
-        Provider.find({postcode: booking.postcode}, function (err, providers) {
-          if (err) return res.notFound(err);
-          for (var i = 0; i < providers.length; i++) {
-            ProviderNotification.create({providerId: providers[i].id, bookingId: booking.id, service: booking.service}, function (err, providernote) {
-              if (err) return res.badRequest(err);
-              var nsp = sails.io.of('/provider_' + providernote.providerId)
-              nsp.on('connection', function(socket) {
-                socket.emit('notification', providernote);
-              });
-          });
-          }
-        });
-        return res.status(201).json({booking: booking})
+        return res.status(201).json({leafremoval: leafremoval})
       }
     });
-    
   },
 
-  // Booking.find(). Return 1 object from id
+  // LeafRemoval.find(). Return 1 object from id
   find: function (req, res) {
     var id = req.param('id');
     var idShortCut = isShortcut(id);
@@ -53,12 +28,12 @@ module.exports = {
     };
 
     if (id) {
-      Booking.findOne(id, function(err, booking) {
-        if(booking === undefined) return res.notFound();
+      LeafRemoval.findOne(id, function(err, leafremoval) {
+        if(leafremoval === undefined) return res.notFound();
 
         if (err) return res.badRequest(err);
 
-        res.ok({booking: booking});
+        res.ok({leafremoval: leafremoval});
       });
     } else {
       var where = req.param('where');
@@ -92,12 +67,12 @@ module.exports = {
           };
 
       console.log("This is the options", options);
-      Booking.find(options, function(err, booking) {
-        if(booking === undefined) return res.notFound();
+      LeafRemoval.find(options, function(err, leafremoval) {
+        if(leafremoval === undefined) return res.notFound();
 
         if (err) return res.badRequest(err);
 
-        res.ok({bookings: booking});
+        res.ok({leafremovals: leafremoval});
       });
 
       function isShortcut(id) {
@@ -121,12 +96,12 @@ module.exports = {
       return res.badRequest('No id provided.');
       };
 
-    Booking.update({id: id, userId: req.user.id}, criteria, function (err, booking) {
-      if(booking.length === 0) return res.notFound();
+    LeafRemoval.update(id, criteria, function (err, leafremoval) {
+      if(leafremoval.length === 0) return res.notFound();
 
       if (err) return res.badRequest(err);
 
-      res.ok({booking: booking});
+      res.ok({leafremoval: leafremoval});
 
     });
   },
@@ -139,11 +114,22 @@ module.exports = {
       return res.badRequest('No id provided.');
     };
 
-    Booking.destroy({id: id, userId: req.user.id}, function (err, booking) {
+    LeafRemoval.destroy(id, function (err, leafremoval) {
       if (err) return res.forbidden(err);
 
-      return res.status(204).json(booking);
+      return res.status(204).json(leafremoval);
     });
 
   },
+
+  // Get info
+  get_info: function (req, res) {
+    var size = req.param('size');
+
+    LeafRemoval.find({lowerSize: { '<': size}, upperSize: { '>=': size}}, function (err, leafremoval) {
+      if (err) return res.notFound();
+      res.ok({leafremoval: leafremoval});
+    });
+  }
+
 };

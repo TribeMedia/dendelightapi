@@ -66,6 +66,22 @@ module.exports.policies = {
   },
   AuthController: {
     '*': true,
+  },
+  MowingController: {
+    '*': 'isAdmin',
+    get_info: true
+  }, 
+  LeafRemovalController: {
+    '*': 'isAdmin',
+    get_info: true
+  }, 
+  WeedControlController: {
+    '*': 'isAdmin',
+    get_info: true
+  }, 
+  YardCleaningController: {
+    '*': 'isAdmin',
+    get_info: true
   }, 
   PaymentController: {
     charge: 'isUser'
