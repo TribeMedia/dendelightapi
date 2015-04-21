@@ -1,4 +1,5 @@
 # oseam Application
+* <a href="#requirements">Requirements</a>
 * <a href="#how-to-install-dependencies">How to install & run</a>
 * <a href="#online-api-test">Online API test</a>
 * <a href="#location">Location</a>
@@ -6,6 +7,10 @@
 * <a href="#user-flow">User Flow</a>
 * <a href="#provider-flow">Provider Flow</a>
 * <a href="#admin-flow">Admin Flow</a>
+
+# Requirements
+* <a href="https://www.mongodb.org/downloads">Mongodb</a>
+* <a href="https://nodejs.org/">Node.js</a> or <a href="https://iojs.org/en/index.html">io.js</a>
 
 # How to Install & Run
 Open Terminal/Powershell & CD into where oseam-app is located & Run these commands
