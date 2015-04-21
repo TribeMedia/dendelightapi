@@ -14,12 +14,12 @@ describe('BookingController', function() {
 			userId = user.id;
 			userToken = jwt.sign({user: user}, secret, { expiresInMinutes: 60*24 });
 
-			Booking.create({userId: userId, service: "Lawning"}, function(err, booking) {
+			Booking.create({userId: userId, service: "Lawning", address: "16 Keats Ave, Kingsbury"}, function(err, booking) {
 				bookingId = booking.id;
 			});	
 
 		});
-		Provider.create({email: "provider_test_booking@gmail.com", password: "14491992", firstName: "Tombook", lastName: "Joebook"}, function(err, provider) {
+		Provider.create({email: "provider_test_booking@gmail.com", password: "14491992", firstName: "Tombook", lastName: "Joebook", abn: '3286382734f', postcode: 78623, address: '743yhf34', lat: 747874342, lng: 7743782632}, function(err, provider) {
 			providerId = provider.id;
 		});
 		Admin.create({email: "admin_test_booking@gmail.com", password: "14491992"}, function(err, admin) {

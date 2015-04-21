@@ -60,7 +60,7 @@ describe('ProviderController', function() {
 		it('should have  json response', function(done) {
 			request(sails.hooks.http.app)
 				.post('/api/v1/provider')
-				.send({email: 'create_provider_test@gmail.com', password: '14491992', firstName: 'Tom', lastName: 'Zoe'})
+				.send({email: 'create_provider_test@gmail.com', password: '14491992', firstName: 'Tom', lastName: 'Zoe', abn: 'u9y4h8yf8324', postcode: 7534, address: '17 hier', lat: 4639276643, lng: 773263462})
 				.expect(201)
 				.expect(hasProviderKey)
 				.end(done);

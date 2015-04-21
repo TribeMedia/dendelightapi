@@ -19,7 +19,7 @@ describe('QuoteController', function() {
 			});	
 
 		});
-		Provider.create({email: "provider_test_quote@gmail.com", password: "14491992", firstName: "Tombook", lastName: "Joebook"}, function(err, provider) {
+		Provider.create({email: "provider_test_quote@gmail.com", password: "14491992", firstName: "Tombook", lastName: "Joebook", abn: 'hsfhi74343', postcode: 74634, address: 'hf y83', lat: 43663455, lng: 73634758}, function(err, provider) {
 			providerId = provider.id;
 			providerToken = jwt.sign({provider: provider}, secret, { expiresInMinutes: 60*24 });
 

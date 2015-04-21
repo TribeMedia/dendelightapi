@@ -124,7 +124,7 @@ module.exports.routes = {
   // Delete Mowing
   'delete /api/v1/mowing/:id?': 'MowingController.destroy',
   // Estimate mowing duration
-  'get /api/v1/duration/mowing': 'MowingController.get_info'
+  'get /api/v1/duration/mowing': 'MowingController.get_info',
 
   // Create LeafRemoval
   'post /api/v1/leaf_removal': 'LeafRemovalController.create',
@@ -135,7 +135,7 @@ module.exports.routes = {
   // Delete LeafRemoval
   'delete /api/v1/leaf_removal/:id?': 'LeafRemovalController.destroy',
   // Estimate LeafRemoval duration
-  'get /api/v1/duration/leaf_removal': 'LeafRemovalController.get_info'
+  'get /api/v1/duration/leaf_removal': 'LeafRemovalController.get_info',
 
   // Create WeedControl
   'post /api/v1/weed_control': 'WeedControlController.create',
@@ -146,7 +146,7 @@ module.exports.routes = {
   // Delete WeedControl
   'delete /api/v1/weed_control/:id?': 'WeedControlController.destroy',
   // Estimate WeedControl duration
-  'get /api/v1/duration/weed_control': 'WeedControlController.get_info'
+  'get /api/v1/duration/weed_control': 'WeedControlController.get_info',
 
   // Create YardCleaning
   'post /api/v1/yard_cleaning': 'YardCleaningController.create',
@@ -157,7 +157,7 @@ module.exports.routes = {
   // Delete YardCleaning
   'delete /api/v1/yard_cleaning/:id?': 'YardCleaningController.destroy',
   // Estimate YardCleaning duration
-  'get /api/v1/duration/yard_cleaning': 'YardCleaningController.get_info'
+  'get /api/v1/duration/yard_cleaning': 'YardCleaningController.get_info',
 
   // View notification
   'get /api/v1/provider_notification': 'NotificationController.provider_notification',

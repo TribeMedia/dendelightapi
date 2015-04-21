@@ -2,6 +2,12 @@ require("sails-test-helper");
 var request = require('supertest');
 
 describe('AuthController', function() {
+	var providerId;
+	before(function(done) {
+		Provider.create({email: 'provider_confirm_test1@gmail.com', password: '14491992', firstName: 'Tom', lastName: 'Henry', abn: '92686h8343', address: '16 Keats Avenue, Kingsbury', lat: 62365135752, lng: 7626763267643}, function(err, provider) { 
+			providerId = provider.id;
+			done(); })
+	});
 
 	describe('#user_confirm()', function() {
 		var userId;
@@ -35,12 +41,6 @@ describe('AuthController', function() {
 	});
 
 	describe('#provider_confirm()', function() {
-		var providerId;
-		before(function(done) {
-			Provider.create({email: 'provider_confirm_test1@gmail.com', password: '14491992', firstName: 'Tom', lastName: 'Henry'}, function(err, provider) { 
-				providerId = provider.id;
-				done(); })
-		});
 		it('should update and confirm provider', function(done) {
 			request(sails.hooks.http.app)
 				.put('/api/v1/provider_confirm/' + providerId)
@@ -100,13 +100,10 @@ describe('AuthController', function() {
 	});	
 
 	describe('#provider_login()', function() {
-		beforeEach(function(done) {
-			Provider.create({email: 'hi@gmail.com', password: '14491992', firstName: 'Ghi', lastName: 'Hiy'}, function(req, res) { done(); })
-		});
 		it('should parse json response and auth token', function(done) {
 			request(sails.hooks.http.app)
 				.post('/api/v1/provider_login')
-				.send({email: 'hi@gmail.com', password: '14491992'})
+				.send({email: 'provider_confirm_test1@gmail.com', password: '14491992'})
 				.expect(200)
 				.expect(hasProviderAndToken)
 				.end(done);
@@ -134,10 +131,15 @@ describe('AuthController', function() {
 	});
 
 	describe('#admin_login()', function() {
+		before(function(done) {
+			Admin.create({email: 'admin_login_test@gmail.com', password: 'admin12345'}, function(err, admin) { 
+				done(); })
+		});
+
 		it('should parse json response and auth token', function(done) {
 			request(sails.hooks.http.app)
 				.post('/api/administrator')
-				.send({email: 'vuongngo.pd@gmail.com', password: 'admin12345'})
+				.send({email: 'admin_login_test@gmail.com', password: 'admin12345'})
 				.expect(200)
 				.expect(hasAdminAndToken)
 				.end(done);
