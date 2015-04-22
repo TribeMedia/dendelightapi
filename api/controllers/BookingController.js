@@ -10,6 +10,9 @@ module.exports = {
     var params = req.params.all();
     var userId = req.user.id;
     params['userId'] = userId;
+
+    var services = [];
+
     if ((params.address) && (!params.lat)) {
       var geocoder = require('geocoder');
       geocoder.geocode(params.address, function ( err, data ) {
@@ -21,15 +24,15 @@ module.exports = {
       });
     };
 
-    Booking.create(params).exec(function(err, booking) {
-      if ((err) || (!booking)) {
-        return res.badRequest(err);
-      } else {
-        Provider.native(function(err, provider) {
-          provider.geoNear(params['lng'], params['lat'], {limit: 1, maxDistance: 10000, query: {'service': 'service', 'schedule': {$not: {'schedule.startTime': {$gt: params['bookTime']}, 'schedule.endTime': {$lt: params['bookTime']}}}}, distanceMultiplier: 6371, spherical: true, uniqueDocs: true}, function (mongoErr, providers) {
-            if (err) return res.notFound(err);
+    for (i = 0; i <= params['services'].length; i ++) {
+      Provider.native(function(err, provider) {
+        provider.geoNear(params['lng'], params['lat'], {limit: 1, maxDistance: 10000, query: {'service': params['service'][i], 'schedule': {$not: {'schedule.startTime': {$gt: params['bookTime']}, 'schedule.endTime': {$lt: params['bookTime']}}}}, distanceMultiplier: 6371, spherical: true, uniqueDocs: true}, function (mongoErr, providers) {
+          if (err) return res.notFound(err);
 
-            ProviderNotification.create({providerId: providers[0].id, bookingId: booking.id, service: booking.service}, function (err, providernote) {
+          params['providerId'] = providers[0]._id.to_s;
+          params['services'][i].create(params).exec(function(err, service) {
+            service
+            ProviderNotification.create({providerId: providers[0].id, bookingId: booking.id, params['services'][i]: service.id}, function (err, providernote) {
               if (err) return res.badRequest(err);
               var nsp = sails.io.of('/provider_' + providernote.providerId);
               nsp.on('connection', function(socket) {
@@ -37,11 +40,10 @@ module.exports = {
               });
             });
           });
-        });  
 
-        return res.status(201).json({booking: booking})
-      }
-    });
+        });
+      }  
+      });  
     
   },
 
