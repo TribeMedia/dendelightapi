@@ -8,17 +8,66 @@
 module.exports = {
 
   attributes: {
-  	lowerSize: {
-  		type: 'integer',
-  		required: true
-  	},
-    upperSize: {
-      type: 'interger',
+    bookingId: {
+      type: 'string',
       required: true
     },
-    duration: {
+    providerId: {
+      type: 'string',
+      required: true
+    }, 
+    treeNumber: {
+      type: 'string',
+      required: true
+    },
+    postcode: {
       type: 'integer',
-      defaultsTo: true
+      required: true
+    },
+    lat: {
+      type: 'float',
+      required: true
+    },
+    lng: {
+      type: 'float',
+      required: true
+    },
+    address: {
+      type: 'string',
+      required: true
+    },
+    bookTime: {
+      type: 'float'
+    },
+    estimatedDuration: {
+      type: 'float'
+    },
+    startTime: {
+      type: 'float'
+    },
+    endTime: {
+      type: 'float'
+    },
+    realDuration: function () {
+      return (this.endTime - this.startTime);
+    },
+    wage: {
+      type: 'integer',
+      required: true
+    },
+    estimatedPrice: function () {
+      return (this.estimatedDuration * 360000 * wage);
+    },
+    price: function () {
+      return (this.realDuration * 360000 * wage);
+    },
+    repeat: {
+      type: 'string',
+      defaultsTo: null
+    },
+    completed: {
+      type: 'boolean',
+      defaultsTo: false,
     }
   },
 };

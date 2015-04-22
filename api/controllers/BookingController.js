@@ -25,18 +25,20 @@ module.exports = {
       if ((err) || (!booking)) {
         return res.badRequest(err);
       } else {
-        Provider.find({postcode: booking.postcode}, function (err, providers) {
-          if (err) return res.notFound(err);
-          for (var i = 0; i < providers.length; i++) {
-            ProviderNotification.create({providerId: providers[i].id, bookingId: booking.id, service: booking.service}, function (err, providernote) {
+        Provider.native(function(err, provider) {
+          provider.geoNear(params['lng'], params['lat'], {limit: 1, maxDistance: 10000, query: {'service': 'service', 'schedule': {$not: {'schedule.startTime': {$gt: params['bookTime']}, 'schedule.endTime': {$lt: params['bookTime']}}}}, distanceMultiplier: 6371, spherical: true, uniqueDocs: true}, function (mongoErr, providers) {
+            if (err) return res.notFound(err);
+
+            ProviderNotification.create({providerId: providers[0].id, bookingId: booking.id, service: booking.service}, function (err, providernote) {
               if (err) return res.badRequest(err);
-              var nsp = sails.io.of('/provider_' + providernote.providerId)
+              var nsp = sails.io.of('/provider_' + providernote.providerId);
               nsp.on('connection', function(socket) {
                 socket.emit('notification', providernote);
               });
+            });
           });
-          }
-        });
+        });  
+
         return res.status(201).json({booking: booking})
       }
     });

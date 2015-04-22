@@ -15,17 +15,18 @@ module.exports = {
           params['lat'] = data.results[0].geometry.location.lat;
           params['lng'] = data.results[0].geometry.location.lng;
           params['postcode'] = data.results[0].address_components[5].long_name;
-
-          Provider.create(params).exec(function(err, provider) {
-            if ((err) || (!provider)) {
-              return res.badRequest(err);
-            } else {
-              return res.status(201).json({provider: provider})
-            }
-          });
         }
       });
-    };  
+    };
+
+    Provider.create(params).exec(function(err, provider) {
+      if ((err) || (!provider)) {
+        return res.badRequest(err);
+      } else {
+        return res.status(201).json({provider: provider})
+      }
+    });
+  
   },
 
   // Provider.find(). Return 1 object from id

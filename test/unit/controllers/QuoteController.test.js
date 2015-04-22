@@ -14,7 +14,7 @@ describe('QuoteController', function() {
 		User.create({email: "user_test_quote@gmail.com", password: "14491992"}, function(err, user) {
 			userId = user.id;
 
-			Booking.create({userId: userId, service: "Lawning"}, function(err, booking) {
+			Booking.create({userId: userId, service: "Lawning", address: "16 hierhshoi"}, function(err, booking) {
 				bookingId = booking.id;
 			});	
 

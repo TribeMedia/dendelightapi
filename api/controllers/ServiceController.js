@@ -121,4 +121,16 @@ module.exports = {
     });
 
   },
+
+  lookup: function (req, res) {
+    var params = req.params.all();
+
+    if (!params['name']) return res.badRequest(error: 'Service name is missing');
+
+    Service.find(params, function (err, services) {
+      if (err) return res.notFound();
+
+      return res.ok(serivces);
+    })    
+  }
 };

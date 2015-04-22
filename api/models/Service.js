@@ -10,50 +10,40 @@ module.exports = {
   attributes: {
   	name: {
   		type: 'string',
-  		unique: true,
   		required: true
   	},
-    verified: {
-      type: 'boolean',
-      defaultsTo: false,
+    type: {
+      type: 'string',
+      unique: true,
+      required: true
+    },
+    duration: {
+      type: 'integer',
+      required: true
+    },
+    price: {
+      type: 'integer',
+      required: true
     }
   },
   seedData:[
       {
-        name:"Personal chef",
-        verified: true
+        name:'Mowing',
+        type: 'small',
+        duration: 2,
+        price: 50
       },
       {
-        name:"Decoration artist",
-        verified: true
+        name:'Mowing',
+        type: 'medium',
+        duration: 3,
+        price: 75
       },
       {
-        name:"Musician",
-        verified: true
-      },
-      {
-        name:"Cleaner",
-        verified: true
-      },
-      {
-        name:"Master of ceremony (MC)",
-        verified: true
-      },
-      {
-        name:"Cake",
-        verified: true
-      },
-      {
-        name:"Personal shopper",
-        verified: true
-      },
-      {
-        name:"Private teacher",
-        verified: true
-      },
-      {
-        name:"Baby sitter",
-        verified: true
+        name:'Mowing',
+        type: 'large',
+        duration: 4,
+        price: 100
       }
     ]
 };

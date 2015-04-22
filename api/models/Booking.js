@@ -12,46 +12,10 @@ module.exports = {
   		type: 'string',
   		required: true
   	},
-  	providerId: {
-  		type: 'string'
-  	}, 
-  	quoteId: {
-  		type: 'string'
-  	},
-  	service: {
-  		type: 'string',
+  	services: {
+  		type: 'array',
   		required: true
   	},
-  	postcode: {
-  		type: 'integer'
-  	},
-    lat: {
-      type: 'float'
-    },
-    lng: {
-      type: 'float'
-    },
-    address: {
-      type: 'string',
-      required: true
-    },
-    size: {
-      type: 'string'
-    },
-    duration: {
-      type: 'string'
-    },
-  	bookTime: {
-  		type: 'dateTime'
-  	},
-  	repeat: {
-  		type: 'string',
-  		defaultsTo: null
-  	},
-    completed: {
-      type: 'boolean',
-      defaultsTo: false,
-    }
   },
 };
 

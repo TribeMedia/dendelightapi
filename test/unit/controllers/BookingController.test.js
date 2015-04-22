@@ -69,7 +69,7 @@ describe('BookingController', function() {
 				.post('/api/v1/booking')
 				.set('Content-Type',  'application/json')
 				.set('Authorization', 'Bearer ' + userToken)
-				.send({userId: userId, service: "Lawning"})
+				.send({userId: userId, service: "Lawning", address: '16 Keats Ave, Kingsbury'})
 				.expect(201)
 				.expect(hasBookingKey)
 				.end(done);
