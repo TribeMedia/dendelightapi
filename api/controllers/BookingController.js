@@ -46,11 +46,12 @@ module.exports = {
                   
                   console.log(providers);                  
                   if (providers.results[0]) { 
+                    var estimatedDuration = params.estimatedDuration;
                     id = providers.results[0].obj._id;
                     endTime = bookTime + estimatedDuration;
                     provider.update({_id: id}, {$push: {schedule: {startTime: bookTime, endTime: endTime }}}, function (err) {
 
-                    callback(null, id.valueOf(), endTime);
+                    callback(null, id, endTime);
 
                     });
                   };
@@ -60,17 +61,13 @@ module.exports = {
             function (id, endTime, callback) {
               console.log(endTime);
 
-              params['providerId'] = id;
-              function capitalizeFirstLetter(string) {
-                  return string.charAt(0).toUpperCase() + string.slice(1);
-              };
-              console.log(params);
-              console.log(serviceName);
+              params['providerId'] = id.toString();
+              if (params['services']) { delete params['services'] };
 
-              capitalizeFirstLetter(serviceName).create(params, function(err, service) {
+              function createService(service) {
                 services = services.concat({name: serviceName, id: service.id});
                 
-                ProviderNotification.create({providerId: id, serviceId: service.id, serviceName: serviceName}, function (err, providernote) {
+                ProviderNotification.create({providerId: params['providerId'], serviceId: service.id, serviceName: serviceName}, function (err, providernote) {
                   if (err) console.log(err);
                   var nsp = sails.io.of('/provider_' + providernote.providerId);
                   nsp.on('connection', function(socket) {
@@ -78,7 +75,30 @@ module.exports = {
                   });
                 });
                 callback(null, service);
-              });
+
+              };
+
+              if (serviceName === 'mowing') {
+                Mowing.create(params, function(err, service) {
+                  console.log(err);
+                  createService(service);
+                });
+              } else if (serviceName === 'leaf removal') {
+                LeafRemoval.create(params, function(err, service) {
+                  console.log(err);
+                  createService(service);
+                });
+              } else if (serviceName === 'weed control') {
+                WeedControl.create(params, function(err, service) {
+                  console.log(err);
+                  createService(service);
+                });
+              } else if (serviceName === 'yard cleaning') {
+                YardCleaning.create(params, function(err, service) {
+                  console.log(err);
+                  createService(service);
+                });
+              }
             }
           ], 
           function (err, result) {    

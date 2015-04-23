@@ -20,15 +20,24 @@ module.exports = {
 
   afterCreate: function (attrs, next) {
     async.map(attrs.services, function (service, callback) {
-      function capitalizeFirstLetter(string) {
-          return string.charAt(0).toUpperCase() + string.slice(1);
-      };
 
-      capitalizeFirstLetter(service.name).findOne({id: service.id}).exec(function(err, service) {
-        if (err) { console.log(err) };
-      });
-
-      callback(null, true);  
+      if (service.name === 'mowing') {
+        Mowing.update(service.id, {bookingId: attrs.id}, function(err, service) {
+          callback(null, true);
+        });
+      } else if (service.name === 'leaf removal') {
+        LeafRemoval.update(service.id, {bookingId: attrs.id}, function(err, service) {
+          callback(null, true);
+        });
+      } else if (service.name === 'weed control') {
+        WeedControl.update(service.id, {bookingId: attrs.id}, function(err, service) {
+          callback(null, true);
+        });
+      } else if (service.name === 'yard cleaning') {
+        YardCleaning.update(service.id, {bookingId: attrs.id}, function(err, service) {
+          callback(null, true);
+        });
+      }
 
     }, function (err, results) {
       if (err) { console.log(err)};
