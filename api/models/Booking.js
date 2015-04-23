@@ -17,5 +17,24 @@ module.exports = {
   		required: true
   	},
   },
+
+  afterCreate: function (attrs, next) {
+    async.map(attrs.services, function (service, callback) {
+      function capitalizeFirstLetter(string) {
+          return string.charAt(0).toUpperCase() + string.slice(1);
+      };
+
+      capitalizeFirstLetter(service.name).findOne({id: service.id}).exec(function(err, service) {
+        if (err) { console.log(err) };
+      });
+
+      callback(null, true);  
+
+    }, function (err, results) {
+      if (err) { console.log(err)};
+      next();
+    });
+  },
+
 };
 

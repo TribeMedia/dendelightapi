@@ -11,13 +11,10 @@ module.exports = {
   	providerId: {
   		type: 'string'
   	}, 
-  	quoteId: {
-  		type: 'string'
-  	},
-    bookingId: {
+    serviceId: {
       type: 'string'
     },
-    service: {
+    serviceName: {
       type: 'string'
     },
     mes: {

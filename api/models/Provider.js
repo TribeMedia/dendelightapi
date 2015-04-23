@@ -38,12 +38,9 @@ module.exports = {
       type: 'string',
       required: true
     },
-    lat: {
-      type: 'float',
-      required: true
-    },
-    lng: {
-      type: 'float',
+    location: {
+      type: 'json',
+      index:'2dsphere',
       required: true
     },
     service: {
@@ -60,6 +57,9 @@ module.exports = {
     stripe_account: {
       type: 'boolean',
       defaultsTo: false
+    },
+    schedule: {
+      type: 'array'
     }
   },
 

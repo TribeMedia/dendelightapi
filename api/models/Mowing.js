@@ -10,7 +10,6 @@ module.exports = {
   attributes: {
     bookingId: {
       type: 'string',
-      required: true
     },
     providerId: {
       type: 'string',
@@ -27,12 +26,9 @@ module.exports = {
       type: 'integer',
       required: true
     },
-    lat: {
-      type: 'float',
-      required: true
-    },
-    lng: {
-      type: 'float',
+    location: {
+      type: 'json',
+      index:'2dsphere',
       required: true
     },
     address: {

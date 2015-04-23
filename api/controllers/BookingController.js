@@ -2,49 +2,99 @@
  * Booking.js
  *
  */
+var async = require('async');
 
 module.exports = {
 
   // Booking.create()
   create: function (req, res) {
-    var params = req.params.all();
     var userId = req.user.id;
-    params['userId'] = userId;
-
     var services = [];
+    var params = req.params.all();
 
-    if ((params.address) && (!params.lat)) {
-      var geocoder = require('geocoder');
-      geocoder.geocode(params.address, function ( err, data ) {
-        if (data) {
-          params['lat'] = data.results[0].geometry.location.lat;
-          params['lng'] = data.results[0].geometry.location.lng;
-          params['postcode'] = data.results[0].address_components[5].long_name;
-        }
-      });
-    };
+    async.waterfall([
+      function (callback) {
 
-    for (i = 0; i <= params['services'].length; i ++) {
-      Provider.native(function(err, provider) {
-        provider.geoNear(params['lng'], params['lat'], {limit: 1, maxDistance: 10000, query: {'service': params['service'][i], 'schedule': {$not: {'schedule.startTime': {$gt: params['bookTime']}, 'schedule.endTime': {$lt: params['bookTime']}}}}, distanceMultiplier: 6371, spherical: true, uniqueDocs: true}, function (mongoErr, providers) {
-          if (err) return res.notFound(err);
-
-          params['providerId'] = providers[0]._id.to_s;
-          params['services'][i].create(params).exec(function(err, service) {
-            service
-            ProviderNotification.create({providerId: providers[0].id, bookingId: booking.id, params['services'][i]: service.id}, function (err, providernote) {
-              if (err) return res.badRequest(err);
-              var nsp = sails.io.of('/provider_' + providernote.providerId);
-              nsp.on('connection', function(socket) {
-                socket.emit('notification', providernote);
-              });
-            });
+        if ((params.address) && (!params.lat)) {
+          var geocoder = require('geocoder');
+          geocoder.geocode(params.address, function ( err, data ) {
+            if (data) {
+              params['location'] = {'type': 'Point', 'coordinates': [data.results[0].geometry.location.lng, data.results[0].geometry.location.lat]};
+              lat = data.results[0].geometry.location.lat;
+              lng = data.results[0].geometry.location.lng;
+              params['postcode'] = data.results[0].address_components[5].long_name;
+              callback(null, lat, lng);
+            }
           });
+        };
+      },
+      function (lat, lng, callback) { 
+        if( typeof params.services === 'string' ) {
+            params['services'] = [ params.services ];
+        };
+        async.map(params.services, function (service, callback) {
+          var serviceName = service;
+          var bookTime = params.bookTime;
+          var createdService;
+          console.log(service);      
+          async.waterfall([
+            function (callback) {
+              console.log(serviceName);
+              Provider.native(function(err, provider) {
+                provider.geoNear(lng, lat, {limit: 1, maxDistance: 10000, query: {'service': serviceName, $or: [{'schedule.startTime': {$not: {$gt: bookTime}}}, {'schedule.endTime': {$not: {$lt: bookTime}}}]}, distanceMultiplier: 6371, spherical: true, uniqueDocs: true}, function (mongoErr, providers) {
+                  if (mongoErr) return res.notFound(mongoErr);
+                  
+                  console.log(providers);                  
+                  if (providers.results[0]) { 
+                    id = providers.results[0].obj._id;
+                    endTime = bookTime + estimatedDuration;
+                    provider.update({_id: id}, {$push: {schedule: {startTime: bookTime, endTime: endTime }}}, function (err) {
 
-        });
-      }  
-      });  
-    
+                    callback(null, id.valueOf(), endTime);
+
+                    });
+                  };
+                });
+              });
+            },
+            function (id, endTime, callback) {
+              console.log(endTime);
+
+              params['providerId'] = id;
+              function capitalizeFirstLetter(string) {
+                  return string.charAt(0).toUpperCase() + string.slice(1);
+              };
+              console.log(params);
+              console.log(serviceName);
+
+              capitalizeFirstLetter(serviceName).create(params, function(err, service) {
+                services = services.concat({name: serviceName, id: service.id});
+                
+                ProviderNotification.create({providerId: id, serviceId: service.id, serviceName: serviceName}, function (err, providernote) {
+                  if (err) console.log(err);
+                  var nsp = sails.io.of('/provider_' + providernote.providerId);
+                  nsp.on('connection', function(socket) {
+                    socket.emit('notification', providernote);
+                  });
+                });
+                callback(null, service);
+              });
+            }
+          ], 
+          function (err, result) {    
+            if (err) { console.log(err)};
+            callback(null, result);
+          })
+        }, 
+        function(err, results) {
+          if (err) return notFound();
+          Booking.create({userId: userId, services: services}, function (err, booking) {
+            if (err) return badRequest(err);
+            return res.ok({booking: booking, services: results});
+          })
+        });  
+      }]
+    )    
   },
 
   // Booking.find(). Return 1 object from id

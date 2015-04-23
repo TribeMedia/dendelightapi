@@ -11,16 +11,19 @@
 
 module.exports.bootstrap = function(cb) {
   // It's very important to trigger this callback method when you are finished
-  // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
+  // // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
   // cb();
   // async.series([
  	// Service.seed, Admin.seed
  	// ],cb);
-  collection.ensureIndex({ loc: '2dsphere' }, function () {
+   function  geoStuff (done) {
+        
+     Provider.native(function (err, collection) {
+            collection.ensureIndex({ location: '2dsphere' }, function () {
+           return done();
+         });
+      });
+   }
 
-    // It's very important to trigger this callack method when you are finished
-    // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
-    cb();
-
-  });
+ async.parallel([geoStuff], cb)
 };

@@ -60,7 +60,7 @@ module.exports.routes = {
   'delete /api/v1/provider/:id?': 'ProviderController.destroy',
   // Provider confirm
   'put /api/v1/provider_confirm/:id?': 'AuthController.provider_confirm',
-
+  'get /api/v1/providers': 'ProviderController.test',
   // Admin login
   'post /api/administrator': 'AuthController.admin_login',
   // User login
