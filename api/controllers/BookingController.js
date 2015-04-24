@@ -2,7 +2,6 @@
  * Booking.js
  *
  */
-var async = require('async');
 
 module.exports = {
 
@@ -34,31 +33,59 @@ module.exports = {
         };
         async.map(params.services, function (service, callback) {
           var serviceName = service;
-          var bookTime = params.bookTime;
+          var bookTime = parseInt(params.bookTime);
+          var estimatedDuration = parseInt(params.estimatedDuration);
+          var endTime = bookTime + estimatedDuration;
           var createdService;
           console.log(service);      
           async.waterfall([
             function (callback) {
               console.log(serviceName);
               Provider.native(function(err, provider) {
-                provider.geoNear(lng, lat, {limit: 1, maxDistance: 10000, query: {'service': serviceName, $or: [{'schedule.startTime': {$not: {$gt: bookTime}}}, {'schedule.endTime': {$not: {$lt: bookTime}}}]}, distanceMultiplier: 6371, spherical: true, uniqueDocs: true}, function (mongoErr, providers) {
-                  if (mongoErr) return res.notFound(mongoErr);
-                  
-                  console.log(providers);                  
-                  if (providers.results[0]) { 
-                    var estimatedDuration = params.estimatedDuration;
-                    id = providers.results[0].obj._id;
-                    endTime = bookTime + estimatedDuration;
-                    provider.update({_id: id}, {$push: {schedule: {startTime: bookTime, endTime: endTime }}}, function (err) {
+                async.waterfall([
+                  function (callback) {
+                    provider.geoNear(lng, lat, { maxDistance: 10000, query: {'service': serviceName, 'schedule.startTime': {$lt: bookTime}, 'schedule.endTime': {$gt: bookTime}}, distanceMultiplier: 6371, spherical: true, uniqueDocs: true}, function (mongoErr, providers) {
+                      if (mongoErr) return res.notFound(mongoErr);
 
-                    callback(null, id, endTime);
-
+                      if (providers.results.length === 0) {
+                        callback(null, []);
+                      } else {
+                        async.map(providers.results,
+                          function (result, callback) {
+                            callback (result.obj._id);
+                          },
+                          function (err, results) {
+                            if (err) { callback(err); };
+                            callback(null, results);
+                          }
+                          );
+                      };
                     });
-                  };
-                });
+                  },
+                  function (ids, callback) {
+                    provider.geoNear(lng, lat, { limit: 1, maxDistance: 10000, query: {'_id': {$nin: ids},'service': serviceName}, distanceMultiplier: 6371, spherical: true, uniqueDocs: true}, function (mongoErr, providers) {
+                      console.log(providers);
+                      if (mongoErr) return res.notFound(mongoErr);
+
+                      if (providers.results[0]) { 
+                        id = providers.results[0].obj._id;
+                        provider.update({_id: id}, {$push: {schedule: {startTime: bookTime, endTime: endTime }}}, function (err) {
+
+                        callback(null, id);
+
+                        });
+                      };
+
+                    })
+                  }
+                ],
+                function (err, result) { 
+                  if (err) { callback(err); };
+                  callback(null, result);
+                })
               });
             },
-            function (id, endTime, callback) {
+            function (id, callback) {
               console.log(endTime);
 
               params['providerId'] = id.toString();
@@ -109,7 +136,7 @@ module.exports = {
         function(err, results) {
           if (err) return notFound();
           Booking.create({userId: userId, services: services}, function (err, booking) {
-            if (err) return badRequest(err);
+            if (err) return res.badRequest(err);
             return res.ok({booking: booking, services: results});
           })
         });  
@@ -208,15 +235,95 @@ module.exports = {
   // a DESTROY action. Return 204 status
   destroy: function (req, res) {
     var id = req.param('id');
+    function serviceDelete(err, service) {
+      if (err) return res.notFound(err);
+
+      console.log(service);
+
+      async.series([
+        function (callback) {
+          Provider.findOne(service.providerId, function (err, provider) {
+            if (err) { console.log(err); callback(err); };
+
+            console.log(provider);
+
+            var index = provider.schedule.indexOf({startTime: service.bookTime, endTime: (service.bookTime + service.estimatedDuration)});
+            provider.schedule.splice(index, 1);
+            provider.save(function (err) {
+
+              if (err) { console.log(err); callback(err) };
+              
+              ProviderNotification.create({providerId: provider.id, serviceId: service.id, serviceName: service.name, mes: 'Is canceled'}, function (err, providernote) {
+                if (err) { console.log(err); callback(err) };
+
+                var nsp = sails.io.of('/provider_' + providernote.providerId);
+                nsp.on('connection', function(socket) {
+                  socket.emit('notification', providernote);
+                });
+
+                callback(null)
+              })
+            })
+          })
+        },
+        function (callback) {
+          service.destroy(function (err) {
+            if (err) { console.log(err); callback(err) };
+
+            callback(null);
+          })
+        }],
+      function (err, results) {
+        if (err) { console.log(err); return err };
+        return true;
+      })  
+    };
 
     if (!id) {
       return res.badRequest('No id provided.');
     };
 
-    Booking.destroy({id: id, userId: req.user.id}, function (err, booking) {
+    Booking.findOne({id: id, userId: req.user.id}, function (err, booking) {
       if (err) return res.forbidden(err);
 
-      return res.status(204).json(booking);
+      async.series([
+        function (callback) {
+          async.map(booking.services, function (service, callback) {
+
+            if (service.name === 'mowing') {
+              Mowing.findOne(service.id, function(err, service) {
+                if (serviceDelete(err, service) === true) { callback(null) } else { callback(err); };
+              });
+            } else if (service.name === 'leaf removal') {
+              LeafRemoval.findOne(service.id, function(err, service) {
+                if (serviceDelete(err, service) === true) { callback(null) } else { callback(err); };
+              });
+            } else if (service.name === 'weed control') {
+              WeedControl.findOne(service.id, function(err, service) {
+                if (serviceDelete(err, service) === true) { callback(null) } else { callback(err); };
+              });
+            } else if (service.name === 'yard cleaning') {
+              YardCleaning.findOne(service.id, function(err, service) {
+                if (serviceDelete(err, service) === true) { callback(null) } else { callback(err); };
+              });
+            }
+
+          }, function (err, results) {
+            if (err) { console.log(err); callback(err) };
+            callback(null);
+          });
+        },
+        function (callback) {
+          booking.destroy(function (err) {
+            if (err) { console.log(err); callback(err) };
+            callback(null);
+          })
+        }],
+        function (err, results) {
+          if (err) return res.status(500);
+          return res.status(204).json(results);
+        }  
+      )  
     });
 
   },

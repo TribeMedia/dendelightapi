@@ -16,6 +16,13 @@ module.exports = {
   		type: 'array',
   		required: true
   	},
+    price: {
+      type: 'interger'
+    },
+    completed: {
+      type: 'boolean',
+      defaultsTo: false
+    }
   },
 
   afterCreate: function (attrs, next) {

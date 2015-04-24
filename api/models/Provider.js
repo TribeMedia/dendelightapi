@@ -44,7 +44,7 @@ module.exports = {
       required: true
     },
     service: {
-      type: 'string',
+      type: 'array',
     },
     verified: {
       type: 'boolean',

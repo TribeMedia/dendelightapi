@@ -120,44 +120,40 @@ module.exports.routes = {
   // Find Mowing
   'get /api/v1/mowing/:id?': 'MowingController.find',
   // Update Mowing
-  'put /api/v1/mowing/:id?': 'MowingController.update',
+  'put /api/v1/user_mowing/:id?': 'MowingController.user_update',
   // Delete Mowing
   'delete /api/v1/mowing/:id?': 'MowingController.destroy',
   // Estimate mowing duration
-  'get /api/v1/duration/mowing': 'MowingController.get_info',
 
   // Create LeafRemoval
   'post /api/v1/leaf_removal': 'LeafRemovalController.create',
   // Find LeafRemoval
   'get /api/v1/leaf_removal/:id?': 'LeafRemovalController.find',
   // Update LeafRemoval
-  'put /api/v1/leaf_removal/:id?': 'LeafRemovalController.update',
+  'put /api/v1/user_leaf_removal/:id?': 'LeafRemovalController.user_update',
   // Delete LeafRemoval
   'delete /api/v1/leaf_removal/:id?': 'LeafRemovalController.destroy',
   // Estimate LeafRemoval duration
-  'get /api/v1/duration/leaf_removal': 'LeafRemovalController.get_info',
 
   // Create WeedControl
   'post /api/v1/weed_control': 'WeedControlController.create',
   // Find WeedControl
   'get /api/v1/weed_control/:id?': 'WeedControlController.find',
   // Update WeedControl
-  'put /api/v1/weed_control/:id?': 'WeedControlController.update',
+  'put /api/v1/user_weed_control/:id?': 'WeedControlController.user_update',
   // Delete WeedControl
   'delete /api/v1/weed_control/:id?': 'WeedControlController.destroy',
   // Estimate WeedControl duration
-  'get /api/v1/duration/weed_control': 'WeedControlController.get_info',
 
   // Create YardCleaning
   'post /api/v1/yard_cleaning': 'YardCleaningController.create',
   // Find YardCleaning
   'get /api/v1/yard_cleaning/:id?': 'YardCleaningController.find',
   // Update YardCleaning
-  'put /api/v1/yard_cleaning/:id?': 'YardCleaningController.update',
+  'put /api/v1/user_yard_cleaning/:id?': 'YardCleaningController.user_update',
   // Delete YardCleaning
   'delete /api/v1/yard_cleaning/:id?': 'YardCleaningController.destroy',
   // Estimate YardCleaning duration
-  'get /api/v1/duration/yard_cleaning': 'YardCleaningController.get_info',
 
   // View notification
   'get /api/v1/provider_notification': 'NotificationController.provider_notification',

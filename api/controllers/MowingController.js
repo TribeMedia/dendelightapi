@@ -5,19 +5,6 @@
 
 module.exports = {
 
-  // Mowing.create()
-  create: function (req, res) {
-    var params = req.params.all();
-    
-    Mowing.create(params).exec(function(err, mowing) {
-      if ((err) || (!mowing)) {
-        return res.badRequest(err);
-      } else {
-        return res.status(201).json({mowing: mowing})
-      }
-    });
-  },
-
   // Mowing.find(). Return 1 object from id
   find: function (req, res) {
     var id = req.param('id');
@@ -84,8 +71,156 @@ module.exports = {
 
   },   
 
+  user_update: function (req, res) {
+    var criteria = {};
+
+    criteria = _.merge({}, req.params.all(), req.body);
+
+    var id = req.param('id');
+
+    if (!id) {
+      return res.badRequest('No id provided.');
+      };
+
+    Mowing.findOne(id, function (err, mowing) {
+      if (err) return res.notFound(err);
+
+      async.series([
+        function (callback) {
+          Provider.findOne(mowing.providerId, function (err, provider) {
+            var index = provider.schedule.indexOf({startTime: mowing.bookTime, endTime: (mowing.bookTime + mowing.estimatedDuration)})
+            provider.schedule.splice(index, 1);
+
+            async.map(provider.schedule,
+              function (slot, callback) {
+                if ( (slot.startTime < mowing.bookTime) && (slot.endTime > mowing.bookTime) ) {
+                  callback(false);
+                } else { 
+                  callback(null);
+                };
+              }, 
+              function (err, results) {
+                if (err) {
+                  var providerId = provider.id;
+
+                  async.series([
+                    function (callback) {
+                      provider.save(function (err) {
+                        if (err) console.log(err);
+                        ProviderNotification.create({providerId: providerId, serviceId: mowing.id, serviceName: 'mowing', mes: 'Is dismissed as time clashed'}, function (err, notification) {
+                          if (err) console.log(err);
+
+                          var nsp = sails.io.of('/provider_' + providernote.providerId);
+                          nsp.on('connection', function(socket) {
+                            socket.emit('notification', providernote);
+                          });
+
+                          callback(null);
+                        })
+                      });
+                    },
+                    function (callback) {
+                      Provider.native(function(err, provider) {
+                        var oldId = ObjectId(providerId);
+                        async.waterfall([
+                          function (callback) {
+                            provider.geoNear(lng, lat, { maxDistance: 10000, query: {'service': serviceName, 'schedule.startTime': {$lt: bookTime}, 'schedule.endTime': {$gt: bookTime}}, distanceMultiplier: 6371, spherical: true, uniqueDocs: true}, function (mongoErr, providers) {
+                              if (mongoErr) return res.notFound(mongoErr);
+
+                              if (providers.results.length === 0) {
+                                callback(null, []);
+                              } else {
+                                async.map(providers.results,
+                                  function (result, callback) {
+                                    callback (result.obj._id);
+                                  },
+                                  function (err, results) {
+                                    if (err) { callback(err); };
+                                    callback(null, results);
+                                  }
+                                  );
+                              };
+                            });
+                          },
+                          function (ids, callback) {
+                            ids = ids.concat(oldId);
+                            provider.geoNear(lng, lat, { limit: 1, maxDistance: 10000, query: {'_id': {$nin: ids},'service': serviceName}, distanceMultiplier: 6371, spherical: true, uniqueDocs: true}, function (mongoErr, providers) {
+                              console.log(providers);
+    
+                              if (providers.results[0]) { 
+                                var estimatedDuration = mowing.estimatedDuration;
+                                id = providers.results[0].obj._id;
+                                endTime = mowing.bookTime + estimatedDuration;
+                                provider.update({_id: id}, {$push: {schedule: {startTime: bookTime, endTime: endTime }}}, function (err) {
+                                  mowing.providerId = id.toString();
+                                  mowing.save(function (err) {
+                                    if (err) callback(err);
+                                  ProviderNotification.create({providerId: id.toString(), serviceId: yardcleanning.id, serviceName: 'yard cleaning', mes: 'Is booked'}, function (err, providernote) {
+                                    if (err) console.log(err);
+                                    var nsp = sails.io.of('/provider_' + providernote.providerId);
+                                    nsp.on('connection', function(socket) {
+                                      socket.emit('notification', providernote);
+                                    });
+
+                                    callback(null, providers);
+
+                                  });
+                                  })
+
+                                });
+                              };
+
+                            })
+                          }
+                        ],
+                        function (err, result) { 
+                          if (err) { callback(err); };
+                          callback(null, result);
+                        })
+                      });
+                    }]
+                  )
+
+                } else {
+
+                  provider.schedule.push({startTime: parseInt(criteria.bookTime), endTime: (parseInt(criteria.bookTime) + mowing.estimatedDuration)})
+                  provider.save(function (err) {
+                    if (err) console.log(err);
+                    ProviderNotification.create({providerId: provider.id, serviceId: mowing.id, serviceName: 'mowing', mes: 'Is rescheduled'}, function (err, providernote) {
+                      if (err) console.log(err);
+
+                      var nsp = sails.io.of('/provider_' + providernote.providerId);
+                      nsp.on('connection', function(socket) {
+                        socket.emit('notification', providernote);
+                      });
+
+                      callback(null);
+                    })
+                  });
+
+                }
+              }
+            );
+
+          });
+        },
+        function (callback) {
+          mowing.bookTime = parseInt(criteria.bookTime);
+          mowing.save(function (err) {
+            if (err) console.log(err);
+            callback(null, mowing);
+          })
+        }],
+        function (err, results) {
+          if (err) return res.badRequest();
+          res.ok({mowing: results[1]});
+        }  
+      )  
+    });
+  },
+  
   // an UPDATE action . Return object in array
-  update: function (req, res) {
+  provider_update: function (req, res) {
     var criteria = {};
 
     criteria = _.merge({}, req.params.all(), req.body);
@@ -114,21 +249,55 @@ module.exports = {
       return res.badRequest('No id provided.');
     };
 
-    Mowing.destroy(id, function (err, mowing) {
+    Mowing.findOne(id, function (err, mowing) {
       if (err) return res.forbidden(err);
+      async.series([
+        function (callback) {
+          Provider.findOne(mowing.providerId, function (err, provider) {
+            var index = provider.schedule.indexOf({startTime: mowing.bookTime, endTime: (mowing.bookTime + mowing.estimatedDuration)});
+            provider.schedule.splice(index, 1);
+            provider.save(function (err) {
+              if (err) console.log(err);
+              ProviderNotification.create({providerId: provider.id, serviceId: mowing.id, serviceName: 'mowing', mes: 'Is canceled'}, function (err, notification) {
+                if (err) console.log(err);
 
-      return res.status(204).json(mowing);
+                var nsp = sails.io.of('/provider_' + providernote.providerId);
+                nsp.on('connection', function(socket) {
+                  socket.emit('notification', providernote);
+                });
+
+                callback(null)
+              })
+            })
+          })
+        },
+        function (callback) {
+          Booking.findOne(mowing.bookingId, function (err, booking) {
+            if (err) console.log(err);
+
+            var index = booking.service.indexOf({name: 'mowing', id: mowing.id});
+            booking.service.splice(index, 1);
+            booking.save(function (err) {
+              if (err) console.log(err);
+
+              callback(null);
+            })
+          })
+        },
+        function (callback) {
+          mowing.remove(function (err) {
+            if (err) console.log(err);
+
+            callback(null, mowing);
+          })
+        }],
+        function (err, results) {
+          if (err) return badRequest(err);
+          return res.status(204).json(mowing);
+        }
+      )  
     });
 
   },
 
-  // Get info
-  get_info: function (req, res) {
-    var size = req.param('size');
-
-    Mowing.find({lowerSize: { '<': size}, upperSize: { '>=': size}}, function (err, mowing) {
-      if (err) return res.notFound();
-      res.ok({mowing: mowing});
-    });
-  }
 };

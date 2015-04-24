@@ -5,19 +5,6 @@
 
 module.exports = {
 
-  // WeedControl.create()
-  create: function (req, res) {
-    var params = req.params.all();
-    
-    WeedControl.create(params).exec(function(err, weedcontrol) {
-      if ((err) || (!weedcontrol)) {
-        return res.badRequest(err);
-      } else {
-        return res.status(201).json({weedcontrol: weedcontrol})
-      }
-    });
-  },
-
   // WeedControl.find(). Return 1 object from id
   find: function (req, res) {
     var id = req.param('id');
@@ -84,8 +71,156 @@ module.exports = {
 
   },   
 
+  user_update: function (req, res) {
+    var criteria = {};
+
+    criteria = _.merge({}, req.params.all(), req.body);
+
+    var id = req.param('id');
+
+    if (!id) {
+      return res.badRequest('No id provided.');
+      };
+
+    WeedControl.findOne(id, function (err, weedcontrol) {
+      if (err) return res.notFound(err);
+
+      async.series([
+        function (callback) {
+          Provider.findOne(weedcontrol.providerId, function (err, provider) {
+            var index = provider.schedule.indexOf({startTime: weedcontrol.bookTime, endTime: (weedcontrol.bookTime + weedcontrol.estimatedDuration)})
+            provider.schedule.splice(index, 1);
+
+            async.map(provider.schedule,
+              function (slot, callback) {
+                if ( (slot.startTime < weedcontrol.bookTime) && (slot.endTime > weedcontrol.bookTime) ) {
+                  callback(false);
+                } else { 
+                  callback(null);
+                };
+              }, 
+              function (err, results) {
+                if (err) {
+                  var providerId = provider.id;
+
+                  async.series([
+                    function (callback) {
+                      provider.save(function (err) {
+                        if (err) console.log(err);
+                        ProviderNotification.create({providerId: providerId, serviceId: weedcontrol.id, serviceName: 'weed control', mes: 'Is dismissed as time clashed'}, function (err, notification) {
+                          if (err) console.log(err);
+
+                          var nsp = sails.io.of('/provider_' + providernote.providerId);
+                          nsp.on('connection', function(socket) {
+                            socket.emit('notification', providernote);
+                          });
+
+                          callback(null);
+                        })
+                      });
+                    },
+                    function (callback) {
+                      Provider.native(function(err, provider) {
+                        var oldId = ObjectId(providerId);
+                        async.waterfall([
+                          function (callback) {
+                            provider.geoNear(lng, lat, { maxDistance: 10000, query: {'service': serviceName, 'schedule.startTime': {$lt: bookTime}, 'schedule.endTime': {$gt: bookTime}}, distanceMultiplier: 6371, spherical: true, uniqueDocs: true}, function (mongoErr, providers) {
+                              if (mongoErr) return res.notFound(mongoErr);
+
+                              if (providers.results.length === 0) {
+                                callback(null, []);
+                              } else {
+                                async.map(providers.results,
+                                  function (result, callback) {
+                                    callback (result.obj._id);
+                                  },
+                                  function (err, results) {
+                                    if (err) { callback(err); };
+                                    callback(null, results);
+                                  }
+                                  );
+                              };
+                            });
+                          },
+                          function (ids, callback) {
+                            ids = ids.concat(oldId);
+                            provider.geoNear(lng, lat, { limit: 1, maxDistance: 10000, query: {'_id': {$nin: ids},'service': serviceName}, distanceMultiplier: 6371, spherical: true, uniqueDocs: true}, function (mongoErr, providers) {
+                              console.log(providers);
+    
+                              if (providers.results[0]) { 
+                                var estimatedDuration = weedcontrol.estimatedDuration;
+                                id = providers.results[0].obj._id;
+                                endTime = weedcontrol.bookTime + estimatedDuration;
+                                provider.update({_id: id}, {$push: {schedule: {startTime: bookTime, endTime: endTime }}}, function (err) {
+                                  weedcontrol.providerId = id.toString();
+                                  weedcontrol.save(function (err) {
+                                    if (err) callback(err);
+                                  ProviderNotification.create({providerId: id.toString(), serviceId: yardcleanning.id, serviceName: 'yard cleaning', mes: 'Is booked'}, function (err, providernote) {
+                                    if (err) console.log(err);
+                                    var nsp = sails.io.of('/provider_' + providernote.providerId);
+                                    nsp.on('connection', function(socket) {
+                                      socket.emit('notification', providernote);
+                                    });
+
+                                    callback(null, providers);
+
+                                  });
+                                  })
+
+                                });
+                              };
+
+                            })
+                          }
+                        ],
+                        function (err, result) { 
+                          if (err) { callback(err); };
+                          callback(null, result);
+                        })
+                      });
+                    }]
+                  )
+
+                } else {
+
+                  provider.schedule.push({startTime: parseInt(criteria.bookTime), endTime: (parseInt(criteria.bookTime) + weedcontrol.estimatedDuration)})
+                  provider.save(function (err) {
+                    if (err) console.log(err);
+                    ProviderNotification.create({providerId: provider.id, serviceId: weedcontrol.id, serviceName: 'weed control', mes: 'Is rescheduled'}, function (err, providernote) {
+                      if (err) console.log(err);
+
+                      var nsp = sails.io.of('/provider_' + providernote.providerId);
+                      nsp.on('connection', function(socket) {
+                        socket.emit('notification', providernote);
+                      });
+
+                      callback(null);
+                    })
+                  });
+
+                }
+              }
+            );
+
+          });
+        },
+        function (callback) {
+          weedcontrol.bookTime = parseInt(criteria.bookTime);
+          weedcontrol.save(function (err) {
+            if (err) console.log(err);
+            callback(null, weedcontrol);
+          })
+        }],
+        function (err, results) {
+          if (err) return res.badRequest();
+          res.ok({weedcontrol: results[1]});
+        }  
+      )  
+    });
+  },
+  
   // an UPDATE action . Return object in array
-  update: function (req, res) {
+  provider_update: function (req, res) {
     var criteria = {};
 
     criteria = _.merge({}, req.params.all(), req.body);
@@ -106,7 +241,6 @@ module.exports = {
     });
   },
 
-  // a DESTROY action. Return 204 status
   destroy: function (req, res) {
     var id = req.param('id');
 
@@ -114,22 +248,55 @@ module.exports = {
       return res.badRequest('No id provided.');
     };
 
-    WeedControl.destroy(id, function (err, weedcontrol) {
+    WeedControl.findOne(id, function (err, weedcontrol) {
       if (err) return res.forbidden(err);
+      async.series([
+        function (callback) {
+          Provider.findOne(weedcontrol.providerId, function (err, provider) {
+            var index = provider.schedule.indexOf({startTime: weedcontrol.bookTime, endTime: (weedcontrol.bookTime + weedcontrol.estimatedDuration)});
+            provider.schedule.splice(index, 1);
+            provider.save(function (err) {
+              if (err) console.log(err);
+              ProviderNotification.create({providerId: provider.id, serviceId: weedcontrol.id, serviceName: 'weed control', mes: 'Is canceled'}, function (err, notification) {
+                if (err) console.log(err);
 
-      return res.status(204).json(weedcontrol);
+                var nsp = sails.io.of('/provider_' + providernote.providerId);
+                nsp.on('connection', function(socket) {
+                  socket.emit('notification', providernote);
+                });
+
+                callback(null)
+              })
+            })
+          })
+        },
+        function (callback) {
+          Booking.findOne(weedcontrol.bookingId, function (err, booking) {
+            if (err) console.log(err);
+
+            var index = booking.service.indexOf({name: 'weed control', id: weedcontrol.id});
+            booking.service.splice(index, 1);
+            booking.save(function (err) {
+              if (err) console.log(err);
+
+              callback(null);
+            })
+          })
+        },
+        function (callback) {
+          weedcontrol.remove(function (err) {
+            if (err) console.log(err);
+
+            callback(null, weedcontrol);
+          })
+        }],
+        function (err, results) {
+          if (err) return badRequest(err);
+          return res.status(204).json(weedcontrol);
+        }
+      )  
     });
 
   },
-
-  // Get info
-  get_info: function (req, res) {
-    var size = req.param('size');
-
-    WeedControl.find({lowerSize: { '<': size}, upperSize: { '>=': size}}, function (err, weedcontrol) {
-      if (err) return res.notFound();
-      res.ok({weedcontrol: weedcontrol});
-    });
-  }
 
 };
