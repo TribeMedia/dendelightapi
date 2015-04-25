@@ -8,6 +8,10 @@
 module.exports = {
 
   attributes: {
+    name: {
+      type: 'string',
+      defaultsTo: 'leaf removal'
+    },
     bookingId: {
       type: 'string',
       required: true

@@ -45,7 +45,7 @@ module.exports = {
                 async.waterfall([
                   function (callback) {
                     provider.geoNear(lng, lat, { maxDistance: 10000, query: {'service': serviceName, 'schedule.startTime': {$lt: bookTime}, 'schedule.endTime': {$gt: bookTime}}, distanceMultiplier: 6371, spherical: true, uniqueDocs: true}, function (mongoErr, providers) {
-                      if (mongoErr) return res.notFound(mongoErr);
+                      if (mongoErr) callback(mongoErr);
 
                       if (providers.results.length === 0) {
                         callback(null, []);
@@ -65,7 +65,9 @@ module.exports = {
                   function (ids, callback) {
                     provider.geoNear(lng, lat, { limit: 1, maxDistance: 10000, query: {'_id': {$nin: ids},'service': serviceName}, distanceMultiplier: 6371, spherical: true, uniqueDocs: true}, function (mongoErr, providers) {
                       console.log(providers);
-                      if (mongoErr) return res.notFound(mongoErr);
+                      if (mongoErr) callback(mongoErr);
+
+                      if (providers.results.length === 0) callback('notFound');
 
                       if (providers.results[0]) { 
                         id = providers.results[0].obj._id;
@@ -88,7 +90,7 @@ module.exports = {
             function (id, callback) {
               console.log(endTime);
 
-              params['providerId'] = id.toString();
+              if (id) { params['providerId'] = id.toString();};
               if (params['services']) { delete params['services'] };
 
               function createService(service) {
@@ -107,34 +109,44 @@ module.exports = {
 
               if (serviceName === 'mowing') {
                 Mowing.create(params, function(err, service) {
-                  console.log(err);
-                  createService(service);
+                  if (err) {callback(err);
+                  } else {
+                    createService(service);
+                  }  
                 });
               } else if (serviceName === 'leaf removal') {
                 LeafRemoval.create(params, function(err, service) {
-                  console.log(err);
-                  createService(service);
+                  if (err) {callback(err);
+                  } else {
+                    createService(service);
+                  }  
                 });
               } else if (serviceName === 'weed control') {
                 WeedControl.create(params, function(err, service) {
-                  console.log(err);
-                  createService(service);
+                  if (err) {callback(err);
+                  } else {
+                    createService(service);
+                  }  
                 });
               } else if (serviceName === 'yard cleaning') {
                 YardCleaning.create(params, function(err, service) {
-                  console.log(err);
-                  createService(service);
+                  if (err) {callback(err);
+                  } else {
+                    createService(service);
+                  }  
                 });
               }
             }
           ], 
           function (err, result) {    
-            if (err) { console.log(err)};
-            callback(null, result);
+            if (err) { callback(err); 
+            } else {
+              callback(null, result);
+            }
           })
         }, 
         function(err, results) {
-          if (err) return notFound();
+          if (err) return res.notFound();
           Booking.create({userId: userId, services: services}, function (err, booking) {
             if (err) return res.badRequest(err);
             return res.ok({booking: booking, services: results});

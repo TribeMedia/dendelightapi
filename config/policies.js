@@ -42,7 +42,7 @@ module.exports.policies = {
   },
   BookingController: {
     create: 'isUser',
-    find: 'isAdmin',
+    find: 'isUser',
     update: 'isUser',
     destroy: 'isUser'
   },
@@ -69,7 +69,7 @@ module.exports.policies = {
     '*': true,
   },
   MowingController: {
-    '*': 'isAdmin',
+    '*': 'isProvider',
     user_update: 'isUser'
   }, 
   LeafRemovalController: {
@@ -83,6 +83,11 @@ module.exports.policies = {
   }, 
   PaymentController: {
     charge: 'isUser'
+  },
+  TaskController: {
+    provider_task: 'isProvider',
+    reject_task: 'isProvider',
+    view_booking: 'isUser'
   },
   NotificationController: {
     provider_notification: 'isProvider',
