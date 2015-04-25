@@ -47,8 +47,10 @@ http://oseam.herokuapp.com
 
 # Get different service information
 
-##### Get service duration (mowing, leaf_removal, weed_control, yard_cleaning) by size
-  * Example GET: /api/v1/duration/mowing?size=20
+##### Get service info (mowing, leaf_removal, weed_control, yard_cleaning)
+  * GET: /api/v1/services
+  * Params: name, type, duration, price
+  * Example GET: /api/v1/services?name=mowing&type=small
 
 # User flow
 
@@ -112,37 +114,103 @@ http://oseam.herokuapp.com
 
 ##### Create booking
 	* POST: /api/v1/booking
-	* Required params: service, size, duration, address, bookTime
+	* Required params: services (array), estimatedSize, address, bookTime (in milliseconds), estimatedDuration (in milliseconds), wage
   * Additional params: postcode, lat, lng, repeat
   * Json response example
 ```json
 {
-    "booking": {
-        "service": "cleaning",
-        "userId": "552f74dd3917d69f0d9800ca",
-        "repeat": null,
-        "completed": false,
-        "createdAt": "2015-04-16T08:45:01.018Z",
-        "updatedAt": "2015-04-16T08:45:01.018Z",
-        "id": "552f768d3917d69f0d9800cb"
+  "booking": {
+    "userId": "553b231b84e52c8222b105db",
+    "services": [
+      {
+        "name": "mowing",
+        "id": "553b232b84e52c8222b105dc"
+      }
+    ],
+    "completed": false,
+    "createdAt": "2015-04-25T05:16:27.506Z",
+    "updatedAt": "2015-04-25T05:16:27.506Z",
+    "id": "553b232b84e52c8222b105de"
+  },
+  "services": [
+    {
+      "estimatedSize": "Medium",
+      "address": "16 Keats Ave, Kingsbury",
+      "bookTime": 1429977804187,
+      "estimatedDuration": 1440000,
+      "wage": 30,
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          145.036478,
+          -37.718564
+        ]
+      },
+      "postcode": 3083,
+      "providerId": "553b22da84e52c8222b105da",
+      "name": "mowing",
+      "repeat": null,
+      "completed": false,
+      "createdAt": "2015-04-25T05:16:27.500Z",
+      "updatedAt": "2015-04-25T05:16:27.500Z",
+      "id": "553b232b84e52c8222b105dc"
     }
+  ]
 }
 ```
-##### Update booking
-	* PUT: /api/v1/booking
+##### View list of previous booking by user
+	* GET: /api/v1/view_booking
+  * Params: completed (true or false)
+```json
+[
+{
+    "userId": "553b231b84e52c8222b105db",
+    "services": [
+      {
+        "name": "mowing",
+        "id": "553b232b84e52c8222b105dc"
+      }
+    ],
+    "completed": false,
+    "createdAt": "2015-04-25T05:16:27.506Z",
+    "updatedAt": "2015-04-25T05:16:27.506Z",
+    "id": "553b232b84e52c8222b105de",
+    "info": [
+      {
+        "estimatedSize": "Medium",
+        "address": "16 Keats Ave, Kingsbury",
+        "bookTime": 1429977804187,
+        "estimatedDuration": 1440000,
+        "wage": 30,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            145.036478,
+            -37.718564
+          ]
+        },
+        "postcode": 3083,
+        "providerId": "553b22da84e52c8222b105da",
+        "name": "mowing",
+        "repeat": null,
+        "completed": false,
+        "createdAt": "2015-04-25T05:16:27.500Z",
+        "updatedAt": "2015-04-25T05:16:27.510Z",
+        "bookingId": "553b232b84e52c8222b105de",
+        "id": "553b232b84e52c8222b105dc"
+      }
+    ]
+  }
+]
+```
+
+##### Update time for tasks in booking (a book may contain many tasks)
+  * PUT: /api/v1/user_mowing/:id
+  * Similarly: user_leaf_removal, user_weed_control, user_yard_cleaning
+  * Params: bookTime (in milliseconds)
 
 ##### Destroy booking
-	* DELETE: /api/v1/booking/:id
-
-##### View list of previous booking by user
-	* GET: /api/v1/user_booking_info
-
-##### View list of quotes for booking
-	* GET: /api/v1/user_quote_info
-
-##### Accept particular quote with quoteId
-	* POST: /api/v1/user_quote_accept/:id?
-	* Params: bookingId, providerId
+  * DELETE: /api/v1/booking/:id
 
 ##### Logout
 	* GET: /api/v1/logout
@@ -152,20 +220,34 @@ http://oseam.herokuapp.com
 
 ##### Register account
   * POST: /api/v1/provider
-  * Required params: email, password, firstName, lastName, abn, address
+  * Required params: email, password, firstName, lastName, abn, address, service (in array), 
   * Additional params: businessName, postcode, lat, lng, service
   * Json response example
 ```json
 {
   "provider": {
-    "email": "hello@gmail.com",
-    "password": "$2a$10$VJFSBiYf5IRbZN/iml4Hbux8lJ6By1kHQ0xll9KLUK4lcVNEpCfVO",
-    "firstName": "Tom",
-    "lastName": "Ngo",
-    "abn": "xxx",
-    "createdAt": "2015-04-16T09:44:58.650Z",
-    "updatedAt": "2015-04-16T09:44:58.650Z",
-    "id": "552f849a3917d69f0d9800cc"
+    "email": "xxx@gmail.com",
+    "password": "$2a$10$9ilqAUVldTFUjIEF2nJBOOOIclaEUREtLvP9FvFAO9bc8K75aZ9iu",
+    "firstName": "xxx",
+    "lastName": "xxx",
+    "abn": "312132",
+    "address": "16 Keats Avenue, Kingsbury",
+    "service": [
+        "mowing"
+    ],
+    "location": {
+        "type": "Point",
+        "coordinates": [
+            145.036478,
+            -37.718564
+        ]
+    },
+    "postcode": "3083",
+    "verified": false,
+    "stripe_account": false,
+    "createdAt": "2015-04-25T05:15:06.945Z",
+    "updatedAt": "2015-04-25T05:15:06.945Z",
+    "id": "553b22da84e52c8222b105da"
   }
 }
 ```
@@ -197,21 +279,47 @@ http://oseam.herokuapp.com
 ##### Destroy account
   * DELETE: /api/v1/provider/:id
 
-##### Create quote
-  * POST: /api/v1/quote
-  * Parameters: userId, service, price
-
-##### Update quote
-  * PUT: /api/v1/quote
-
-##### Destroy quote
-  * DELETE: /api/v1/quote/:id
-
 ##### View queued tasks by provider
   * GET: /api/v1/provider_task
 
-##### View queued quotes by provider
-  * GET: /api/v1/provider_quote_active
+##### View tasks
+  * GET: /api/v1/provider_task
+  * Params: completed (true or false)
+```json
+[
+  {
+    "estimatedSize": "Medium",
+    "address": "16 Keats Ave, Kingsbury",
+    "bookTime": 1429977804187,
+    "estimatedDuration": 1440000,
+    "wage": 30,
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        145.036478,
+        -37.718564
+      ]
+    },
+    "postcode": 3083,
+    "providerId": "553b22da84e52c8222b105da",
+    "name": "mowing",
+    "repeat": null,
+    "completed": false,
+    "createdAt": "2015-04-25T05:16:27.500Z",
+    "updatedAt": "2015-04-25T05:16:27.510Z",
+    "bookingId": "553b232b84e52c8222b105de",
+    "id": "553b232b84e52c8222b105dc"
+  }
+]
+```
+
+##### Reject task
+  * PUT: /api/v1/reject_task/:id
+
+##### Update task
+  * PUT: /api/v1/provider_mowing/:id
+  * Similarly: provider_leaf_removal, provider_weed_control, provider_yard_cleaning
+  * Params: realSize, startTime, endTime, completed
 
 ##### Logout
   * GET: /api/v1/logout
@@ -227,6 +335,7 @@ socket.on('notification', function(data) {
 ```
 
 # Admin flow
+
 ##### Admin Login
   * POST: /api/administrator
   * Parameters: email, password
@@ -250,14 +359,6 @@ socket.on('notification', function(data) {
 ##### Find all bookings
   * GET: /api/v1/booking
 
-##### Find quote by id
-  * GET: /api/v1/quote/:id
-
-##### Find all quotes
-  * GET: /api/v1/quote
-
 ##### CRUD different services (mowing, leaf_removal, weed_control, yard_cleaning)
   * GET: /api/v1/mowing
-  * POST: /api/v1/mowing (params: size, duration)
   * PUT: /api/v1/mowing
-  * DELETE: /api/v1/mowing

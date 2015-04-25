@@ -82,7 +82,7 @@ module.exports.routes = {
   // Find booking
   'get /api/v1/booking/:id?': 'BookingController.find',
   // Update booking
-  'put /api/v1/booking/:id?': 'BookingController.update',
+  // 'put /api/v1/booking/:id?': 'BookingController.update',
   // Delete booking
   'delete /api/v1/booking/:id?': 'BookingController.destroy',
 
@@ -95,17 +95,8 @@ module.exports.routes = {
   // Delete quote
   'delete /api/v1/quote/:id?': 'QuoteController.destroy',
 
-  // View booking info for user
-  'get /api/v1/user_booking_info': 'TransactionController.user_booking_info',
-  // View quote info for user
-  'get /api/v1/user_quote_info': 'TransactionController.user_quote_info',
-  // Accept quote 
-  'post /api/v1/user_quote_accept/:id?': 'TransactionController.user_quote_accept',
-  // View task for provider
-  'get /api/v1/provider_task': 'TransactionController.provider_task',
-  // View quote in queue for provider
-  'get /api/v1/provider_quote_active': 'TransactionController.provider_quote_active',
-
+  // Fetch service
+  'get /api/v1/services': 'ServiceController.fetch',
   // Create service
   'post /api/v1/service': 'ServiceController.create',
   // Find service
@@ -115,8 +106,6 @@ module.exports.routes = {
   // Delete service
   'delete /api/v1/service/:id?': 'ServiceController.destroy',
   
-  // Create Mowing
-  'post /api/v1/mowing': 'MowingController.create',
   // Find Mowing
   'get /api/v1/mowing/:id?': 'MowingController.find',
   // Update Mowing for user
@@ -127,8 +116,6 @@ module.exports.routes = {
   'delete /api/v1/mowing/:id?': 'MowingController.destroy',
   // Estimate mowing duration
 
-  // Create LeafRemoval
-  'post /api/v1/leaf_removal': 'LeafRemovalController.create',
   // Find LeafRemoval
   'get /api/v1/leaf_removal/:id?': 'LeafRemovalController.find',
   // Update LeafRemoval
@@ -138,8 +125,6 @@ module.exports.routes = {
   // Delete LeafRemoval
   'delete /api/v1/leaf_removal/:id?': 'LeafRemovalController.destroy',
 
-  // Create WeedControl
-  'post /api/v1/weed_control': 'WeedControlController.create',
   // Find WeedControl
   'get /api/v1/weed_control/:id?': 'WeedControlController.find',
   // Update WeedControl
@@ -149,8 +134,6 @@ module.exports.routes = {
   // Delete WeedControl
   'delete /api/v1/weed_control/:id?': 'WeedControlController.destroy',
 
-  // Create YardCleaning
-  'post /api/v1/yard_cleaning': 'YardCleaningController.create',
   // Find YardCleaning
   'get /api/v1/yard_cleaning/:id?': 'YardCleaningController.find',
   // Update YardCleaning

@@ -223,26 +223,26 @@ module.exports = {
   },   
 
   // an UPDATE action . Return object in array
-  update: function (req, res) {
-    var criteria = {};
+  // update: function (req, res) {
+  //   var criteria = {};
 
-    criteria = _.merge({}, req.params.all(), req.body);
+  //   criteria = _.merge({}, req.params.all(), req.body);
 
-    var id = req.param('id');
+  //   var id = req.param('id');
 
-    if (!id) {
-      return res.badRequest('No id provided.');
-      };
+  //   if (!id) {
+  //     return res.badRequest('No id provided.');
+  //     };
 
-    Booking.update({id: id, userId: req.user.id}, criteria, function (err, booking) {
-      if(booking.length === 0) return res.notFound();
+  //   Booking.update({id: id, userId: req.user.id}, criteria, function (err, booking) {
+  //     if(booking.length === 0) return res.notFound();
 
-      if (err) return res.badRequest(err);
+  //     if (err) return res.badRequest(err);
 
-      res.ok({booking: booking});
+  //     res.ok({booking: booking});
 
-    });
-  },
+  //   });
+  // },
 
   // a DESTROY action. Return 204 status
   destroy: function (req, res) {

@@ -5,6 +5,15 @@
 
 module.exports = {
 
+  fetch: function (req, res) {
+    var params = req.params.all();
+
+    Service.find(params, function (err, services) {
+      if (err) return res.badRequest(err);
+      res.ok(services);
+    });
+  },
+
   // Service.create()
   create: function (req, res) {
     var params = req.params.all();

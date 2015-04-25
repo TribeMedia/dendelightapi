@@ -46,6 +46,7 @@ module.exports.policies = {
     destroy: 'isUser'
   },
   ServiceController: {
+    fetch: true,
     create: 'isAdmin',
     find: 'isAdmin',
     update: 'isAdmin',
@@ -55,7 +56,7 @@ module.exports.policies = {
     '*': true,
   },
   MowingController: {
-    '*': 'isProvider',
+    '*': 'isAdmin',
     user_update: 'isUser',
     provider_update: 'isProvider'
   }, 
@@ -71,11 +72,11 @@ module.exports.policies = {
   }, 
   YardCleaningController: {
     '*': 'isAdmin',
+    user_update: 'isUser',
+    provider_update: 'isProvider'
   }, 
   PaymentController: {
     charge: 'isUser'
-    user_update: 'isUser',
-    provider_update: 'isProvider'
   },
   TaskController: {
     provider_task: 'isProvider',

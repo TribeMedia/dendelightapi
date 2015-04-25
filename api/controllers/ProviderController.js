@@ -17,7 +17,6 @@ module.exports = {
             if (data) {
               params['location'] = {type: 'Point', coordinates: [data.results[0].geometry.location.lng, data.results[0].geometry.location.lat]};
               params['postcode'] = data.results[0].address_components[5].long_name;
-              params['schedule'] = [{startTime: parseInt(params.startTime), endTime: parseInt(params.endTime), meanTime: ((parseInt(params.startTime) + parseInt(params.endTime))*0.5)}];
               callback(null, params);
             }
           });
