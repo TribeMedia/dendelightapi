@@ -1,16 +1,34 @@
 # oseam Application
-API
+* <a href="#requirements">Requirements</a>
+* <a href="#how-to-install-dependencies">How to install & run</a>
+* <a href="#online-api-test">Online API test</a>
+* <a href="#location">Location</a>
+* <a href="#get-different-service-information">Service Information</a>
+* <a href="#user-flow">User Flow</a>
+* <a href="#provider-flow">Provider Flow</a>
+* <a href="#admin-flow">Admin Flow</a>
 
-# How to install dependencies
-Installing dependencies is simply running ```npm install``` in Terminal/Powershell
+# Requirements
+* <a href="https://www.mongodb.org/downloads">Mongodb</a>
+* <a href="https://nodejs.org/">Node.js</a> or <a href="https://iojs.org/en/index.html">io.js</a>
 
-# Start server
+# How to Install & Run
+Open Terminal/Powershell & CD into where oseam-app is located & Run these commands
 ```
-sails lift
+$ sudo npm install
 ```
+In a new terminal, Run This command *(Required for Database)*
 ```
-To access authorize location, set Authorization header with *'Bearer' + token* .
+$ mongod
 ```
+Then in the other terminal (where you installed the dependencies) Run this command
+```
+$ npm start
+```
+* You might not need to run as Super user (sudo)
+* Don't include ```$``` into your commands
+* To access authorize location, set Authorization header with *'Bearer' + token* .
+
 # Online API test
 http://oseam.herokuapp.com
 
@@ -32,7 +50,7 @@ http://oseam.herokuapp.com
 ##### Get service duration (mowing, leaf_removal, weed_control, yard_cleaning) by size
   * Example GET: /api/v1/duration/mowing?size=20
 
-# User flow 
+# User flow
 
 ##### Register account
   * POST: /api/v1/user
@@ -71,7 +89,7 @@ http://oseam.herokuapp.com
 	* Automatic callback at: /api/v1/auth/facebook/callback
   * Json response example
 ```json
-{	
+{
   "success": true,
   "user": {
   	"apiProvider": "Facebook",
@@ -243,4 +261,3 @@ socket.on('notification', function(data) {
   * POST: /api/v1/mowing (params: size, duration)
   * PUT: /api/v1/mowing
   * DELETE: /api/v1/mowing
-
