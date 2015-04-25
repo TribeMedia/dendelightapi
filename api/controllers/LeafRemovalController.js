@@ -107,7 +107,7 @@ module.exports = {
                     function (callback) {
                       provider.save(function (err) {
                         if (err) console.log(err);
-                        ProviderNotification.create({providerId: providerId, serviceId: leafremoval.id, serviceName: 'leaf removal', mes: 'Is dismissed as time clashed'}, function (err, notification) {
+                        ProviderNotification.create({providerId: providerId, serviceId: leafremoval.id, serviceName: 'leaf_removal', mes: 'Is dismissed as time clashed'}, function (err, notification) {
                           if (err) console.log(err);
 
                           var nsp = sails.io.of('/provider_' + providernote.providerId);
@@ -186,7 +186,7 @@ module.exports = {
                   provider.schedule.push({startTime: parseInt(criteria.bookTime), endTime: (parseInt(criteria.bookTime) + leafremoval.estimatedDuration)})
                   provider.save(function (err) {
                     if (err) console.log(err);
-                    ProviderNotification.create({providerId: provider.id, serviceId: leafremoval.id, serviceName: 'leaf removal', mes: 'Is rescheduled'}, function (err, providernote) {
+                    ProviderNotification.create({providerId: provider.id, serviceId: leafremoval.id, serviceName: 'leaf_removal', mes: 'Is rescheduled'}, function (err, providernote) {
                       if (err) console.log(err);
 
                       var nsp = sails.io.of('/provider_' + providernote.providerId);
@@ -257,7 +257,7 @@ module.exports = {
             provider.schedule.splice(index, 1);
             provider.save(function (err) {
               if (err) console.log(err);
-              ProviderNotification.create({providerId: provider.id, serviceId: leafremoval.id, serviceName: 'leaf removal', mes: 'Is canceled'}, function (err, notification) {
+              ProviderNotification.create({providerId: provider.id, serviceId: leafremoval.id, serviceName: 'leaf_removal', mes: 'Is canceled'}, function (err, notification) {
                 if (err) console.log(err);
 
                 var nsp = sails.io.of('/provider_' + providernote.providerId);
@@ -274,7 +274,7 @@ module.exports = {
           Booking.findOne(leafremoval.bookingId, function (err, booking) {
             if (err) console.log(err);
 
-            var index = booking.service.indexOf({name: 'leaf removal', id: leafremoval.id});
+            var index = booking.service.indexOf({name: 'leaf_removal', id: leafremoval.id});
             booking.service.splice(index, 1);
             booking.save(function (err) {
               if (err) console.log(err);

@@ -107,7 +107,7 @@ module.exports = {
                     function (callback) {
                       provider.save(function (err) {
                         if (err) console.log(err);
-                        ProviderNotification.create({providerId: providerId, serviceId: yardcleaning.id, serviceName: 'yard cleaning', mes: 'Is dismissed as time clashed'}, function (err, notification) {
+                        ProviderNotification.create({providerId: providerId, serviceId: yardcleaning.id, serviceName: 'yard_cleaning', mes: 'Is dismissed as time clashed'}, function (err, notification) {
                           if (err) console.log(err);
 
                           var nsp = sails.io.of('/provider_' + providernote.providerId);
@@ -155,7 +155,7 @@ module.exports = {
                                   yardcleanning.providerId = id.toString();
                                   yardcleanning.save(function (err) {
                                     if (err) callback(err);
-                                  ProviderNotification.create({providerId: id.toString(), serviceId: yardcleanning.id, serviceName: 'yard cleaning', mes: 'Is booked'}, function (err, providernote) {
+                                  ProviderNotification.create({providerId: id.toString(), serviceId: yardcleanning.id, serviceName: 'yard_cleaning', mes: 'Is booked'}, function (err, providernote) {
                                     if (err) console.log(err);
                                     var nsp = sails.io.of('/provider_' + providernote.providerId);
                                     nsp.on('connection', function(socket) {
@@ -186,7 +186,7 @@ module.exports = {
                   provider.schedule.push({startTime: parseInt(criteria.bookTime), endTime: (parseInt(criteria.bookTime) + yardcleanning.estimatedDuration)})
                   provider.save(function (err) {
                     if (err) console.log(err);
-                    ProviderNotification.create({providerId: provider.id, serviceId: yardcleanning.id, serviceName: 'yard cleaning', mes: 'Is rescheduled'}, function (err, providernote) {
+                    ProviderNotification.create({providerId: provider.id, serviceId: yardcleanning.id, serviceName: 'yard_cleaning', mes: 'Is rescheduled'}, function (err, providernote) {
                       if (err) console.log(err);
 
                       var nsp = sails.io.of('/provider_' + providernote.providerId);
@@ -257,7 +257,7 @@ module.exports = {
             provider.schedule.splice(index, 1);
             provider.save(function (err) {
               if (err) console.log(err);
-              ProviderNotification.create({providerId: provider.id, serviceId: yardcleaning.id, serviceName: 'yard cleaning', mes: 'Is canceled'}, function (err, notification) {
+              ProviderNotification.create({providerId: provider.id, serviceId: yardcleaning.id, serviceName: 'yard_cleaning', mes: 'Is canceled'}, function (err, notification) {
                 if (err) console.log(err);
 
                 var nsp = sails.io.of('/provider_' + providernote.providerId);
@@ -274,7 +274,7 @@ module.exports = {
           Booking.findOne(yardcleaning.bookingId, function (err, booking) {
             if (err) console.log(err);
 
-            var index = booking.service.indexOf({name: 'yard cleaning', id: yardcleaning.id});
+            var index = booking.service.indexOf({name: 'yard_cleaning', id: yardcleaning.id});
             booking.service.splice(index, 1);
             booking.save(function (err) {
               if (err) console.log(err);

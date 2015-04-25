@@ -114,21 +114,21 @@ module.exports = {
                     createService(service);
                   }  
                 });
-              } else if (serviceName === 'leaf removal') {
+              } else if (serviceName === 'leaf_removal') {
                 LeafRemoval.create(params, function(err, service) {
                   if (err) {callback(err);
                   } else {
                     createService(service);
                   }  
                 });
-              } else if (serviceName === 'weed control') {
+              } else if (serviceName === 'weed_control') {
                 WeedControl.create(params, function(err, service) {
                   if (err) {callback(err);
                   } else {
                     createService(service);
                   }  
                 });
-              } else if (serviceName === 'yard cleaning') {
+              } else if (serviceName === 'yard_cleaning') {
                 YardCleaning.create(params, function(err, service) {
                   if (err) {callback(err);
                   } else {
@@ -306,15 +306,15 @@ module.exports = {
               Mowing.findOne(service.id, function(err, service) {
                 if (serviceDelete(err, service) === true) { callback(null) } else { callback(err); };
               });
-            } else if (service.name === 'leaf removal') {
+            } else if (service.name === 'leaf_removal') {
               LeafRemoval.findOne(service.id, function(err, service) {
                 if (serviceDelete(err, service) === true) { callback(null) } else { callback(err); };
               });
-            } else if (service.name === 'weed control') {
+            } else if (service.name === 'weed_control') {
               WeedControl.findOne(service.id, function(err, service) {
                 if (serviceDelete(err, service) === true) { callback(null) } else { callback(err); };
               });
-            } else if (service.name === 'yard cleaning') {
+            } else if (service.name === 'yard_cleaning') {
               YardCleaning.findOne(service.id, function(err, service) {
                 if (serviceDelete(err, service) === true) { callback(null) } else { callback(err); };
               });

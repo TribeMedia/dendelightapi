@@ -10,7 +10,7 @@ module.exports = {
   attributes: {
     name: {
       type: 'string',
-      defaultsTo: 'weed control'
+      defaultsTo: 'weed_control'
     },
     bookingId: {
       type: 'string',

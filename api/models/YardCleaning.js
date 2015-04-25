@@ -10,7 +10,7 @@ module.exports = {
   attributes: {
     name: {
       type: 'string',
-      defaultsTo: 'yard cleaning'
+      defaultsTo: 'yard_cleaning'
     },
     bookingId: {
       type: 'string',

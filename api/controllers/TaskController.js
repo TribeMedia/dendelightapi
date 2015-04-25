@@ -28,7 +28,7 @@ module.exports = {
       	  }
         },
         function (callback) {
-      	  if (provider.service.indexOf('leaf removal') >= 0) {
+      	  if (provider.service.indexOf('leaf_removal') >= 0) {
       	  	LeafRemoval.find(params, function (err, leafremovals) {
   	  		  if (err) {
   	  		  	callback(false);
@@ -41,7 +41,7 @@ module.exports = {
       	  }
         },
         function (callback) {
-      	  if (provider.service.indexOf('weed control') >= 0) {
+      	  if (provider.service.indexOf('weed_control') >= 0) {
       	  	WeedControl.find(params, function (err, weedcontrols) {
   	  		  if (err) {
   	  		  	callback(false);
@@ -54,7 +54,7 @@ module.exports = {
       	  }
         },
         function (callback) {
-      	  if (provider.service.indexOf('yard cleaning') >= 0) {
+      	  if (provider.service.indexOf('yard_cleaning') >= 0) {
       	  	YardCleaning.find(params, function (err, yardcleanings) {
   	  		  if (err) {
   	  		  	callback(false);
@@ -97,17 +97,17 @@ module.exports = {
 	  	if (err) return res.notFound(err);
   		updateTask(task);
   	  })
-    }  else if (params.taskName === 'leaf removal') {
+    }  else if (params.taskName === 'leaf_removal') {
   	  LeafRemoval.findOne(taskId, function (err, task) {
 	  	if (err) return res.notFound(err);
   		updateTask(task);
   	  })
-    }  else if (params.taskName === 'weed control') {
+    }  else if (params.taskName === 'weed_control') {
   	  WeedControl.findOne(taskId, function (err, task) {
 	  	if (err) return res.notFound(err);
   		updateTask(task);
   	  })
-    }  else if (params.taskName === 'yard cleaning') {
+    }  else if (params.taskName === 'yard_cleaning') {
   	  YardCleaning.findOne(taskId, function (err, task) {
 	  	if (err) return res.notFound(err);
   		updateTask(task);
@@ -241,17 +241,17 @@ module.exports = {
   	  	  	  	  if (err) callback(err);
   	  	  	  	  callback(null, mowing);
   	  	  	  	})
-  	  	  	  }	else if (service.name === 'leaf removal') {
+  	  	  	  }	else if (service.name === 'leaf_removal') {
   	  	  	  	LeafRemoval.findOne(service.id, function (err, leafremoval) {
   	  	  	  	  if (err) callback(err);
   	  	  	  	  callback(null, leafremoval);
   	  	  	  	})
-  	  	  	  } else if (service.name === 'weed control') {
+  	  	  	  } else if (service.name === 'weed_control') {
   	  	  	  	WeedControl.findOne(service.id, function (err, weedcontrol) {
   	  	  	  	  if (err) callback(err);
   	  	  	  	  callback(null, weedcontrol);
   	  	  	  	})
-  	  	  	  } else if (service.name === 'yard cleaning') {
+  	  	  	  } else if (service.name === 'yard_cleaning') {
   	  	  	  	YardCleaning.findOne(service.id, function (err, yardcleaning) {
   	  	  	  	  if (err) callback(err);
   	  	  	  	  callback(null, yardcleaning);

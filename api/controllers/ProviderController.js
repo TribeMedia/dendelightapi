@@ -5,29 +5,6 @@
 
 module.exports = {
 
-  test: function (req, res) {
-    var params = req.params.all();
-    var lng = parseFloat(params.lng);
-    var lat = parseFloat(params.lat);
-    var serviceName = params.service;
-    var bookTime = parseInt(params.bookTime);
-    var duration = parseInt(params.duration) * 3600000;
-    console.log(duration);
-  
-    Provider.native(function(err, provider) {
-      provider.geoNear(lng, lat, {limit: 1, maxDistance: 10000, query: {'service': serviceName, $or: [{'schedule.startTime': {$not: {$gt: bookTime}}}, {'schedule.endTime': {$not: {$lt: bookTime}}}]}, distanceMultiplier: 6371, spherical: true, uniqueDocs: true}, function (mongoErr, providers) {
-        if (mongoErr) return res.notFound(mongoErr);
-        if (providers.results[0]) { 
-          var id = providers.results[0].obj._id;
-          var endTime = bookTime + duration;
-          provider.update({_id: id}, {$push: {schedule: {startTime: bookTime, endTime: endTime }}}, function (err) {
-          });
-        }
-        return res.ok(providers);
-      });
-    })  
-  },
-
   // Provider.create()
   create: function (req, res) {
     var params = req.params.all();

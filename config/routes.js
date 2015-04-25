@@ -60,7 +60,7 @@ module.exports.routes = {
   'delete /api/v1/provider/:id?': 'ProviderController.destroy',
   // Provider confirm
   'put /api/v1/provider_confirm/:id?': 'AuthController.provider_confirm',
-  'get /api/v1/providers': 'ProviderController.test',
+
   // Admin login
   'post /api/administrator': 'AuthController.admin_login',
   // User login
@@ -119,8 +119,10 @@ module.exports.routes = {
   'post /api/v1/mowing': 'MowingController.create',
   // Find Mowing
   'get /api/v1/mowing/:id?': 'MowingController.find',
-  // Update Mowing
+  // Update Mowing for user
   'put /api/v1/user_mowing/:id?': 'MowingController.user_update',
+  // Update Mowing for provider
+  'put /api/v1/provider_mowing/:id?': 'MowingController.provider_update',
   // Delete Mowing
   'delete /api/v1/mowing/:id?': 'MowingController.destroy',
   // Estimate mowing duration
@@ -131,9 +133,10 @@ module.exports.routes = {
   'get /api/v1/leaf_removal/:id?': 'LeafRemovalController.find',
   // Update LeafRemoval
   'put /api/v1/user_leaf_removal/:id?': 'LeafRemovalController.user_update',
+  // Update LeafRemoval
+  'put /api/v1/provider_leaf_removal/:id?': 'LeafRemovalController.provider_update',
   // Delete LeafRemoval
   'delete /api/v1/leaf_removal/:id?': 'LeafRemovalController.destroy',
-  // Estimate LeafRemoval duration
 
   // Create WeedControl
   'post /api/v1/weed_control': 'WeedControlController.create',
@@ -141,9 +144,10 @@ module.exports.routes = {
   'get /api/v1/weed_control/:id?': 'WeedControlController.find',
   // Update WeedControl
   'put /api/v1/user_weed_control/:id?': 'WeedControlController.user_update',
+  // Update WeedControl
+  'put /api/v1/provider_weed_control/:id?': 'WeedControlController.provider_update',
   // Delete WeedControl
   'delete /api/v1/weed_control/:id?': 'WeedControlController.destroy',
-  // Estimate WeedControl duration
 
   // Create YardCleaning
   'post /api/v1/yard_cleaning': 'YardCleaningController.create',
@@ -151,9 +155,10 @@ module.exports.routes = {
   'get /api/v1/yard_cleaning/:id?': 'YardCleaningController.find',
   // Update YardCleaning
   'put /api/v1/user_yard_cleaning/:id?': 'YardCleaningController.user_update',
+  // Update YardCleaning
+  'put /api/v1/provider_yard_cleaning/:id?': 'YardCleaningController.provider_update',
   // Delete YardCleaning
   'delete /api/v1/yard_cleaning/:id?': 'YardCleaningController.destroy',
-  // Estimate YardCleaning duration
 
   // View notification
   'get /api/v1/provider_notification': 'NotificationController.provider_notification',

@@ -28,19 +28,19 @@ module.exports = {
   },
   seedData:[
       {
-        name:'Mowing',
+        name:'mowing',
         type: 'small',
         duration: 2,
         price: 50
       },
       {
-        name:'Mowing',
+        name:'mowing',
         type: 'medium',
         duration: 3,
         price: 75
       },
       {
-        name:'Mowing',
+        name:'mowing',
         type: 'large',
         duration: 4,
         price: 100

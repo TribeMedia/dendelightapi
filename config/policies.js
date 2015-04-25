@@ -34,7 +34,6 @@ module.exports.policies = {
     destroy: 'isUser'
   },
   ProviderController: {
-    test: true,
     create: true,
     find: 'isProvider',
     update: 'isProvider',
@@ -42,15 +41,9 @@ module.exports.policies = {
   },
   BookingController: {
     create: 'isUser',
-    find: 'isUser',
+    find: 'isAdmin',
     update: 'isUser',
     destroy: 'isUser'
-  },
-  QuoteController: {
-    create: 'isProvider',
-    find: 'isAdmin',
-    update: 'isProvider',
-    destroy: 'isProvider'
   },
   ServiceController: {
     create: 'isAdmin',
@@ -58,31 +51,31 @@ module.exports.policies = {
     update: 'isAdmin',
     destroy: 'isAdmin'
   },
-  TransactionController: {
-    user_booking_info: 'isUser',
-    user_quote_info: 'isUser',
-    user_quote_accept: 'isUser',
-    provider_task: 'isProvider',
-    provider_quote_active: 'isProvider'
-  },
   AuthController: {
     '*': true,
   },
   MowingController: {
     '*': 'isProvider',
-    user_update: 'isUser'
+    user_update: 'isUser',
+    provider_update: 'isProvider'
   }, 
   LeafRemovalController: {
     '*': 'isAdmin',
+    user_update: 'isUser',
+    provider_update: 'isProvider'
   }, 
   WeedControlController: {
     '*': 'isAdmin',
+    user_update: 'isUser',
+    provider_update: 'isProvider'
   }, 
   YardCleaningController: {
     '*': 'isAdmin',
   }, 
   PaymentController: {
     charge: 'isUser'
+    user_update: 'isUser',
+    provider_update: 'isProvider'
   },
   TaskController: {
     provider_task: 'isProvider',
