@@ -25,5 +25,5 @@ module.exports.bootstrap = function(cb) {
       });
    }
 
- async.parallel([geoStuff], cb)
+ async.parallel([geoStuff, Service.seed], cb)
 };
