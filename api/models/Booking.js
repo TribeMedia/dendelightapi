@@ -25,32 +25,5 @@ module.exports = {
     }
   },
 
-  afterCreate: function (attrs, next) {
-    async.map(attrs.services, function (service, callback) {
-
-      if (service.name === 'mowing') {
-        Mowing.update(service.id, {bookingId: attrs.id}, function(err, service) {
-          callback(null, true);
-        });
-      } else if (service.name === 'leaf_removal') {
-        LeafRemoval.update(service.id, {bookingId: attrs.id}, function(err, service) {
-          callback(null, true);
-        });
-      } else if (service.name === 'weed_control') {
-        WeedControl.update(service.id, {bookingId: attrs.id}, function(err, service) {
-          callback(null, true);
-        });
-      } else if (service.name === 'yard_cleaning') {
-        YardCleaning.update(service.id, {bookingId: attrs.id}, function(err, service) {
-          callback(null, true);
-        });
-      }
-
-    }, function (err, results) {
-      if (err) { console.log(err)};
-      next();
-    });
-  },
-
 };
 

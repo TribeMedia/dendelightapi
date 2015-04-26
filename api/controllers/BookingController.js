@@ -10,150 +10,98 @@ module.exports = {
     var userId = req.user.id;
     var services = [];
     var params = req.params.all();
+    if( typeof params.services === 'string' ) {
+        params['services'] = [ params.services ];
+    };
+    var lat;
+    var lng;
+    var createdService;
+    var serviceName;                  
+    var bookTime = parseInt(params.bookTime);
+    var estimatedDuration = parseInt(params.estimatedDuration);
+    var endTime = bookTime + estimatedDuration;
 
-    async.waterfall([
-      function (callback) {
+    // Convert address to lat, lng & point
+    Locations.getLocation(params.address)
+      .then(function(result) {
+        lng = result.lng;
+        lat = result.lat;
+        params['location'] = result.loc;
+        params['postcode'] = result.postcode;
+      // Map array of service and search provider for each
+        return params.services.reduce(function(sequence, service) {          
+          return sequence.then(function() {            
+            serviceName = service;
+            // Search array of providers who can't provide service
+            if (serviceName !== null) return Queries.searchProviderBusy(lng, lat, service, bookTime);
 
-        if ((params.address) && (!params.lat)) {
-          var geocoder = require('geocoder');
-          geocoder.geocode(params.address, function ( err, data ) {
-            if (data) {
-              params['location'] = {'type': 'Point', 'coordinates': [data.results[0].geometry.location.lng, data.results[0].geometry.location.lat]};
-              lat = data.results[0].geometry.location.lat;
-              lng = data.results[0].geometry.location.lng;
-              params['postcode'] = data.results[0].address_components[5].long_name;
-              callback(null, lat, lng);
+          })
+          .catch(function(err) { console.log(err);})
+          .then(function(ids) {
+            // Search nearest provider who can provide  service
+            return Queries.searchProviderFree(lng, lat, serviceName, bookTime, ids);
+          })
+          .catch(function(err) { console.log(err);})
+          .then(function(providers) {
+            if (providers.results[0]) { 
+              id = providers.results[0].obj._id;
+              // Update provider schedule
+              return Queries.updateFreeProvider(id, bookTime, endTime)                   
             }
-          });
-        };
-      },
-      function (lat, lng, callback) { 
-        if( typeof params.services === 'string' ) {
-            params['services'] = [ params.services ];
-        };
-        async.map(params.services, function (service, callback) {
-          var serviceName = service;
-          var bookTime = parseInt(params.bookTime);
-          var estimatedDuration = parseInt(params.estimatedDuration);
-          var endTime = bookTime + estimatedDuration;
-          var createdService;
-          console.log(service);      
-          async.waterfall([
-            function (callback) {
-              console.log(serviceName);
-              Provider.native(function(err, provider) {
-                async.waterfall([
-                  function (callback) {
-                    provider.geoNear(lng, lat, { maxDistance: 10000, query: {'service': serviceName, 'schedule.startTime': {$lt: bookTime}, 'schedule.endTime': {$gt: bookTime}}, distanceMultiplier: 6371, spherical: true, uniqueDocs: true}, function (mongoErr, providers) {
-                      if (mongoErr) callback(mongoErr);
+          })
+          .catch(function(err) { console.log(err);})
+          .then(function(provider) {
+            // Delete services params to create individual service like mowing...
+            if (params['services']) { delete params['services'] };
+            params['providerId'] = id.toString();
 
-                      if (providers.results.length === 0) {
-                        callback(null, []);
-                      } else {
-                        async.map(providers.results,
-                          function (result, callback) {
-                            callback (result.obj._id);
-                          },
-                          function (err, results) {
-                            if (err) { callback(err); };
-                            callback(null, results);
-                          }
-                          );
-                      };
-                    });
-                  },
-                  function (ids, callback) {
-                    provider.geoNear(lng, lat, { limit: 1, maxDistance: 10000, query: {'_id': {$nin: ids},'service': serviceName}, distanceMultiplier: 6371, spherical: true, uniqueDocs: true}, function (mongoErr, providers) {
-                      console.log(providers);
-                      if (mongoErr) callback(mongoErr);
+            // Loop through service and create associated service
+            if (serviceName === 'mowing') {
+              return Mowing.create(params)
+            } else if (serviceName === 'leaf_removal') {
+              LeafRemoval.create(params)
+            } else if (serviceName === 'weed_control') {
+              WeedControl.create(params)
+            } else if (serviceName === 'yard_cleaning') {
+              YardCleaning.create(params)
+            };
 
-                      if (providers.results.length === 0) callback('notFound');
-
-                      if (providers.results[0]) { 
-                        id = providers.results[0].obj._id;
-                        provider.update({_id: id}, {$push: {schedule: {startTime: bookTime, endTime: endTime }}}, function (err) {
-
-                        callback(null, id);
-
-                        });
-                      };
-
-                    })
-                  }
-                ],
-                function (err, result) { 
-                  if (err) { callback(err); };
-                  callback(null, result);
-                })
+          })
+          .catch(function(err) { console.log(err);})
+          .then(function(service) {
+            // Create a hash of services to store in Booking
+            services = services.concat({name: serviceName, id: service.id});
+            
+            // Create provider notification and push notfication on socket
+            ProviderNotification.create({providerId: params['providerId'], serviceId: service.id, serviceName: serviceName}, function (err, providernote) {
+              if (err) console.log(err);
+              var nsp = sails.io.of('/provider_' + providernote.providerId);
+              nsp.on('connection', function(socket) {
+                socket.emit('notification', providernote);
               });
-            },
-            function (id, callback) {
-              console.log(endTime);
+            });
+          });
 
-              if (id) { params['providerId'] = id.toString();};
-              if (params['services']) { delete params['services'] };
-
-              function createService(service) {
-                services = services.concat({name: serviceName, id: service.id});
-                
-                ProviderNotification.create({providerId: params['providerId'], serviceId: service.id, serviceName: serviceName}, function (err, providernote) {
-                  if (err) console.log(err);
-                  var nsp = sails.io.of('/provider_' + providernote.providerId);
-                  nsp.on('connection', function(socket) {
-                    socket.emit('notification', providernote);
-                  });
-                });
-                callback(null, service);
-
-              };
-
-              if (serviceName === 'mowing') {
-                Mowing.create(params, function(err, service) {
-                  if (err) {callback(err);
-                  } else {
-                    createService(service);
-                  }  
-                });
-              } else if (serviceName === 'leaf_removal') {
-                LeafRemoval.create(params, function(err, service) {
-                  if (err) {callback(err);
-                  } else {
-                    createService(service);
-                  }  
-                });
-              } else if (serviceName === 'weed_control') {
-                WeedControl.create(params, function(err, service) {
-                  if (err) {callback(err);
-                  } else {
-                    createService(service);
-                  }  
-                });
-              } else if (serviceName === 'yard_cleaning') {
-                YardCleaning.create(params, function(err, service) {
-                  if (err) {callback(err);
-                  } else {
-                    createService(service);
-                  }  
-                });
-              }
-            }
-          ], 
-          function (err, result) {    
-            if (err) { callback(err); 
-            } else {
-              callback(null, result);
-            }
-          })
-        }, 
-        function(err, results) {
-          if (err) return res.notFound();
-          Booking.create({userId: userId, services: services}, function (err, booking) {
-            if (err) return res.badRequest(err);
-            return res.ok({booking: booking, services: results});
-          })
-        });  
-      }]
-    )    
+        }, Promise.resolve()); 
+      })
+      .catch(function(err) { console.log(err);})
+      .then(function() {
+        // Create Booking by hash of services above
+        return Booking.create({userId: userId, services: services})
+      })
+      .catch(function(err) { console.log(err);})
+      .then(function(booking) {
+        // Update bookingId for each associated services
+        return Queries.updateServiceWithBookingID(booking);
+      })
+      .then(function(service) {
+        // Return JSON of booking and array of services
+        return res.ok(service);
+      })
+      .catch(function(err) {
+        res.badRequest(err);
+      })
+  
   },
 
   // Booking.find(). Return 1 object from id
