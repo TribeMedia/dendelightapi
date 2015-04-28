@@ -33,23 +33,20 @@ module.exports = {
           return sequence.then(function() {            
             serviceName = service;
             // Search array of providers who can't provide service
-            if (serviceName !== null) return Queries.searchProviderBusy(lng, lat, service, bookTime);
+            if (serviceName !== null) return Queries.searchBusyProvider(lng, lat, service, bookTime);
 
           })
-          .catch(function(err) { console.log(err);})
           .then(function(ids) {
             // Search nearest provider who can provide  service
-            return Queries.searchProviderFree(lng, lat, serviceName, bookTime, ids);
+            return Queries.searchFreeProvider(lng, lat, serviceName, bookTime, ids);
           })
-          .catch(function(err) { console.log(err);})
           .then(function(providers) {
             if (providers.results[0]) { 
               id = providers.results[0].obj._id;
               // Update provider schedule
-              return Queries.updateFreeProvider(id, bookTime, endTime)                   
+              return Queries.updateProviderAddSchedule(id, bookTime, endTime)                   
             }
           })
-          .catch(function(err) { console.log(err);})
           .then(function(provider) {
             // Delete services params to create individual service like mowing...
             if (params['services']) { delete params['services'] };
@@ -67,7 +64,6 @@ module.exports = {
             };
 
           })
-          .catch(function(err) { console.log(err);})
           .then(function(service) {
             // Create a hash of services to store in Booking
             services = services.concat({name: serviceName, id: service.id});
@@ -84,12 +80,10 @@ module.exports = {
 
         }, Promise.resolve()); 
       })
-      .catch(function(err) { console.log(err);})
       .then(function() {
         // Create Booking by hash of services above
         return Booking.create({userId: userId, services: services})
       })
-      .catch(function(err) { console.log(err);})
       .then(function(booking) {
         // Update bookingId for each associated services
         return Queries.updateServiceWithBookingID(booking);
@@ -195,96 +189,61 @@ module.exports = {
   // a DESTROY action. Return 204 status
   destroy: function (req, res) {
     var id = req.param('id');
-    function serviceDelete(err, service) {
-      if (err) return res.notFound(err);
-
-      console.log(service);
-
-      async.series([
-        function (callback) {
-          Provider.findOne(service.providerId, function (err, provider) {
-            if (err) { console.log(err); callback(err); };
-
-            console.log(provider);
-
-            var index = provider.schedule.indexOf({startTime: service.bookTime, endTime: (service.bookTime + service.estimatedDuration)});
-            provider.schedule.splice(index, 1);
-            provider.save(function (err) {
-
-              if (err) { console.log(err); callback(err) };
-              
-              ProviderNotification.create({providerId: provider.id, serviceId: service.id, serviceName: service.name, mes: 'Is canceled'}, function (err, providernote) {
-                if (err) { console.log(err); callback(err) };
-
-                var nsp = sails.io.of('/provider_' + providernote.providerId);
-                nsp.on('connection', function(socket) {
-                  socket.emit('notification', providernote);
-                });
-
-                callback(null)
-              })
-            })
-          })
-        },
-        function (callback) {
-          service.destroy(function (err) {
-            if (err) { console.log(err); callback(err) };
-
-            callback(null);
-          })
-        }],
-      function (err, results) {
-        if (err) { console.log(err); return err };
-        return true;
-      })  
-    };
+    var startTime;
+    var endTime;
+    var service;
 
     if (!id) {
       return res.badRequest('No id provided.');
     };
 
-    Booking.findOne({id: id, userId: req.user.id}, function (err, booking) {
-      if (err) return res.forbidden(err);
+    Booking.findOne({id: id, userId: req.user.id})
+      .then(function(booking) {
 
-      async.series([
-        function (callback) {
-          async.map(booking.services, function (service, callback) {
+        return booking.services.reduce(function(sequence, service) {          
+          return sequence.then(function() {            
 
-            if (service.name === 'mowing') {
-              Mowing.findOne(service.id, function(err, service) {
-                if (serviceDelete(err, service) === true) { callback(null) } else { callback(err); };
-              });
-            } else if (service.name === 'leaf_removal') {
-              LeafRemoval.findOne(service.id, function(err, service) {
-                if (serviceDelete(err, service) === true) { callback(null) } else { callback(err); };
-              });
-            } else if (service.name === 'weed_control') {
-              WeedControl.findOne(service.id, function(err, service) {
-                if (serviceDelete(err, service) === true) { callback(null) } else { callback(err); };
-              });
-            } else if (service.name === 'yard_cleaning') {
-              YardCleaning.findOne(service.id, function(err, service) {
-                if (serviceDelete(err, service) === true) { callback(null) } else { callback(err); };
-              });
-            }
+            // Search service with id (eg. mowing)
+            return Queries.searchServiceWithId(service.name, service.id);
 
-          }, function (err, results) {
-            if (err) { console.log(err); callback(err) };
-            callback(null);
-          });
-        },
-        function (callback) {
-          booking.destroy(function (err) {
-            if (err) { console.log(err); callback(err) };
-            callback(null);
           })
-        }],
-        function (err, results) {
-          if (err) return res.status(500);
-          return res.status(204).json(results);
-        }  
-      )  
-    });
-
+          .then(function(service) {
+            startTime = service.bookTime;
+            endTime = service.bookTime + service.estimatedDuration;
+            service = service;
+            // Find provider
+            return Provider.findOne(service.providerId);
+          })
+          .then(function(provider) {
+            var ObjectID = require('mongodb').ObjectID;
+            var providerId = ObjectID(provider.id);
+            // Update provider schedule with mongonative, return objectId
+            return Queries.updateProviderRemoveSchedule(providerId, startTime, endTime);
+          })
+          .then(function(pid) {
+            // Create notification
+            return ProviderNotification.create({providerId: pid.toString(), serviceId: service.id, serviceName: service.name, mes: 'Is canceled'})
+          })
+          .then(function(ProviderNotification) {
+            // Create socket
+            var nsp = sails.io.of('/provider_' + ProviderNotification.providerId);
+            nsp.on('connection', function(socket) {
+              socket.emit('notification', ProviderNotification);
+            });
+            // Destroy related service
+            return service.destroy;            
+          })
+        }, Promise.resolve()); 
+      })
+      .then(function() {
+        // Destroy booking
+        return Booking.destroy({id: id, userId: req.user.id});
+      })
+      .then(function(booking) {
+        return res.status(204).json(booking);
+      })    
+      .catch(function(err) {
+        return res.status(500);
+      })    
   },
 };
