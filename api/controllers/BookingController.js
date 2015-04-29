@@ -20,6 +20,7 @@ module.exports = {
     var bookTime = parseInt(params.bookTime);
     var estimatedDuration = parseInt(params.estimatedDuration);
     var endTime = bookTime + estimatedDuration;
+    var id;
 
     // Convert address to lat, lng & point
     Locations.getLocation(params.address)
@@ -28,26 +29,22 @@ module.exports = {
         lat = result.lat;
         params['location'] = result.loc;
         params['postcode'] = result.postcode;
-      // Map array of service and search provider for each
+        // Search array of providers who can't provide service
+        return Queries.searchBusyProvider(lng, lat, params.services, bookTime);
+      })
+      .then(function(ids) {
+        // Search nearest provider who can provide  service
+        return Queries.searchFreeProvider(lng, lat, params.services, bookTime, ids);
+      })
+      .then(function(providers) {
+        console.log(providers);
+        if (providers.results[0]) { 
+          id = providers.results[0].obj._id;
+        };        
+        // Map array of service and search provider for each
         return params.services.reduce(function(sequence, service) {          
           return sequence.then(function() {            
             serviceName = service;
-            // Search array of providers who can't provide service
-            if (serviceName !== null) return Queries.searchBusyProvider(lng, lat, service, bookTime);
-
-          })
-          .then(function(ids) {
-            // Search nearest provider who can provide  service
-            return Queries.searchFreeProvider(lng, lat, serviceName, bookTime, ids);
-          })
-          .then(function(providers) {
-            if (providers.results[0]) { 
-              id = providers.results[0].obj._id;
-              // Update provider schedule
-              return Queries.updateProviderAddSchedule(id, bookTime, endTime)                   
-            }
-          })
-          .then(function(provider) {
             // Delete services params to create individual service like mowing...
             if (params['services']) { delete params['services'] };
             params['providerId'] = id.toString();
@@ -65,6 +62,7 @@ module.exports = {
 
           })
           .then(function(service) {
+            console.log(service);
             // Create a hash of services to store in Booking
             services = services.concat({name: serviceName, id: service.id});
             
@@ -81,10 +79,15 @@ module.exports = {
         }, Promise.resolve()); 
       })
       .then(function() {
+        // Update provider schedule
+        return Queries.updateProviderAddSchedule(id, bookTime, endTime)                   
+      })
+      .then(function() {
         // Create Booking by hash of services above
         return Booking.create({userId: userId, services: services})
       })
       .then(function(booking) {
+        console.log(booking);
         // Update bookingId for each associated services
         return Queries.updateServiceWithBookingID(booking);
       })

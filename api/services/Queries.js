@@ -1,11 +1,11 @@
 module.exports = {
 
-	searchBusyProvider: function (lng, lat, serviceName, bookTime) {
+	searchBusyProvider: function (lng, lat, service, bookTime) {
 	  
 	  return new Promise(function(resolve, reject) {
 	        
 	    Provider.native(function(err, provider){
-	      provider.geoNear(lng, lat, { maxDistance: 10000, query: {'service': serviceName, 'schedule.startTime': {$lte: bookTime}, 'schedule.endTime': {$gt: bookTime}}, distanceMultiplier: 6371, spherical: true, uniqueDocs: true}, function (mongoErr, providers) {
+	      provider.geoNear(lng, lat, { maxDistance: 10000, query: {'service': {$all: service}, 'schedule.startTime': {$lte: bookTime}, 'schedule.endTime': {$gt: bookTime}}, distanceMultiplier: 6371, spherical: true, uniqueDocs: true}, function (mongoErr, providers) {
 	        if (mongoErr) { reject(mongoErr)}; 
 	        if (providers.results.length === 0) {
 	          resolve([]);
@@ -27,12 +27,12 @@ module.exports = {
 	  })
 	},
 
-	searchFreeProvider: function (lng, lat, serviceName, bookTime, ids) {
+	searchFreeProvider: function (lng, lat, service, bookTime, ids) {
 	  
 	  return new Promise(function(resolve, reject) {
 	        
 	    Provider.native(function(err, provider){
-	      provider.geoNear(lng, lat, { limit: 1, maxDistance: 10000, query: {'_id': {$nin: ids},'service': serviceName}, distanceMultiplier: 6371, spherical: true, uniqueDocs: true}, function (mongoErr, providers) {
+	      provider.geoNear(lng, lat, { limit: 1, maxDistance: 10000, query: {'_id': {$nin: ids},'service': {$all: service}}, distanceMultiplier: 6371, spherical: true, uniqueDocs: true}, function (mongoErr, providers) {
 	        if (mongoErr) { reject(mongoErr);  
 	        } else if (providers.results.length === 0) {
 	          reject('Provider not found');
