@@ -189,44 +189,39 @@ module.exports = {
 
     Booking.findOne({id: id, userId: req.user.id})
       .then(function(booking) {
-
+        // Pass value to variables
         booking = booking;
         oldBookTime = booking.bookTime;
         estimatedDuration = booking.estimatedDuration;
         oldEndTime = oldBookTime + estimatedDuration;
         endTime = bookTime + estimatedDuration;
         location = booking.location;
-
+        // Create an array of services like ['mowing', 'leaf_removal']
         booking.services.forEach(function(element, index, array) {
           services = services.concat(element.name);
         });
-
-        console.log({1: booking.providerId, 2: services});
-
+        // Search for provider who perform job in that booking
         return Provider.findOne({id: booking.providerId});     
       })
       .then(function(provider) {
-        console.log({2: provider});
-
         firstProviderId = provider.id;
-
+        // Remove schedule of that provider
         return Queries.updateProviderRemoveSchedule(ObjectID(firstProviderId), oldBookTime, oldEndTime);
       })
       .then(function() {
-        console.log({3: 'done'});
+        // Find a list of busy providers
         return Queries.searchBusyProvider(location.coordinates[0], location.coordinates[1], services, bookTime);        
       })
       .then(function(ids) {
-        console.log({4: ids});
         // Search nearest provider who provides  services
         return Queries.searchFreeProvider(location.coordinates[0], location.coordinates[1], services, bookTime, ids);
       })
       .then(function(providers) {
-        console.log({5: providers});
         if (providers.results[0]) { 
           secondProviderId = providers.results[0].obj._id;
         };        
         if (firstProviderId === secondProviderId.toString()) {
+          // Update provider and update time if provider is the same
           Queries.updateProviderAddSchedule(ObjectID(firstProviderId), bookTime, endTime)
             .then(function() {
               Booking.update({id: id}, {bookTime: bookTime})
@@ -235,6 +230,7 @@ module.exports = {
               res.ok(booking);
             })
         } else {
+          // Update provider schedule, update service, update booking if provider is different
           Queries.updateProviderAddSchedule(secondProviderId, bookTime, endTime)
             .then(function() {
               Queries.updateServiceWithProviderID(secondProviderId.toString(), booking);
