@@ -23,10 +23,20 @@ module.exports = function isUser(req, res, next) {
   jwt.verify(token, secret, function(err, decoded) {
     if (err) return res.json(401, {err: 'The token is not valid'});
 
-    if (!decoded.user) return res.json(401, {err: 'Is not user'});
+    if (!decoded.user) {
+      return res.json(401, {err: 'Is not user'});
+    } else {
+      User.findOne({id: decoded.user.id, accessToken: token}, function (err, user) {
+        if (err) return res.json(401, {err: 'Invalid user'});      
 
-    req.user = decoded.user;
+        if (!user) {
+          return res.json(401, {err: 'Invalid user'});
+        } else {
+          req.user = decoded.user;
 
-    next();
+          next();
+        }
+      })
+    }
   });
 };

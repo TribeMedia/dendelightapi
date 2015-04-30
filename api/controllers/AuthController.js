@@ -58,10 +58,14 @@ module.exports = {
       } else {                  
         var token = jwt.sign({user: user}, secret, { expiresInMinutes: 60*24 });
         
-        return res.ok({
-          user: user,
-          token: token
-        });
+        User.update(user, {accessToken: token}, function (err, user) {
+          if (err) return res.badRequest(err);
+          
+          return res.ok({
+            user: user,
+          });
+        })        
+
       }
     })(req, res);
   },
@@ -80,10 +84,13 @@ module.exports = {
       } else {                  
         var token = jwt.sign({provider: provider}, secret, { expiresInMinutes: 60*24 });
         
-        return res.ok({
-          provider: provider,
-          token: token
-        });
+        Provider.update(provider, {accessToken: token}, function (err, provider) {
+          if (err) return res.badRequest(err);
+          
+          return res.ok({
+            provider: provider,
+          });
+        })        
       }
     })(req, res);
   },
@@ -102,10 +109,13 @@ module.exports = {
       } else {                  
         var token = jwt.sign({admin: admin}, secret, { expiresInMinutes: 60*24 });
         
-        return res.ok({
-          admin: admin,
-          token: token
-        });
+        Admin.update(admin, {accessToken: token}, function (err, admin) {
+          if (err) return res.badRequest(err);
+          
+          return res.ok({
+            admin: admin,
+          });
+        })        
       }
     })(req, res);
   },

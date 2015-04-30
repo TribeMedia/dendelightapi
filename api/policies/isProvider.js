@@ -23,10 +23,21 @@ module.exports = function isProvider(req, res, next) {
   jwt.verify(token, secret, function(err, decoded) {
     if (err) return res.json(401, {err: 'The token is not valid'});
 
-    if (!decoded.provider) return res.json(401, {err: 'Is not provider'});
+    if (!decoded.provider) {
+      return res.json(401, {err: 'Is not provider'});
+    } else {
+      Provider.findOne({id: decoded.provider.id, accessToken: token}, function (err, provider) {
+        if (err) return res.json(401, {err: 'Invalid provider'});      
 
-    req.provider = decoded.provider;
+        if (!provider) {
+          return res.json(401, {err: 'Invalid provider'});
+        } else {
+          req.provider = decoded.provider;
 
-    next();
+          next();
+        }
+      })
+
+    }
   });
 };

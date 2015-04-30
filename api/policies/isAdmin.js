@@ -23,10 +23,21 @@ module.exports = function isAdmin(req, res, next) {
   jwt.verify(token, secret, function(err, decoded) {
     if (err) return res.json(401, {err: 'The token is not valid'});
 
-    if (!decoded.admin) return res.json(401, {err: 'Is not admin'});
+    if (!decoded.admin) {
+      return res.json(401, {err: 'Is not admin'});
+    } else {
+      Admin.findOne({id: decoded.admin.id, accessToken: token}, function (err, admin) {
+        if (err) return res.json(401, {err: 'Invalid admin'});      
 
-    req.admin = decoded.admin;
+        if (!admin) {
+          return res.json(401, {err: 'Invalid admin'});
+        } else {
+          req.admin = decoded.admin;
 
-    next();
+          next();
+        }
+      })
+
+    }
   });
 };

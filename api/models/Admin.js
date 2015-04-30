@@ -16,6 +16,9 @@ module.exports = {
     password: {
       type: 'string',
       required: true,
+    },
+    accessToken: {
+      stype: 'string'
     }
   },
   seedData:[
