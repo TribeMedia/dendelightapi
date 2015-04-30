@@ -142,10 +142,10 @@ module.exports.routes = {
   // Update notification to read
   'put /api/v1/provider_read_notification': 'NotificationController.provider_read_notification',
   
-  // View task
-  'get /api/v1/provider_task': 'TaskController.provider_task',
-  // Reject task
-  'put /api/v1/reject_task/:id?': 'TaskController.reject_task',
+  // View job
+  'get /api/v1/provider_job': 'TaskController.provider_job',
+  // Reject job
+  'put /api/v1/reject_job/:id?': 'TaskController.reject_job',
   // View booking by user
   'get /api/v1/view_booking': 'TaskController.view_booking',
 

@@ -12,11 +12,10 @@ module.exports = {
 	        } else {
 	          async.map(providers.results,
 	            function (result, callback) {
-	              callback (result.obj._id);
+	              callback (null, result.obj._id);
 	            },
 	            function (err, results) {
 	              if (err) { reject(err); };
-	              console.log(results);
 	              if (results) { resolve(results) };
 	            }
 	            );
@@ -157,5 +156,38 @@ module.exports = {
             }
 
 		})
+	},
+
+	searchServiceInBookings: function (bookings) {
+
+		return new Promise(function(resolve, reject) {
+	  	  async.map(bookings, 
+	  	  	function (booking, callback) {
+	  	  	  async.map(booking.services,
+	  	  	  	function (service, callback) {
+	              Queries.searchServiceWithId(service.name, service.id)
+	                .then(function(service) {
+	                  callback(null, service);
+	                })
+	                .catch(function(err) {
+	                  callback(err);
+	                })
+	  	  	  	},
+	  	  	  	function (err, results) {
+	  	  	  	  if (err) callback(err);	
+	  	  	  	  booking['info'] = results;
+	  	  	  	  callback(null, booking);
+	  	  	  	}
+	  	  	  	)
+			  },
+			  function (err, results) {
+			  	if (err) { 
+			  	  reject(err);
+			  	} else {
+		 	  	 resolve(results);
+		 	  	}	
+	  	  	  }
+	  	  	)
+	  	})
 	}
 }

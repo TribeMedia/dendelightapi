@@ -338,8 +338,8 @@ http://oseam.herokuapp.com
 ##### View queued tasks by provider
   * GET: /api/v1/provider_task
 
-##### View tasks
-  * GET: /api/v1/provider_task
+##### View job
+  * GET: /api/v1/provider_job
   * Params: completed (true or false)
 ```json
 [
@@ -369,8 +369,8 @@ http://oseam.herokuapp.com
 ]
 ```
 
-##### Reject task
-  * PUT: /api/v1/reject_task/:id
+##### Reject job
+  * PUT: /api/v1/reject_job/:id (with id = bookingId)
 
 ##### Update task
   * PUT: /api/v1/provider_mowing/:id

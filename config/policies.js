@@ -80,8 +80,8 @@ module.exports.policies = {
     charge: 'isUser'
   },
   TaskController: {
-    provider_task: 'isProvider',
-    reject_task: 'isProvider',
+    provider_job: 'isProvider',
+    reject_job: 'isProvider',
     view_booking: 'isUser'
   },
   NotificationController: {
