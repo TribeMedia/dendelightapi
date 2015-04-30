@@ -20,7 +20,6 @@ module.exports = {
     var createdService;
     var serviceName;                  
     var services = [];
-    var id;
 
     // Convert address to lat, lng & point
     Locations.getLocation(params.address)
@@ -30,17 +29,9 @@ module.exports = {
         params['location'] = result.loc;
         params['postcode'] = result.postcode;
         // Search array of providers who can't provide service
-        return Queries.searchBusyProvider(lng, lat, params.services, bookTime);
+        return Provider.findOne(params.providerId);
       })
-      .then(function(ids) {
-        // Search nearest provider who provides  services
-        return Queries.searchFreeProvider(lng, lat, params.services, bookTime, ids);
-      })
-      .then(function(providers) {
-        console.log(providers);
-        if (providers.results[0]) { 
-          id = providers.results[0].obj._id;
-        };        
+      .then(function(provider) {
         // Map array of service
         return params.services.reduce(function(sequence, service) {          
           return sequence.then(function() {            
@@ -49,7 +40,6 @@ module.exports = {
             if (params['services']) { delete params['services'] };
             if (params['bookTime']) { delete params['bookTime'] };
             if (params['estimatedDuration']) { delete params['estimatedDuration'] };
-            params['providerId'] = id.toString();
 
 
             // Loop through service and create associated service
@@ -82,12 +72,14 @@ module.exports = {
         }, Promise.resolve()); 
       })
       .then(function() {
+        var ObjectID = require('mongodb').ObjectID;
+
         // Update provider schedule
-        return Queries.updateProviderAddSchedule(id, bookTime, endTime)                   
+        return Queries.updateProviderAddSchedule(ObjectID(params.providerId), bookTime, endTime)                   
       })
       .then(function() {
         // Create Booking by hash of services above
-        return Booking.create({userId: userId, services: services, bookTime: bookTime, estimatedDuration: estimatedDuration, providerId: id.toString(), location: params.location})
+        return Booking.create({userId: userId, services: services, bookTime: bookTime, estimatedDuration: estimatedDuration, providerId: params.providerId, location: params.location})
       })
       .then(function(booking) {
         console.log(booking);

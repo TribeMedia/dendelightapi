@@ -4,6 +4,45 @@
  */
 
 module.exports = {
+  
+  // Fetch provider
+  fetch: function (req, res) {
+    var params = req.params.all();
+    if( typeof params.services === 'string' ) {
+        params['services'] = [ params.services ];
+    };
+    var lat;
+    var lng;
+    var bookTime = parseInt(params.bookTime);
+    var estimatedDuration = parseInt(params.estimatedDuration);
+    var endTime = bookTime + estimatedDuration;
+
+    // Convert address to lat, lng & point
+    Locations.getLocation(params.address)
+      .then(function(result) {
+        lng = result.lng;
+        lat = result.lat;
+        params['location'] = result.loc;
+        params['postcode'] = result.postcode;
+        // Search array of providers who can't provide service
+        return Queries.searchBusyProvider(lng, lat, params.services, bookTime);
+      })
+      .then(function(ids) {
+        // Search nearest provider who provides  services
+        return Queries.searchFreeProvider(lng, lat, params.services, bookTime, ids);
+      })
+      .then(function(providers) {
+        console.log(providers);
+        if (providers.results[0]) { 
+          provider = providers.results[0];
+          return res.ok(provider);
+        };        
+      })
+      .catch(function(err) {
+        res.badRequest(err);
+      })
+  
+  },    
 
   // Provider.create()
   create: function (req, res) {

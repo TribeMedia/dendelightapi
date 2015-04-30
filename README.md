@@ -52,6 +52,38 @@ http://oseam.herokuapp.com
   * Params: name, type, duration, price
   * Example GET: /api/v1/services?name=mowing&type=small
 
+##### Fetch provider nearby
+  * POST: /api/v1/providers
+  * Params: services (array), address, bookTime, estimatedDuration (calculated from service info above)
+```Json
+{
+  "dis": 0,
+  "obj": {
+    "_id": "5541c38aeca343890e031819",
+    "email": "xxx@gmail.com",
+    "password": "$2a$10$FhYl2z.fifN8Wiczh7Hd8usSr3rVbhJxF53cbFzDSVUG0.BCw9SIW",
+    "firstName": "xxx",
+    "lastName": "xxx",
+    "abn": "312132",
+    "address": "16 Keats Avenue, Kingsbury",
+    "service": [
+        "mowing"
+    ],
+    "location": {
+        "type": "Point",
+        "coordinates": [
+            145.036478,
+            -37.718564
+        ]
+    },
+    "postcode": "3083",
+    "verified": false,
+    "stripe_account": false,
+    "createdAt": "2015-04-30T05:54:18.122Z",
+    "updatedAt": "2015-04-30T05:54:18.122Z"
+  }
+}
+```
 # User flow
 
 ##### Register account
@@ -114,47 +146,58 @@ http://oseam.herokuapp.com
 
 ##### Create booking
 	* POST: /api/v1/booking
-	* Required params: services (array), estimatedSize, address, bookTime (in milliseconds), estimatedDuration (in milliseconds), wage
+	* Required params: services (array), estimatedSize, address, bookTime (in milliseconds), estimatedDuration (in milliseconds), wage, providerId (when user selects provider)
   * Additional params: postcode, lat, lng, repeat
   * Json response example
 ```json
 {
   "booking": {
-    "userId": "553b231b84e52c8222b105db",
+    "userId": "5541c4de11b496bb0e24b2fa",
     "services": [
       {
         "name": "mowing",
-        "id": "553b232b84e52c8222b105dc"
+        "id": "5541c50911b496bb0e24b2fb"
       }
     ],
+    "bookTime": 1429977804187,
+    "estimatedDuration": 1440000,
+    "providerId": "5541c49f11b496bb0e24b2f9",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        145.036478,
+        -37.718564
+      ]
+    },
     "completed": false,
-    "createdAt": "2015-04-25T05:16:27.506Z",
-    "updatedAt": "2015-04-25T05:16:27.506Z",
-    "id": "553b232b84e52c8222b105de"
+    "createdAt": "2015-04-30T06:00:41.779Z",
+    "updatedAt": "2015-04-30T06:00:41.779Z",
+    "id": "5541c50911b496bb0e24b2fd"
   },
   "services": [
-    {
-      "estimatedSize": "Medium",
-      "address": "16 Keats Ave, Kingsbury",
-      "bookTime": 1429977804187,
-      "estimatedDuration": 1440000,
-      "wage": 30,
-      "location": {
-        "type": "Point",
-        "coordinates": [
-          145.036478,
-          -37.718564
-        ]
-      },
-      "postcode": 3083,
-      "providerId": "553b22da84e52c8222b105da",
-      "name": "mowing",
-      "repeat": null,
-      "completed": false,
-      "createdAt": "2015-04-25T05:16:27.500Z",
-      "updatedAt": "2015-04-25T05:16:27.500Z",
-      "id": "553b232b84e52c8222b105dc"
-    }
+    [
+      {
+        "estimatedSize": "Medium",
+        "address": "16 Keats Ave, Kingsbury",
+        "wage": 30,
+        "providerId": "5541c49f11b496bb0e24b2f9",
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            145.036478,
+            -37.718564
+          ]
+        },
+        "postcode": 3083,
+        "name": "mowing",
+        "repeat": null,
+        "completed": false,
+        "createdAt": "2015-04-30T06:00:41.688Z",
+        "updatedAt": "2015-04-30T06:00:41.782Z",
+        "bookingId": "5541c50911b496bb0e24b2fd",
+        "id": "5541c50911b496bb0e24b2fb"
+      }
+    ]
   ]
 }
 ```
@@ -256,19 +299,33 @@ http://oseam.herokuapp.com
   * Json response example
 ```json
 {
-  "provider": {
-      "email": "hello@gmail.com",
-      "password": "$2a$10$zVINlvmzYckalBg.zASkce.OJCliMW.hHAGSAQKfliSFGk3chvAYS",
-      "firstName": "Tome",
-      "lastName": "Ngo",
+  "provider": [
+    {
+      "email": "xxx@gmail.com",
+      "password": "$2a$10$x2DP1DPxqVwduFg0T/L1Ze6J9NPxE0xcu1j7tK6wNrgwBDrJwHPKe",
+      "firstName": "xxx",
+      "lastName": "xxx",
       "abn": "312132",
-      "verified": true,
+      "address": "16 Keats Avenue, Kingsbury",
+      "service": [
+          "mowing"
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          145.036478,
+          -37.718564
+        ]
+      },
+      "postcode": "3083",
+      "verified": false,
       "stripe_account": false,
-      "createdAt": "2015-04-16T10:45:12.052Z",
-      "updatedAt": "2015-04-16T10:45:12.052Z",
-      "id": "552f849a3917d69f0d9800cc"
-  },
-  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm92aWRlciI6eyJlbWFpbCI6InZ1b25nbmdvLnBkQGdtYWlsLmNvbSIsInBhc3N3b3JkIjoiJDJhJDEwJHpWSU5sdm16WWNrYWxCZy56QVNrY2UuT0pDbGlNVy5oSEFHU0FRS2ZsaVNGR2szY2h2QVlTIiwiZmlyc3ROYW1lIjoidnVvbmciLCJsYXN0TmFtZSI6Im5nbyIsImFibiI6IjMxMjEzMiIsInZlcmlmaWVkIjpmYWxzZSwic3RyaXBlX2FjY291bnQiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDE1LTA0LTE2VDEwOjQ1OjEyLjA1MloiLCJ1cGRhdGVkQXQiOiIyMDE1LTA0LTE2VDEwOjQ1OjEyLjA1MloiLCJpZCI6IjU1MmY5MmI4MGM4NTRiODIxNDkxZTJiZCJ9LCJpYXQiOjE0MjkxODExMTYsImV4cCI6MTQyOTI2NzUxNn0.k_ALD-Y8tpeuuM7Wb4FQIHeoZdYawC6tyic6YP1UmWw"
+      "createdAt": "2015-04-30T05:58:55.835Z",
+      "updatedAt": "2015-04-30T05:59:00.172Z",
+      "accessToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm92aWRlciI6eyJlbWFpbCI6InRvbS5wZEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYSQxMCR4MkRQMURQeHFWd2R1RmcwVC9MMVplNko5TlB4RTB4Y3Uxajd0SzZ3TnJnd0JEckp3SFBLZSIsImZpcnN0TmFtZSI6InZ1b25nIiwibGFzdE5hbWUiOiJuZ28iLCJhYm4iOiIzMTIxMzIiLCJhZGRyZXNzIjoiMTYgS2VhdHMgQXZlbnVlLCBLaW5nc2J1cnkiLCJzZXJ2aWNlIjpbIm1vd2luZyJdLCJsb2NhdGlvbiI6eyJ0eXBlIjoiUG9pbnQiLCJjb29yZGluYXRlcyI6WzE0NS4wMzY0NzgsLTM3LjcxODU2NF19LCJwb3N0Y29kZSI6IjMwODMiLCJ2ZXJpZmllZCI6ZmFsc2UsInN0cmlwZV9hY2NvdW50IjpmYWxzZSwiY3JlYXRlZEF0IjoiMjAxNS0wNC0zMFQwNTo1ODo1NS44MzVaIiwidXBkYXRlZEF0IjoiMjAxNS0wNC0zMFQwNTo1ODo1NS44MzVaIiwiaWQiOiI1NTQxYzQ5ZjExYjQ5NmJiMGUyNGIyZjkifSwiaWF0IjoxNDMwMzczNTQwLCJleHAiOjE0MzA0NTk5NDB9.TfpGRXV445ORNZEL6Cww6KZNQ8RNGl9qDltL3BsgbU8",
+      "id": "5541c49f11b496bb0e24b2f9"
+    }
+  ]
 }
 ```
 

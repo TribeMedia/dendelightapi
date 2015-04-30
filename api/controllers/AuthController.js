@@ -84,7 +84,7 @@ module.exports = {
       } else {                  
         var token = jwt.sign({provider: provider}, secret, { expiresInMinutes: 60*24 });
         
-        Provider.update(provider, {accessToken: token}, function (err, provider) {
+        Provider.update({id: provider.id}, {accessToken: token}, function (err, provider) {
           if (err) return res.badRequest(err);
           
           return res.ok({

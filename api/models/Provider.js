@@ -60,7 +60,11 @@ module.exports = {
     },
     schedule: {
       type: 'array'
+    },
+    accessToken: {
+      type: 'string'
     }
+    
   },
 
   beforeCreate: function (attrs, next) {

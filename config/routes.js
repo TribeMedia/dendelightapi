@@ -50,6 +50,8 @@ module.exports.routes = {
   // User confirm
   'put /api/v1/user_confirm/:id?': 'AuthController.user_confirm',
 
+  // Fetch provider
+  'post /api/v1/providers': 'ProviderController.fetch',
   // Create provider
   'post /api/v1/provider': 'ProviderController.create',
   // Find provider

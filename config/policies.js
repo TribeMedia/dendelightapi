@@ -34,6 +34,7 @@ module.exports.policies = {
     destroy: 'isUser'
   },
   ProviderController: {
+    fetch: true,
     create: true,
     find: 'isProvider',
     update: 'isProvider',
