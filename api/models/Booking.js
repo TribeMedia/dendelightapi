@@ -12,6 +12,21 @@ module.exports = {
   		type: 'string',
   		required: true
   	},
+    providerId: {
+      type: 'string',
+      required: true
+    }, 
+    bookTime: {
+      type: 'float'
+    },
+    estimatedDuration: {
+      type: 'float'
+    },
+    location: {
+      type: 'json',
+      index:'2dsphere',
+      required: true
+    },
   	services: {
   		type: 'array',
   		required: true

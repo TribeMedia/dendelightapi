@@ -40,12 +40,6 @@ module.exports = {
       type: 'string',
       required: true
     },
-    bookTime: {
-      type: 'float'
-    },
-    estimatedDuration: {
-      type: 'float'
-    },
     startTime: {
       type: 'float'
     },

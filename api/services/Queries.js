@@ -104,6 +104,37 @@ module.exports = {
 	  })
 	},
 
+	updateServiceWithProviderID: function (providerId, booking) {
+
+	  return new Promise(function(resolve, reject) {
+	    async.map(booking.services, function (service, callback) {
+
+	      if (service.name === 'mowing') {
+	        Mowing.update(service.id, {providerId: providerId}, function(err, service) {
+	          callback(null, service);
+	        });
+	      } else if (service.name === 'leaf_removal') {
+	        LeafRemoval.update(service.id, {providerId: providerId}, function(err, service) {
+	          callback(null, service);
+	        });
+	      } else if (service.name === 'weed_control') {
+	        WeedControl.update(service.id, {providerId: providerId}, function(err, service) {
+	          callback(null, service);
+	        });
+	      } else if (service.name === 'yard_cleaning') {
+	        YardCleaning.update(service.id, {providerId: providerId}, function(err, service) {
+	          callback(null, service);
+	        });
+	      }
+
+	    }, function (err, results) {
+	      if (err) { reject(err)};
+	      if (results) {resolve({booking: booking, services: results});};
+	    });
+
+	  })
+	},
+
 	searchServiceWithId: function (name, id) {
 
 		return new Promise(function(resolve, reject) {

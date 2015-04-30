@@ -8,18 +8,18 @@ module.exports = {
   // Booking.create()
   create: function (req, res) {
     var userId = req.user.id;
-    var services = [];
     var params = req.params.all();
     if( typeof params.services === 'string' ) {
         params['services'] = [ params.services ];
     };
+    var bookTime = parseInt(params.bookTime);
+    var estimatedDuration = parseInt(params.estimatedDuration);
+    var endTime = bookTime + estimatedDuration;
     var lat;
     var lng;
     var createdService;
     var serviceName;                  
-    var bookTime = parseInt(params.bookTime);
-    var estimatedDuration = parseInt(params.estimatedDuration);
-    var endTime = bookTime + estimatedDuration;
+    var services = [];
     var id;
 
     // Convert address to lat, lng & point
@@ -33,7 +33,7 @@ module.exports = {
         return Queries.searchBusyProvider(lng, lat, params.services, bookTime);
       })
       .then(function(ids) {
-        // Search nearest provider who can provide  service
+        // Search nearest provider who provides  services
         return Queries.searchFreeProvider(lng, lat, params.services, bookTime, ids);
       })
       .then(function(providers) {
@@ -41,13 +41,16 @@ module.exports = {
         if (providers.results[0]) { 
           id = providers.results[0].obj._id;
         };        
-        // Map array of service and search provider for each
+        // Map array of service
         return params.services.reduce(function(sequence, service) {          
           return sequence.then(function() {            
             serviceName = service;
             // Delete services params to create individual service like mowing...
             if (params['services']) { delete params['services'] };
+            if (params['bookTime']) { delete params['bookTime'] };
+            if (params['estimatedDuration']) { delete params['estimatedDuration'] };
             params['providerId'] = id.toString();
+
 
             // Loop through service and create associated service
             if (serviceName === 'mowing') {
@@ -84,7 +87,7 @@ module.exports = {
       })
       .then(function() {
         // Create Booking by hash of services above
-        return Booking.create({userId: userId, services: services})
+        return Booking.create({userId: userId, services: services, bookTime: bookTime, estimatedDuration: estimatedDuration, providerId: id.toString(), location: params.location})
       })
       .then(function(booking) {
         console.log(booking);
@@ -168,26 +171,94 @@ module.exports = {
   },   
 
   // an UPDATE action . Return object in array
-  // update: function (req, res) {
-  //   var criteria = {};
+  update: function (req, res) {
+    var criteria = {};
+    var id = req.param('id');
 
-  //   criteria = _.merge({}, req.params.all(), req.body);
+    if (!id) {
+      return res.badRequest('No id provided.');
+      };
 
-  //   var id = req.param('id');
+    criteria = _.merge({}, req.params.all(), req.body);
 
-  //   if (!id) {
-  //     return res.badRequest('No id provided.');
-  //     };
+    var firstProviderId;
+    var secondProviderId;
+    var ObjectID = require('mongodb').ObjectID;
+    var oldBooKTime;
+    var oldEndTime;
+    var lat;
+    var lng;
+    var services = [];
+    var bookTime = parseInt(criteria.bookTime);
+    var estimatedDuration;
+    var endTime;
+    var location;
+    var booking;
 
-  //   Booking.update({id: id, userId: req.user.id}, criteria, function (err, booking) {
-  //     if(booking.length === 0) return res.notFound();
+    Booking.findOne({id: id, userId: req.user.id})
+      .then(function(booking) {
 
-  //     if (err) return res.badRequest(err);
+        booking = booking;
+        oldBookTime = booking.bookTime;
+        estimatedDuration = booking.estimatedDuration;
+        oldEndTime = oldBookTime + estimatedDuration;
+        endTime = bookTime + estimatedDuration;
+        location = booking.location;
 
-  //     res.ok({booking: booking});
+        booking.services.forEach(function(element, index, array) {
+          services = services.concat(element.name);
+        });
 
-  //   });
-  // },
+        console.log({1: booking.providerId, 2: services});
+
+        return Provider.findOne({id: booking.providerId});     
+      })
+      .then(function(provider) {
+        console.log({2: provider});
+
+        firstProviderId = provider.id;
+
+        return Queries.updateProviderRemoveSchedule(ObjectID(firstProviderId), oldBookTime, oldEndTime);
+      })
+      .then(function() {
+        console.log({3: 'done'});
+        return Queries.searchBusyProvider(location.coordinates[0], location.coordinates[1], services, bookTime);        
+      })
+      .then(function(ids) {
+        console.log({4: ids});
+        // Search nearest provider who provides  services
+        return Queries.searchFreeProvider(location.coordinates[0], location.coordinates[1], services, bookTime, ids);
+      })
+      .then(function(providers) {
+        console.log({5: providers});
+        if (providers.results[0]) { 
+          secondProviderId = providers.results[0].obj._id;
+        };        
+        if (firstProviderId === secondProviderId.toString()) {
+          Queries.updateProviderAddSchedule(ObjectID(firstProviderId), bookTime, endTime)
+            .then(function() {
+              Booking.update({id: id}, {bookTime: bookTime})
+            })
+            .then(function(booking) {
+              res.ok(booking);
+            })
+        } else {
+          Queries.updateProviderAddSchedule(secondProviderId, bookTime, endTime)
+            .then(function() {
+              Queries.updateServiceWithProviderID(secondProviderId.toString(), booking);
+            })
+            .then(function(services) {
+              Booking.update({id: id}, {bookTime: bookTime, providerId: secondProviderId.toString()});
+            })
+            .then(function(booking) {
+              res.ok(booking);
+            })
+        };
+      })
+      .catch(function(err) {
+        res.badRequest(err);
+      })
+  },
 
   // a DESTROY action. Return 204 status
   destroy: function (req, res) {

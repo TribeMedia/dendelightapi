@@ -204,9 +204,8 @@ http://oseam.herokuapp.com
 ]
 ```
 
-##### Update time for tasks in booking (a book may contain many tasks)
-  * PUT: /api/v1/user_mowing/:id
-  * Similarly: user_leaf_removal, user_weed_control, user_yard_cleaning
+##### Update booking time
+  * PUT: /api/v1/booking/:id
   * Params: bookTime (in milliseconds)
 
 ##### Destroy booking
