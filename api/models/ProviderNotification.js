@@ -9,16 +9,20 @@ module.exports = {
 
   attributes: {
   	providerId: {
-  		type: 'string'
+  		type: 'string',
+      string: true
   	}, 
     serviceId: {
-      type: 'string'
+      type: 'string',
+      string: true
     },
     serviceName: {
-      type: 'string'
+      type: 'string',
+      string: true
     },
     mes: {
-      type: 'string'
+      type: 'string',
+      string: true
     },
     read: {
       type: 'boolean',

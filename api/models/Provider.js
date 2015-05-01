@@ -5,38 +5,48 @@ module.exports = {
   	email: {
   		type: 'email',
   		unique: true,
-  		required: true
+  		required: true,
+      email: true,
+      protected: true
   	},
   	password: {
   		type: 'string',
   		required: true,
+      string: true,
   		minLength: 6,
+      protected: true
   	},
     firstName: {
       type: 'string',
       required: true,
-      maxLength: 15
+      maxLength: 15,
+      alpha: true
     },
     lastName: {
       type: 'string',
       required: true,
-      maxLength: 15
+      maxLength: 15,
+      alpha: true
     },
     fullName: function() {
       return this.firstName + ' ' + this.lastName
     },
     businessName: {
       type: 'string',
-      maxLength: 20
+      maxLength: 20,
+      string: true
     },
     address: {
       type: 'string',
       maxLength: 30,
-      required: true
+      required: true,
+      string: true
     },
     postcode: {
-      type: 'string',
-      required: true
+      type: 'integer',
+      required: true,
+      min: 0,
+      max: 10000
     },
     location: {
       type: 'json',
@@ -45,6 +55,7 @@ module.exports = {
     },
     service: {
       type: 'array',
+      array: true
     },
     verified: {
       type: 'boolean',
@@ -52,17 +63,31 @@ module.exports = {
     },
     abn: {
       type: 'string',
-      required: true
+      required: true,
+      alphanumeric: true,
+      minLength: 11,
+      maxLength: 11
     },
     stripe_account: {
       type: 'boolean',
-      defaultsTo: false
+      defaultsTo: false,
+      protected: true
+    },
+    stripeId: {
+      type: 'string',
+      string: true,
+      unique: true,
+      protected: true
     },
     schedule: {
-      type: 'array'
+      type: 'array',
+      array: true,
+      protected: true
     },
     accessToken: {
-      type: 'string'
+      type: 'string',
+      string: true,
+      protected: true
     }
     
   },

@@ -11,25 +11,34 @@ module.exports = {
   	email: {
   		type: 'email',
   		unique: true,
-  		required: true
+  		required: true,
+      email: true,
+      protected: true
   	},
   	password: {
   		type: 'string',
   		required: true,
-  		minLength: 6
+  		minLength: 6,
+      string: true,
+      protected: true
   	},
     firstName: {
       type: 'string',
+      alpha: true,
+      maxLength: 15
     },
     lastName: {
       type: 'string',
+      maxLength: 15,
+      alpha: true
     },
     fullName: function() {
       return this.firstName + ' ' + this.lastName
     },
     address: {
       type: 'string',
-      maxLength: 30
+      maxLength: 30,
+      string: true,
     },
     verified: {
       type: 'boolean',
@@ -39,7 +48,10 @@ module.exports = {
       type: 'string',
     },
     accessToken: {
-      type: 'string'
+      type: 'string',
+      string: true,
+      protected: true
+
     }
   },
 

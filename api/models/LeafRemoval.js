@@ -14,11 +14,12 @@ module.exports = {
     },
     bookingId: {
       type: 'string',
-      required: true
+      string: true
     },
     providerId: {
       type: 'string',
-      required: true
+      required: true,
+      string: true
     }, 
     treeNumber: {
       type: 'string',
@@ -26,7 +27,9 @@ module.exports = {
     },
     postcode: {
       type: 'integer',
-      required: true
+      required: true,
+      min: 0,
+      max: 10000
     },
     location: {
       type: 'json',
@@ -35,30 +38,31 @@ module.exports = {
     },
     address: {
       type: 'string',
-      required: true
+      required: true,
+      string: true
     },
     startTime: {
-      type: 'float'
+      type: 'float',
+      float: true
     },
     endTime: {
-      type: 'float'
+      type: 'float',
+      float: true
     },
     realDuration: function () {
       return (this.endTime - this.startTime);
     },
     wage: {
       type: 'integer',
-      required: true
+      required: true,
+      min: 10,
+      max: 40
     },
     estimatedPrice: function () {
-      return (this.estimatedDuration * 360000 * wage);
+      return ((this.estimatedDuration / 360000) * wage);
     },
     price: function () {
-      return (this.realDuration * 360000 * wage);
-    },
-    repeat: {
-      type: 'string',
-      defaultsTo: null
+      return ((this.realDuration / 360000) * wage);
     },
     completed: {
       type: 'boolean',

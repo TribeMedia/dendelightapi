@@ -10,17 +10,23 @@ module.exports = {
   attributes: {
   	userId: {
   		type: 'string',
-  		required: true
+  		required: true,
+      string: true
   	},
     providerId: {
       type: 'string',
-      required: true
+      required: true,
+      string: true
     }, 
     bookTime: {
-      type: 'float'
+      type: 'float',
+      required: true,
+      float: true
     },
     estimatedDuration: {
-      type: 'float'
+      type: 'float',
+      required: true,
+      float: true
     },
     location: {
       type: 'json',
@@ -29,10 +35,14 @@ module.exports = {
     },
   	services: {
   		type: 'array',
-  		required: true
+  		required: true,
+      array: true
   	},
     price: {
-      type: 'interger'
+      type: 'interger',
+      integer: true,
+      min: 10,
+      max: 200
     },
     completed: {
       type: 'boolean',

@@ -62,7 +62,8 @@ module.exports = {
           if (err) return res.badRequest(err);
           
           return res.ok({
-            user: user,
+            user: user[0],
+            token: token
           });
         })        
 
@@ -86,9 +87,10 @@ module.exports = {
         
         Provider.update({id: provider.id}, {accessToken: token}, function (err, provider) {
           if (err) return res.badRequest(err);
-          
+
           return res.ok({
-            provider: provider,
+            provider: provider[0],
+            token: token
           });
         })        
       }
@@ -113,7 +115,8 @@ module.exports = {
           if (err) return res.badRequest(err);
           
           return res.ok({
-            admin: admin,
+            admin: admin[0],
+            token: token
           });
         })        
       }

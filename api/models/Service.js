@@ -10,20 +10,26 @@ module.exports = {
   attributes: {
   	name: {
   		type: 'string',
-  		required: true
+  		required: true,
+      string: true
   	},
     type: {
       type: 'string',
       unique: true,
-      required: true
+      required: true,
+      string: true
     },
     duration: {
-      type: 'integer',
-      required: true
+      type: 'float',
+      required: true,
+      float: true
     },
     price: {
       type: 'integer',
-      required: true
+      required: true,
+      integer: true,
+      min: 10,
+      max: 200
     }
   },
   seedData:[

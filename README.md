@@ -108,14 +108,12 @@ http://oseam.herokuapp.com
 ```json
 {
   "user": {
-    "email": "hello@gmail.com",
-    "password": "$2a$10$oDTKkwnz7y6QuRt26u4hjb9XjSj8mm4nzRphGUiERc0fgArFG",
-    "verified": true,
-    "createdAt": "2015-04-16T08:37:49.375Z",
-    "updatedAt": "2015-04-16T08:37:49.375Z",
-    "id": "552f74dd3917d69f0d9800ca"
+    "verified": false,
+    "createdAt": "2015-05-01T10:37:25.304Z",
+    "updatedAt": "2015-05-01T10:37:34.576Z",
+    "id": "55435765bb0bf70b1abd3683"
   },
-  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7ImVtYWlsIjoidnVvbmduZ28ucGRAZ21haWwuY29tIiwicGFzc3dvcmQiOiIkMmEkMTAkb2dPZElEVEtrd256N3k2UXVSdDI2dTRoamI5WGpTajhtbTRuelJwaEdVaUVSYzBmZ0FyRkciLCJ2ZXJpZmllZCI6ZmFsc2UsImNyZWF0ZWRBdCI6IjIwMTUtMDQtMTZUMDg6Mzc6NDkuMzc1WiIsInVwZGF0ZWRBdCI6IjIwMTUtMDQtMTZUMDg6Mzc6NDkuMzc1WiIsImlkIjoiNTUyZjc0ZGQzOTE3ZDY5ZjBkOTgwMGNhIn0sImlhdCI6MTQyOTE3MzU2MCwiZXhwIjoxNDI5MjU5OTYwfQ.5Z_FLhf7Uvv1TO5_YOWRbRE88hF094StMpdcU3pahoE"
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7InZlcmlmaWVkIjpmYWxzZSwiY3JlYXRlZEF0IjoiMjAxNS0wNS0wMVQxMDozNzoyNS4zMDRaIiwidXBkYXRlZEF0IjoiMjAxNS0wNS0wMVQxMDozNzoyNS4zMDRaIiwiaWQiOiI1NTQzNTc2NWJiMGJmNzBiMWFiZDM2ODMifSwiaWF0IjoxNDMwNDc2NjU0LCJleHAiOjE0MzA1NjMwNTR9.yQtvsYFIkgMyTs7ROOSF05OiTjtSxqbaoLvLQBdqHKw"
 }
 ```
 ##### Facebook oauth
@@ -127,8 +125,6 @@ http://oseam.herokuapp.com
   "success": true,
   "user": {
   	"apiProvider": "Facebook",
-    "email": "hello@gmail.com",
-    "password": "$2a$10$oDTKkwnz7y6QuRt26u4hjb9XjSj8mm4nzRphGUiERc0fgArFG",
     "verified": true,
     "createdAt": "2015-04-16T08:37:49.375Z",
     "updatedAt": "2015-04-16T08:37:49.375Z",
@@ -299,33 +295,28 @@ http://oseam.herokuapp.com
   * Json response example
 ```json
 {
-  "provider": [
-    {
-      "email": "xxx@gmail.com",
-      "password": "$2a$10$x2DP1DPxqVwduFg0T/L1Ze6J9NPxE0xcu1j7tK6wNrgwBDrJwHPKe",
-      "firstName": "xxx",
-      "lastName": "xxx",
-      "abn": "312132",
-      "address": "16 Keats Avenue, Kingsbury",
-      "service": [
-          "mowing"
-      ],
-      "location": {
-        "type": "Point",
-        "coordinates": [
-          145.036478,
-          -37.718564
-        ]
-      },
-      "postcode": "3083",
-      "verified": false,
-      "stripe_account": false,
-      "createdAt": "2015-04-30T05:58:55.835Z",
-      "updatedAt": "2015-04-30T05:59:00.172Z",
-      "accessToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm92aWRlciI6eyJlbWFpbCI6InRvbS5wZEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYSQxMCR4MkRQMURQeHFWd2R1RmcwVC9MMVplNko5TlB4RTB4Y3Uxajd0SzZ3TnJnd0JEckp3SFBLZSIsImZpcnN0TmFtZSI6InZ1b25nIiwibGFzdE5hbWUiOiJuZ28iLCJhYm4iOiIzMTIxMzIiLCJhZGRyZXNzIjoiMTYgS2VhdHMgQXZlbnVlLCBLaW5nc2J1cnkiLCJzZXJ2aWNlIjpbIm1vd2luZyJdLCJsb2NhdGlvbiI6eyJ0eXBlIjoiUG9pbnQiLCJjb29yZGluYXRlcyI6WzE0NS4wMzY0NzgsLTM3LjcxODU2NF19LCJwb3N0Y29kZSI6IjMwODMiLCJ2ZXJpZmllZCI6ZmFsc2UsInN0cmlwZV9hY2NvdW50IjpmYWxzZSwiY3JlYXRlZEF0IjoiMjAxNS0wNC0zMFQwNTo1ODo1NS44MzVaIiwidXBkYXRlZEF0IjoiMjAxNS0wNC0zMFQwNTo1ODo1NS44MzVaIiwiaWQiOiI1NTQxYzQ5ZjExYjQ5NmJiMGUyNGIyZjkifSwiaWF0IjoxNDMwMzczNTQwLCJleHAiOjE0MzA0NTk5NDB9.TfpGRXV445ORNZEL6Cww6KZNQ8RNGl9qDltL3BsgbU8",
-      "id": "5541c49f11b496bb0e24b2f9"
-    }
-  ]
+  "provider": {
+    "firstName": "vuong",
+    "lastName": "ngo",
+    "abn": "312132635hg",
+    "address": "16 Keats Avenue, Kingsbury",
+    "service": [
+      "mowing"
+    ],
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        145.036478,
+        -37.718564
+      ]
+    },
+    "postcode": 3083,
+    "verified": false,
+    "createdAt": "2015-05-01T10:37:16.217Z",
+    "updatedAt": "2015-05-01T10:40:33.864Z",
+    "id": "5543575cbb0bf70b1abd3682"
+  },
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm92aWRlciI6eyJmaXJzdE5hbWUiOiJ2dW9uZyIsImxhc3ROYW1lIjoibmdvIiwiYWJuIjoiMzEyMTMyNjM1aGciLCJhZGRyZXNzIjoiMTYgS2VhdHMgQXZlbnVlLCBLaW5nc2J1cnkiLCJzZXJ2aWNlIjpbIm1vd2luZyJdLCJsb2NhdGlvbiI6eyJ0eXBlIjoiUG9pbnQiLCJjb29yZGluYXRlcyI6WzE0NS4wMzY0NzgsLTM3LjcxODU2NF19LCJwb3N0Y29kZSI6MzA4MywidmVyaWZpZWQiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDE1LTA1LTAxVDEwOjM3OjE2LjIxN1oiLCJ1cGRhdGVkQXQiOiIyMDE1LTA1LTAxVDEwOjM3OjE3LjYyNloiLCJpZCI6IjU1NDM1NzVjYmIwYmY3MGIxYWJkMzY4MiJ9LCJpYXQiOjE0MzA0NzY4MzMsImV4cCI6MTQzMDU2MzIzM30.IvRrC-YZjvfuv7XtHf58FgqHlK8QZabm5ONJ75lF2ek"
 }
 ```
 

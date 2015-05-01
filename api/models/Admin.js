@@ -11,14 +11,20 @@ module.exports = {
   	email: {
   		type: 'email',
   		unique: true,
-  		required: true
+  		required: true,
+      email: true,
+      protected: true,
   	},
     password: {
       type: 'string',
       required: true,
+      string: true,
+      protected: true,
+      minLength: 6
     },
     accessToken: {
-      stype: 'string'
+      stype: 'string',
+      protected: true
     }
   },
   seedData:[
