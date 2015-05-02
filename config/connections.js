@@ -61,25 +61,25 @@ module.exports.connections = {
     adapter: 'sails-mongo',
     url: process.env.MONGOLAB_URI
   },
+ 
+  // hackathon: {
+  //   adapter: 'sails-mongo',
+  //   host: 'localhost',
+  //   port: 27017,
+  //   user: '',
+  //   password: '',
+  //   database: 'hackathondb',
 
-  hackathon: {
-    adapter: 'sails-mongo',
-    host: 'localhost',
-    port: 27017,
-    user: '',
-    password: '',
-    database: 'hackathondb',
-
-    // Server Options
-    ssl: false,
-    poolSize: 10,
-    socketOptions: {
-      noDelay: true,
-      keepAlive: 1,
-      connectTimeoutMS: 30000,
-      socketTimeoutMS: 30000
-    },
-  },
+  //   // Server Options
+  //   ssl: false,
+  //   poolSize: 10,
+  //   socketOptions: {
+  //     noDelay: true,
+  //     keepAlive: 1,
+  //     connectTimeoutMS: 30000,
+  //     socketTimeoutMS: 30000
+  //   },
+  // },
   /***************************************************************************
   *                                                                          *
   * PostgreSQL is another officially supported relational database.          *
