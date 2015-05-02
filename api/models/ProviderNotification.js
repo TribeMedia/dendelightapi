@@ -12,13 +12,8 @@ module.exports = {
   		type: 'string',
       string: true
   	}, 
-    serviceId: {
-      type: 'string',
-      string: true
-    },
-    serviceName: {
-      type: 'string',
-      string: true
+    booking: {
+      type: 'json',
     },
     mes: {
       type: 'string',

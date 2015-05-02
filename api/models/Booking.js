@@ -33,11 +33,21 @@ module.exports = {
       index:'2dsphere',
       required: true
     },
-  	services: {
-  		type: 'array',
-  		required: true,
-      array: true
-  	},
+    mowing: {
+      model: 'Mowing'
+    },
+    leafRemoval: {
+      model: 'LeafRemoval'
+    },
+    weedControl: {
+      model: 'WeedControl'
+    },
+    yardCleaning: {
+      model: 'YardCleaning'
+    },
+    services: {
+      type: 'array'
+    },
     price: {
       type: 'interger',
       integer: true,
@@ -50,5 +60,55 @@ module.exports = {
     }
   },
 
+  afterDestroy: function(deletedRecords, next) {
+    async.each(deletedRecords, function(booking, callback) {
+        async.parallel([
+            function(callback){
+              if (booking.mowing) {
+                Mowing.destroy(booking.mowing.id, function(err) {
+                  if (err) { callback(err);
+                  } else { callback(null); };
+                });
+              };
+            },
+            function(callback){
+              if (booking.leafRemoval) {
+                LeafRemoval.destroy(booking.leafRemoval.id, function(err) {
+                  if (err) { callback(err);
+                  } else { callback(null); };                
+                });
+              }; 
+            },
+            function(callback){
+              if (booking.weedControl) {
+                WeedControl.destroy(booking.weedControl.id, function(err) {
+                  if (err) { callback(err);
+                  } else { callback(null); };                
+                });
+              }; 
+            },
+            function(callback){
+              if (booking.yardCleaning) {
+                YardCleaning.destroy(booking.yardCleaning.id, function(err) {
+                  if (err) { callback(err);
+                  } else { callback(null); };                
+                });
+              }; 
+            },
+        ],
+        function(err, results){
+          if (err) { callback(err);
+          } else {
+            callback();
+          }
+        });
+      }, function(err) {
+        if (err) {
+          next(err);
+        } else {
+          next;
+        } 
+      });
+  }
 };
 

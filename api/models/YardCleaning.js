@@ -12,9 +12,8 @@ module.exports = {
       type: 'string',
       defaultsTo: 'yard_cleaning'
     },
-    bookingId: {
-      type: 'string',
-      string: true
+    booking: {
+      model: 'Booking',
     },
     providerId: {
       type: 'string',

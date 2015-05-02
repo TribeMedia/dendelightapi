@@ -7,8 +7,8 @@ module.exports = {
 	        
 	  Provider.native(function(err, provider){
 	    provider.geoNear(lng, lat, { maxDistance: 10000, query: {'service': {$all: service}, 'schedule.startTime': {$lte: bookTime}, 'schedule.endTime': {$gt: bookTime}}, distanceMultiplier: 6371, spherical: true, uniqueDocs: true}, function (mongoErr, providers) {
-	      if (mongoErr) { reject(mongoErr)}; 
-	      if (providers.results.length === 0) {
+	      if (mongoErr) { reject(mongoErr)
+	      } else if (providers.results.length === 0) {
 	        resolve([]);
 	      } else {
 	        async.map(providers.results,
@@ -111,33 +111,54 @@ module.exports = {
   },
 
   // Update services in Bookings with providerId
-  updateServiceWithProviderID: function (providerId, booking) {
+  updateServiceWithProviderID: function (providerId, id) {
 
     return new Promise(function(resolve, reject) {
-	  async.map(booking.services, function (service, callback) {
-
-	    if (service.name === 'mowing') {
-	      Mowing.update(service.id, {providerId: providerId}, function(err, service) {
-	        callback(null, service);
-	      });
-	    } else if (service.name === 'leaf_removal') {
-	      LeafRemoval.update(service.id, {providerId: providerId}, function(err, service) {
-	        callback(null, service);
-	      });
-	    } else if (service.name === 'weed_control') {
-	      WeedControl.update(service.id, {providerId: providerId}, function(err, service) {
-	        callback(null, service);
-	      });
-	    } else if (service.name === 'yard_cleaning') {
-	      YardCleaning.update(service.id, {providerId: providerId}, function(err, service) {
-	        callback(null, service);
-	      });
-	    }
-
-	  }, function (err, results) {
-	    if (err) { reject(err)};
-	    if (results) {resolve({booking: booking, services: results});};
-	  });
+      
+      booking.findOne({id: id}).populateAll().exec(function (err, booking) {
+	    if (err) { reject(err); };
+        
+        async.parallel([
+            function(callback){
+              if (booking.mowing) {
+			      Mowing.update(booking.mowing.id, {providerId: providerId}, function(err, service) {
+			        if (err) { callback(err); };
+			        if (service) { callback(null, service); };
+			      });
+              };
+            },
+            function(callback){
+              if (booking.leafRemoval) {
+			      LeafRemoval.update(booking.leafRemoval.id, {providerId: providerId}, function(err, service) {
+			        if (err) { callback(err); };
+			        if (service) { callback(null, service); };
+			      });
+              }; 
+            },
+            function(callback){
+              if (booking.weedControl) {
+			      WeedControl.update(booking.weedControl.id, {providerId: providerId}, function(err, service) {
+			        if (err) { callback(err); };
+			        if (service) { callback(null, service); };
+			      });
+              }; 
+            },
+            function(callback){
+              if (booking.yardCleaning) {
+			      YardCleaning.update(booking.yardCleaning.id, {providerId: providerId}, function(err, service) {
+			        if (err) { callback(err); };
+			        if (service) { callback(null, service); };
+			      });
+              }; 
+            },
+        ],
+        function(err, results){
+          if (err) { reject(err);
+          } else {
+            resolve(results);
+          }
+        });
+	  })
 
 	})
   },

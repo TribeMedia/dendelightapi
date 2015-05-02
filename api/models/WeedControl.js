@@ -12,9 +12,8 @@ module.exports = {
       type: 'string',
       defaultsTo: 'weed_control'
     },
-    bookingId: {
-      type: 'string',
-      string: true
+    booking: {
+      model: 'Booking',
     },
     providerId: {
       type: 'string',

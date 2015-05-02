@@ -18,8 +18,8 @@ module.exports = {
     var lat;
     var lng;
     var createdService;
-    var serviceName;                  
-    var services = [];
+    var bookingId;
+    var services = params['services'];  
 
     // Convert address to lat, lng & point
     Locations.getLocation(params.address)
@@ -32,65 +32,80 @@ module.exports = {
         return Provider.findOne(params.providerId);
       })
       .then(function(provider) {
+        console.log({1: provider});
+        // Create Booking by hash of services above
+        return Booking.create({userId: userId, bookTime: bookTime, estimatedDuration: estimatedDuration, providerId: provider.id, location: params.location, services: services})
+      })
+      .then(function(booking) {
+        console.log({2: booking});
+        bookingId = booking.id;
+        params['booking'] = bookingId;
         // Map array of service
         return params.services.reduce(function(sequence, service) {          
-          return sequence.then(function() {            
-            serviceName = service;
+          return sequence.then(function() { 
             // Delete services params to create individual service like mowing...
             if (params['services']) { delete params['services'] };
             if (params['bookTime']) { delete params['bookTime'] };
             if (params['estimatedDuration']) { delete params['estimatedDuration'] };
 
-
             // Loop through service and create associated service
-            if (serviceName === 'mowing') {
-              return Mowing.create(params)
-            } else if (serviceName === 'leaf_removal') {
-              LeafRemoval.create(params)
-            } else if (serviceName === 'weed_control') {
-              WeedControl.create(params)
-            } else if (serviceName === 'yard_cleaning') {
-              YardCleaning.create(params)
+            if (service === 'mowing') {
+              return Mowing.create(params);
+            } else if (service === 'leaf_removal') {
+              return LeafRemoval.create(params)
+            } else if (service === 'weed_control') {
+              return WeedControl.create(params)
+            } else if (service === 'yard_cleaning') {
+              return YardCleaning.create(params)
             };
 
           })
           .then(function(service) {
-            console.log(service);
-            // Create a hash of services to store in Booking
-            services = services.concat({name: serviceName, id: service.id});
-            
+            console.log({3: service});
+
+            // Loop through service and update associated service
+            if (service.name === 'mowing') {
+              return Booking.update({id: bookingId}, {mowing: service.id})            
+            } else if (service.name === 'leaf_removal') {
+              return Booking.update({id: bookingId}, {leafRemoval: service.id})            
+            } else if (service.name === 'weed_control') {
+              return Booking.update({id: bookingId}, {weedControl: service.id})            
+            } else if (service.name === 'yard_cleaning') {
+              return Booking.update({id: bookingId}, {yardCleaning: service.id})            
+            };
             // Create provider notification and push notfication on socket
-            ProviderNotification.create({providerId: params['providerId'], serviceId: service.id, serviceName: serviceName}, function (err, providernote) {
-              if (err) console.log(err);
-              var nsp = sails.io.of('/provider_' + providernote.providerId);
-              nsp.on('connection', function(socket) {
-                socket.emit('notification', providernote);
-              });
-            });
-          });
+          });          ;
 
         }, Promise.resolve()); 
       })
-      .then(function() {
+      .then(function(services) {
+        console.log({5: services});
+
         var ObjectID = require('mongodb').ObjectID;
 
         // Update provider schedule
         return Queries.updateProviderAddSchedule(ObjectID(params.providerId), bookTime, endTime)                   
+
       })
       .then(function() {
-        // Create Booking by hash of services above
-        return Booking.create({userId: userId, services: services, bookTime: bookTime, estimatedDuration: estimatedDuration, providerId: params.providerId, location: params.location})
+        console.log({6: 'step five completed'});
+        return Booking.findOne({id: bookingId}).populateAll();
       })
       .then(function(booking) {
-        console.log(booking);
-        // Update bookingId for each associated services
-        return Queries.updateServiceWithBookingID(booking);
-      })
-      .then(function(service) {
-        // Return JSON of booking and array of services
-        return res.ok(service);
+        console.log({7: booking});
+
+        ProviderNotification.create({providerId: params.providerId, booking: booking}, function (err, providernote) {
+          if (err) console.log(err);
+          var nsp = sails.io.of('/provider_' + params.providerId);
+          nsp.on('connection', function(socket) {
+            socket.emit('notification', providernote);
+          });
+        });
+
+        return res.ok(booking);
       })
       .catch(function(err) {
+        console.log({8: err});
         res.badRequest(err);
       })
   
@@ -185,38 +200,38 @@ module.exports = {
     var estimatedDuration;
     var endTime;
     var location;
-    var booking;
+    var bookingServices;
 
     Booking.findOne({id: id, userId: req.user.id})
       .then(function(booking) {
+        console.log({1: booking});
         // Pass value to variables
-        booking = booking;
+        bookingServices = booking.services;
         oldBookTime = booking.bookTime;
         estimatedDuration = booking.estimatedDuration;
         oldEndTime = oldBookTime + estimatedDuration;
         endTime = bookTime + estimatedDuration;
         location = booking.location;
-        // Create an array of services like ['mowing', 'leaf_removal']
-        booking.services.forEach(function(element, index, array) {
-          services = services.concat(element.name);
-        });
         // Search for provider who perform job in that booking
         return Provider.findOne({id: booking.providerId});     
       })
       .then(function(provider) {
+        console.log({2: provider});
         firstProviderId = provider.id;
         // Remove schedule of that provider
         return Queries.updateProviderRemoveSchedule(ObjectID(firstProviderId), oldBookTime, oldEndTime);
       })
       .then(function() {
         // Find a list of busy providers
-        return Queries.searchBusyProvider(location.coordinates[0], location.coordinates[1], services, bookTime);        
+        return Queries.searchBusyProvider(location.coordinates[0], location.coordinates[1], bookingServices, bookTime);        
       })
       .then(function(ids) {
+        console.log({3: ids});
         // Search nearest provider who provides  services
-        return Queries.searchFreeProvider(location.coordinates[0], location.coordinates[1], services, bookTime, ids);
+        return Queries.searchFreeProvider(location.coordinates[0], location.coordinates[1], bookingServices, bookTime, ids);
       })
       .then(function(providers) {
+        console.log({4: providers});
         if (providers.results[0]) { 
           secondProviderId = providers.results[0].obj._id;
         };        
@@ -224,26 +239,34 @@ module.exports = {
           // Update provider and update time if provider is the same
           Queries.updateProviderAddSchedule(ObjectID(firstProviderId), bookTime, endTime)
             .then(function() {
-              Booking.update({id: id}, {bookTime: bookTime})
+              console.log({5: 'Ok'});
+
+              return Booking.update({id: id}, {bookTime: bookTime})
             })
             .then(function(booking) {
-              res.ok(booking);
+              console.log({6: booking});
+              return res.ok(booking);
             })
         } else {
           // Update provider schedule, update service, update booking if provider is different
           Queries.updateProviderAddSchedule(secondProviderId, bookTime, endTime)
             .then(function() {
-              Queries.updateServiceWithProviderID(secondProviderId.toString(), booking);
+            console.log({7: 'Ok'});
+              return Queries.updateServiceWithProviderID(secondProviderId.toString(), booking.id);
             })
             .then(function(services) {
+              console.log({8: services});
               Booking.update({id: id}, {bookTime: bookTime, providerId: secondProviderId.toString()});
             })
             .then(function(booking) {
+              console.log({9: booking});
               res.ok(booking);
             })
         };
       })
       .catch(function(err) {
+        console.log({10: err});
+
         res.badRequest(err);
       })
   },
@@ -261,43 +284,23 @@ module.exports = {
 
     Booking.findOne({id: id, userId: req.user.id})
       .then(function(booking) {
-
-        return booking.services.reduce(function(sequence, service) {          
-          return sequence.then(function() {            
-
-            // Search service with id (eg. mowing)
-            return Queries.searchServiceWithId(service.name, service.id);
-
-          })
-          .then(function(service) {
-            startTime = service.bookTime;
-            endTime = service.bookTime + service.estimatedDuration;
-            service = service;
-            // Find provider
-            return Provider.findOne(service.providerId);
-          })
-          .then(function(provider) {
-            var ObjectID = require('mongodb').ObjectID;
-            var providerId = ObjectID(provider.id);
-            // Update provider schedule with mongonative, return objectId
-            return Queries.updateProviderRemoveSchedule(providerId, startTime, endTime);
-          })
-          .then(function(pid) {
-            // Create notification
-            return ProviderNotification.create({providerId: pid.toString(), serviceId: service.id, serviceName: service.name, mes: 'Is canceled'})
-          })
-          .then(function(ProviderNotification) {
-            // Create socket
-            var nsp = sails.io.of('/provider_' + ProviderNotification.providerId);
-            nsp.on('connection', function(socket) {
-              socket.emit('notification', ProviderNotification);
-            });
-            // Destroy related service
-            return service.destroy;            
-          })
-        }, Promise.resolve()); 
+        var ObjectID = require('mongodb').ObjectID;
+        var providerId = ObjectID(booking.providerId);
+        startTime = booking.bookTime;
+        endTime = startTime + booking.estimatedDuration;
+        // Update provider schedule with mongonative, return objectId
+        return Queries.updateProviderRemoveSchedule(providerId, startTime, endTime);
       })
-      .then(function() {
+      .then(function(pid) {
+        // Create notification
+        return ProviderNotification.create({providerId: pid.toString(), serviceId: service.id, serviceName: service.name, mes: 'Is canceled'})
+      })
+      .then(function(ProviderNotification) {
+        // Create socket
+        var nsp = sails.io.of('/provider_' + ProviderNotification.providerId);
+        nsp.on('connection', function(socket) {
+          socket.emit('notification', ProviderNotification);
+        });
         // Destroy booking
         return Booking.destroy({id: id, userId: req.user.id});
       })

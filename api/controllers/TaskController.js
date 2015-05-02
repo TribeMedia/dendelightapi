@@ -13,15 +13,11 @@ module.exports = {
     Provider.findOne(params['providerId'])
       .then(function(provider) {
         // Find booking related to provider
-        return Booking.find(params);
+        return Booking.find(params).populateAll();
       })
       .then(function(bookings) {
-        // Find services related to booking
-        return Queries.searchServiceInBookings(bookings);
-      })
-      .then(function(results) {
         // Return 200
-        return res.ok(results);
+        return res.ok(bookings);
       })
       .catch(function(err) {
         res.notFound(err);
@@ -35,24 +31,20 @@ module.exports = {
   	var params = req.params.all();
     var ObjectID = require('mongodb').ObjectID;
   	var newProviderId;
-    var booking;
     var bookTime;
     var estimatedDuration;
     var endTime;
     var location;
-    var services = [];
+    var services;
 
     Booking.findOne({id: bookingId, providerId: providerId})
       .then(function(booking) {
-        booking = booking;
         bookTime = booking.bookTime;
         estimatedDuration = booking.estimatedDuration;
         endTime = bookTime + estimatedDuration;
         location = booking.location
         // create an array of services
-        booking.services.forEach(function(element, index, array) {
-          services = services.concat(element.name);
-        });
+        services = booking.services;
 
         console.log({1: booking});
         // Search for a list of provider id whom could not perform job
@@ -73,7 +65,7 @@ module.exports = {
       })
       .then(function() {
         // Update providerId to service
-        return Queries.updateServiceWithProviderID(newProviderId.toString(), booking);
+        return Queries.updateServiceWithProviderID(newProviderId.toString(), bookingId);
       })
       .then(function(results) {
         console.log({4: results});
@@ -95,13 +87,9 @@ module.exports = {
   	var params = req.params.all();
   	params['userId'] = userId;
 
-  	Booking.find(params)
+  	Booking.find(params).populateAll()
       .then(function(bookings) {
-        // Find services related to booking
-        return Queries.searchServiceInBookings(bookings);
-      })
-      .then(function(results) {
-        return res.ok(results);
+        return res.ok(bookings);
       })
       .catch(function(err) {
         return res.notFound(err);

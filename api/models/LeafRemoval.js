@@ -12,9 +12,8 @@ module.exports = {
       type: 'string',
       defaultsTo: 'leaf_removal'
     },
-    bookingId: {
-      type: 'string',
-      string: true
+    booking: {
+      model: 'Booking',
     },
     providerId: {
       type: 'string',
