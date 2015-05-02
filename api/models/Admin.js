@@ -23,14 +23,14 @@ module.exports = {
       minLength: 6
     },
     accessToken: {
-      stype: 'string',
+      type: 'string',
       protected: true
     }
   },
   seedData:[
       {
-        email:"vuongngo.pd@gmail.com",
-        password: "admin12345"
+        email: 'test@oseam.com',
+        password: '123456789'
       },
     ],
 

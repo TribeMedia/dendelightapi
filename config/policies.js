@@ -29,14 +29,14 @@ module.exports.policies = {
   // '*': "hasToken",
   UserController: {
     create: true,
-    find: 'isUser',
+    find: 'isAdmin',
     update: 'isUser',
     destroy: 'isUser'
   },
   ProviderController: {
     fetch: true,
     create: true,
-    find: 'isProvider',
+    find: 'isAdmin',
     update: 'isProvider',
     destroy: 'isProvider'
   },

@@ -49,7 +49,7 @@ http://oseam.herokuapp.com
 
 ##### Get service info (mowing, leaf_removal, weed_control, yard_cleaning)
   * GET: /api/v1/services
-  * Params: name, type, duration, price
+  * Params: name, type, duration (in milliseconds), price
   * Example GET: /api/v1/services?name=mowing&type=small
 
 ##### Fetch provider nearby
@@ -385,9 +385,17 @@ socket.on('notification', function(data) {
 
 ##### Admin Login
   * POST: /api/administrator
-  * Parameters: email, password
-  * Json response: { provider: {xxx}, token: xxx }
-
+  * Parameters: email = test@oseam.com, password = 123456789
+```json
+{
+  "admin": {
+    "createdAt": "2015-05-02T06:36:19.408Z",
+    "updatedAt": "2015-05-02T06:36:22.215Z",
+    "id": "5544706382b8d03b1c2930d4"
+  },
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhZG1pbiI6eyJjcmVhdGVkQXQiOiIyMDE1LTA1LTAyVDA2OjM2OjE5LjQwOFoiLCJ1cGRhdGVkQXQiOiIyMDE1LTA1LTAyVDA2OjM2OjE5LjQwOFoiLCJpZCI6IjU1NDQ3MDYzODJiOGQwM2IxYzI5MzBkNCJ9LCJpYXQiOjE0MzA1NDg1ODIsImV4cCI6MTQzMDYzNDk4Mn0.9nPheTCWhZFKI_FUohOGPcqADKwZSzwd0Q_SgvczUFs"
+}
+```
 ##### Find user by id
   * GET: /api/v1/user/:id
 
