@@ -56,6 +56,12 @@ module.exports.connections = {
   * Run: npm install sails-mongo                                             *
   *                                                                          *
   ***************************************************************************/
+
+  productionDiskDb: {
+    adapter: 'sails-mongo',
+    url: process.env.MONGOLAB_URI
+  },
+
   hackathon: {
     adapter: 'sails-mongo',
     host: 'localhost',
@@ -73,11 +79,6 @@ module.exports.connections = {
       connectTimeoutMS: 30000,
       socketTimeoutMS: 30000
     },
-  },
-
-  productionDiskDb: {
-    adapter: 'sails-mongo',
-    url: process.env.MONGOLAB_URI
   },
   /***************************************************************************
   *                                                                          *
