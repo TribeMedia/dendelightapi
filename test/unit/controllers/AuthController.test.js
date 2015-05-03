@@ -4,7 +4,7 @@ var request = require('supertest');
 describe('AuthController', function() {
 	var providerId;
 	before(function(done) {
-		Provider.create({email: 'provider_confirm_test1@gmail.com', password: '14491992', firstName: 'Tom', lastName: 'Henry', abn: '92686h8343', address: '16 Keats Avenue, Kingsbury', lat: 62365135752, lng: 7626763267643, postcode: 1923}, function(err, provider) { 
+		Provider.create({email: 'provider_confirm_test1@gmail.com', password: '14491992', firstName: 'Tom', lastName: 'Henry', abn: 'ud73gs67e8u', address: '16 Keats Avenue, Kingsbury', location: { type: 'Point', coordinates: [144.963089, -37.807880]}, postcode: 3053}, function(err, provider) { 
 			providerId = provider.id;
 			done(); })
 	});

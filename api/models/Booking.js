@@ -65,35 +65,35 @@ module.exports = {
         async.parallel([
             function(callback){
               if (booking.mowing) {
-                Mowing.destroy(booking.mowing.id, function(err) {
+                Mowing.destroy({booking: booking.id}, function(err) {
                   if (err) { callback(err);
                   } else { callback(null); };
                 });
-              };
+              } else { callback(false); };
             },
             function(callback){
               if (booking.leafRemoval) {
-                LeafRemoval.destroy(booking.leafRemoval.id, function(err) {
+                LeafRemoval.destroy({booking: booking.id}, function(err) {
                   if (err) { callback(err);
                   } else { callback(null); };                
                 });
-              }; 
+              } else { callback(false); };
             },
             function(callback){
               if (booking.weedControl) {
-                WeedControl.destroy(booking.weedControl.id, function(err) {
+                WeedControl.destroy({booking: booking.id}, function(err) {
                   if (err) { callback(err);
                   } else { callback(null); };                
                 });
-              }; 
+              } else { callback(false); };
             },
             function(callback){
               if (booking.yardCleaning) {
-                YardCleaning.destroy(booking.yardCleaning.id, function(err) {
+                YardCleaning.destroy({booking: booking.id}, function(err) {
                   if (err) { callback(err);
                   } else { callback(null); };                
                 });
-              }; 
+              } else { callback(false); };
             },
         ],
         function(err, results){
@@ -106,7 +106,7 @@ module.exports = {
         if (err) {
           next(err);
         } else {
-          next;
+          next();
         } 
       });
   }

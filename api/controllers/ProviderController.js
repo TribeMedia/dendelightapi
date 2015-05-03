@@ -8,6 +8,12 @@ module.exports = {
   // Fetch provider
   fetch: function (req, res) {
     var params = req.params.all();
+
+    if (!params['address']) return res.badRequest({err: 'No address'});
+    if (!params['bookTime']) return res.badRequest({err: 'No booktime'});
+    if (!params['estimatedDuration']) return res.badRequest({err: 'No estimatedDuration'});
+    if (!params['services']) return res.badRequest({err: 'No services'});
+
     if( typeof params.services === 'string' ) {
         params['services'] = [ params.services ];
     };
@@ -16,7 +22,6 @@ module.exports = {
     var bookTime = parseInt(params.bookTime);
     var estimatedDuration = parseInt(params.estimatedDuration);
     var endTime = bookTime + estimatedDuration;
-
     // Convert address to lat, lng & point
     Locations.getLocation(params.address)
       .then(function(result) {
@@ -34,8 +39,7 @@ module.exports = {
       .then(function(providers) {
         console.log(providers);
         if (providers.results[0]) { 
-          provider = providers.results[0];
-          return res.ok(provider);
+          return res.ok(providers);
         };        
       })
       .catch(function(err) {
@@ -48,6 +52,7 @@ module.exports = {
   create: function (req, res) {
     var params = req.params.all();
 
+    if (!params.address) return res.badRequest({err: 'No address'});
     async.waterfall([
       function (callback) {
         if ((params.address) && (!params.lat)) {

@@ -4,11 +4,11 @@ module.exports = function(factory) {
 	  .attr('password', '14491992')
 	  .attr('firstName', 'Vuong')
 	  .attr('lastName', 'Ngo')
-	  .attr('abn', 'hfaiyhuhewioare')
-	  .attr('address', '16 Keats Ave, Kingsbury')
-	  .attr('lat', 16573684686384)
-	  .attr('lng', 3497638623662333)
-	  .attr('postcode', 6352);
+	  .attr('abn', 'hs83u7fhd80')
+	  .attr('service', ['mowing', 'leaf_removal'])
+	  .attr('location', { type: 'Point', coordinates: [144.963089, -37.807880]})
+	  .attr('address', '16 Keats Avenue, Kingsbury')
+	  .attr('postcode', 3083);
 	factory.define("active_provider").parent("provider")
 	  .attr("active", true);
 };

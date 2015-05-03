@@ -4,16 +4,27 @@ var request = require('supertest');
 describe('UserController', function() {
 	var token;
 	var userId;
+	var adminToken;
+	var jwt = require('jsonwebtoken');
+	var secret = '6ab198087a16e6d49b438a7aa514731f';
 
 	before(function(done) {
 		factory.load();
 		factory.create("user", function(user) {
 			userId = user.id;
-			var jwt = require('jsonwebtoken');
-			var secret = '6ab198087a16e6d49b438a7aa514731f';
 			token = jwt.sign({user: user}, secret, { expiresInMinutes: 60*24 });
-			done();
+			User.update(user.id, {accessToken: token}, function(err, user) {
+				if (err) console.log(err);
+			})
 		});
+		Admin.create({email: "admin_test_user@gmail.com", password: "14491992"}, function(err, admin) {
+			adminToken = jwt.sign({admin: admin}, secret, { expiresInMinutes: 60*24 });
+			Admin.update(admin.id, {accessToken: adminToken}, function(err, admin) {
+				if (err) console.log(err);
+				done();			
+			});
+		})
+
 	});
 
 	describe('#find()', function() {
@@ -21,7 +32,7 @@ describe('UserController', function() {
 			request(sails.hooks.http.app)
 				.get('/api/v1/user')
 				.set('Content-Type',  'application/json')
-				.set('Authorization', 'Bearer ' + token)
+				.set('Authorization', 'Bearer ' + adminToken)
 				.expect(200)
 				.expect(hasUsersKey)
 				.end(done);
@@ -34,7 +45,7 @@ describe('UserController', function() {
 			request(sails.hooks.http.app)
 				.get('/api/v1/user/' + userId)
 				.set('Content-Type', 'application/json')
-				.set('Authorization', 'Bearer ' + token)
+				.set('Authorization', 'Bearer ' + adminToken)
 				.expect(200)
 				.expect(hasUserKey)
 				.end(done);
@@ -44,7 +55,7 @@ describe('UserController', function() {
 			request(sails.hooks.http.app)
 				.get('/api/v1/user/1' + userId)
 				.set('Content-Type', 'application/json')
-				.set('Authorization', 'Bearer ' + token)
+				.set('Authorization', 'Bearer ' + adminToken)
 				.expect(404)
 				.end(done);
 		})

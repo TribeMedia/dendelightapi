@@ -9,6 +9,12 @@ module.exports = {
   create: function (req, res) {
     var userId = req.user.id;
     var params = req.params.all();
+
+    if (!params['address']) return res.badRequest({err: 'No address'});
+    if (!params['bookTime']) return res.badRequest({err: 'No booktime'});
+    if (!params['estimatedDuration']) return res.badRequest({err: 'No estimatedDuration'});
+    if (!params['services']) return res.badRequest({err: 'No services'});
+
     if( typeof params.services === 'string' ) {
         params['services'] = [ params.services ];
     };
@@ -102,11 +108,11 @@ module.exports = {
           });
         });
 
-        return res.ok(booking);
+        return res.status(201).json({booking: booking});
       })
       .catch(function(err) {
         console.log({8: err});
-        res.badRequest(err);
+        res.badRequest({err: err});
       })
   
   },
@@ -205,6 +211,7 @@ module.exports = {
     Booking.findOne({id: id, userId: req.user.id})
       .then(function(booking) {
         console.log({1: booking});
+        if (!booking) return res.notFound();
         // Pass value to variables
         bookingServices = booking.services;
         oldBookTime = booking.bookTime;
@@ -245,7 +252,7 @@ module.exports = {
             })
             .then(function(booking) {
               console.log({6: booking});
-              return res.ok(booking);
+              return res.ok({booking: booking});
             })
         } else {
           // Update provider schedule, update service, update booking if provider is different
@@ -260,7 +267,7 @@ module.exports = {
             })
             .then(function(booking) {
               console.log({9: booking});
-              res.ok(booking);
+              res.ok({booking: booking});
             })
         };
       })
@@ -276,7 +283,7 @@ module.exports = {
     var id = req.param('id');
     var startTime;
     var endTime;
-    var service;
+    var bookingInfo;
 
     if (!id) {
       return res.badRequest('No id provided.');
@@ -284,28 +291,33 @@ module.exports = {
 
     Booking.findOne({id: id, userId: req.user.id})
       .then(function(booking) {
+      console.log({1: booking});
         var ObjectID = require('mongodb').ObjectID;
         var providerId = ObjectID(booking.providerId);
         startTime = booking.bookTime;
         endTime = startTime + booking.estimatedDuration;
+        bookingInfo = booking;
         // Update provider schedule with mongonative, return objectId
         return Queries.updateProviderRemoveSchedule(providerId, startTime, endTime);
       })
       .then(function(pid) {
+      console.log({2: pid});
+      console.log({test: bookingInfo});
         // Create notification
-        return ProviderNotification.create({providerId: pid.toString(), serviceId: service.id, serviceName: service.name, mes: 'Is canceled'})
+        return ProviderNotification.create({providerId: pid.toString(), booking: JSON.stringify(bookingInfo), mes: 'Is canceled'})
       })
-      .then(function(ProviderNotification) {
+      .then(function(providerNotification) {
+      console.log({3: providerNotification});
         // Create socket
-        var nsp = sails.io.of('/provider_' + ProviderNotification.providerId);
+        var nsp = sails.io.of('/provider_' + providerNotification.providerId);
         nsp.on('connection', function(socket) {
-          socket.emit('notification', ProviderNotification);
+          socket.emit('notification', providerNotification);
         });
         // Destroy booking
         return Booking.destroy({id: id, userId: req.user.id});
       })
-      .then(function(booking) {
-        return res.status(204).json(booking);
+      .then(function() {
+        return res.status(204).json();
       })    
       .catch(function(err) {
         return res.status(500);

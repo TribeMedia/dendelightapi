@@ -7,24 +7,32 @@ describe('BookingController', function() {
 	var userId;
 	var providerId;
 	var bookingId;
+	var bookingId2;
 	var jwt = require('jsonwebtoken');
 	var secret = '6ab198087a16e6d49b438a7aa514731f';
 	before(function(done) {
+		Provider.create({email: "provider_test_booking@gmail.com", password: "14491992", firstName: "Tombook", lastName: "Joebook", abn: '3286382734f', service: ['mowing', 'leaf_removal', 'yard_cleaning'], postcode: 3083, address: '16 Keats Avenue, Kingsbury', location: { type: 'Point', coordinates: [145.036478, -37.718564]}}, function(err, provider) {
+			providerId = provider.id;
+		});
 		User.create({email: "user_test_booking@gmail.com", password: "14491992"}, function(err, user) {
 			userId = user.id;
 			userToken = jwt.sign({user: user}, secret, { expiresInMinutes: 60*24 });
 
-			Booking.create({userId: userId, service: "Lawning", address: "16 Keats Ave, Kingsbury"}, function(err, booking) {
+			User.update(userId, {accessToken: userToken}, function(err, user) {
+				if (err) console.log(err);
+			});
+
+			Booking.create({providerId: providerId, userId: userId, services: ['mowing', 'leaf_removal'], estimatedSize: 'medium', bookTime: 1449977804187, estimatedDuration: 1440000, treeNumber: 'tree trees', location: { type: 'Point', coordinates: [145.036478, -37.718564]}}, function(err, booking) {
 				bookingId = booking.id;
 			});	
 
 		});
-		Provider.create({email: "provider_test_booking@gmail.com", password: "14491992", firstName: "Tombook", lastName: "Joebook", abn: '3286382734f', postcode: 78623, address: '743yhf34', lat: 747874342, lng: 7743782632}, function(err, provider) {
-			providerId = provider.id;
-		});
 		Admin.create({email: "admin_test_booking@gmail.com", password: "14491992"}, function(err, admin) {
 			adminToken = jwt.sign({admin: admin}, secret, { expiresInMinutes: 60*24 });
-			done();			
+			Admin.update(admin.id, {accessToken: adminToken}, function(err, admin) {
+				if (err) console.log(err);
+				done();			
+			});
 		})
 	});
 
@@ -69,9 +77,10 @@ describe('BookingController', function() {
 				.post('/api/v1/booking')
 				.set('Content-Type',  'application/json')
 				.set('Authorization', 'Bearer ' + userToken)
-				.send({userId: userId, service: "Lawning", address: '16 Keats Ave, Kingsbury'})
+				.send({services: ['mowing', 'leaf_removal'], address: '16 Keats Ave, Kingsbury', estimatedSize: 'medium', bookTime: 1429977804187, estimatedDuration: 1440000, treeNumber: 'three trees', providerId: providerId, wage: 30})
 				.expect(201)
 				.expect(hasBookingKey)
+				.expect(returnBookingId)
 				.end(done);
 		});
 
@@ -93,7 +102,7 @@ describe('BookingController', function() {
 				.put('/api/v1/booking/' + bookingId)
 				.set('Content-Type', 'application/json')
 				.set('Authorization', 'Bearer ' + userToken)
-				.send({service: 'Cleaning'})
+				.send({bookTime: 1459977804187})
 				.expect(200)
 				.expect(hasBookingKey)
 				.end(done);
@@ -114,7 +123,7 @@ describe('BookingController', function() {
 				.put('/api/v1/booking/1' + bookingId)
 				.set('Content-Type', 'application/json')
 				.set('Authorization', 'Bearer ' + userToken)
-				.send({service: 'Cleaning'})
+				.send({services: ['Cleaning']})
 				.expect(404)
 				.end(done);
 		})
@@ -124,7 +133,7 @@ describe('BookingController', function() {
 	describe('#destroy()', function() {
 		it('should return 204', function(done) {
 			request(sails.hooks.http.app)
-				.delete('/api/v1/booking/' + bookingId)
+				.delete('/api/v1/booking/' + bookingId2)
 				.set('Content-Type', 'application/json')
 				.set('Authorization', 'Bearer ' + userToken)
 				.expect(204)
@@ -135,6 +144,11 @@ describe('BookingController', function() {
 
 	function hasBookingKey (res) {
 		if (!('booking' in res.body)) return "missing booking key";
+	};
+
+	function returnBookingId (res) {
+		if ('booking' in res.body) {bookingId2 = res.body.booking.id};
+		console.log(bookingId2);
 	};
 
 });
