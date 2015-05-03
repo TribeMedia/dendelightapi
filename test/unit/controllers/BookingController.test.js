@@ -77,12 +77,24 @@ describe('BookingController', function() {
 				.post('/api/v1/booking')
 				.set('Content-Type',  'application/json')
 				.set('Authorization', 'Bearer ' + userToken)
+				.send({services: ['mowing', 'leaf_removal'], address: '16 Keats Ave, Kingsbury', estimatedSize: 'medium', bookTime: 1459977804187, estimatedDuration: 1440000, treeNumber: 'three trees', providerId: providerId, wage: 30})
+				.expect(201)
+				.expect(hasBookingKey)
+				.end(done);
+		});
+
+		it('should have  json response', function(done) {
+			request(sails.hooks.http.app)
+				.post('/api/v1/booking')
+				.set('Content-Type',  'application/json')
+				.set('Authorization', 'Bearer ' + userToken)
 				.send({services: ['mowing', 'leaf_removal'], address: '16 Keats Ave, Kingsbury', estimatedSize: 'medium', bookTime: 1429977804187, estimatedDuration: 1440000, treeNumber: 'three trees', providerId: providerId, wage: 30})
 				.expect(201)
 				.expect(hasBookingKey)
 				.expect(returnBookingId)
 				.end(done);
 		});
+
 
 		it('should return badRequest', function(done) {
 			request(sails.hooks.http.app)
@@ -99,7 +111,7 @@ describe('BookingController', function() {
 	describe('#update()', function() {
 		it('should update booking and have json response', function(done) {
 			request(sails.hooks.http.app)
-				.put('/api/v1/booking/' + bookingId)
+				.put('/api/v1/booking/' + bookingId2)
 				.set('Content-Type', 'application/json')
 				.set('Authorization', 'Bearer ' + userToken)
 				.send({bookTime: 1459977804187})

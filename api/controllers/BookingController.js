@@ -259,15 +259,15 @@ module.exports = {
           Queries.updateProviderAddSchedule(secondProviderId, bookTime, endTime)
             .then(function() {
             console.log({7: 'Ok'});
-              return Queries.updateServiceWithProviderID(secondProviderId.toString(), booking.id);
+              return Queries.updateServiceWithProviderID(secondProviderId.toString(), id);
             })
             .then(function(services) {
               console.log({8: services});
-              Booking.update({id: id}, {bookTime: bookTime, providerId: secondProviderId.toString()});
+              return Booking.update({id: id}, {bookTime: bookTime, providerId: secondProviderId.toString()});
             })
             .then(function(booking) {
               console.log({9: booking});
-              res.ok({booking: booking});
+              return res.ok({booking: booking});
             })
         };
       })

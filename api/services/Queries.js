@@ -115,9 +115,9 @@ module.exports = {
 
     return new Promise(function(resolve, reject) {
       
-      booking.findOne({id: id}).populateAll().exec(function (err, booking) {
+      Booking.findOne({id: id}).populateAll().exec(function (err, booking) {
 	    if (err) { reject(err); };
-        
+        console.log({hello: booking});
         async.parallel([
             function(callback){
               if (booking.mowing) {
@@ -125,7 +125,7 @@ module.exports = {
 			        if (err) { callback(err); };
 			        if (service) { callback(null, service); };
 			      });
-              };
+              } else { callback(null, true); };
             },
             function(callback){
               if (booking.leafRemoval) {
@@ -133,7 +133,7 @@ module.exports = {
 			        if (err) { callback(err); };
 			        if (service) { callback(null, service); };
 			      });
-              }; 
+              } else { callback(null, true); };
             },
             function(callback){
               if (booking.weedControl) {
@@ -141,7 +141,7 @@ module.exports = {
 			        if (err) { callback(err); };
 			        if (service) { callback(null, service); };
 			      });
-              }; 
+              } else { callback(null, true); };
             },
             function(callback){
               if (booking.yardCleaning) {
@@ -149,7 +149,7 @@ module.exports = {
 			        if (err) { callback(err); };
 			        if (service) { callback(null, service); };
 			      });
-              }; 
+              } else { callback(null, true); };
             },
         ],
         function(err, results){

@@ -145,7 +145,7 @@ module.exports.routes = {
   // View job
   'get /api/v1/provider_job': 'TaskController.provider_job',
   // Reject job
-  'put /api/v1/reject_job/:id?': 'TaskController.reject_job',
+  'delete /api/v1/reject_job/:id?': 'TaskController.reject_job',
   // View booking by user
   'get /api/v1/view_booking': 'TaskController.view_booking',
 

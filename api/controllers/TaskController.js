@@ -17,6 +17,7 @@ module.exports = {
       })
       .then(function(bookings) {
         // Return 200
+        console.log({wew: bookings});
         return res.ok(bookings);
       })
       .catch(function(err) {
@@ -28,7 +29,6 @@ module.exports = {
   reject_job: function (req, res) {
   	var providerId = req.provider.id;
   	var bookingId = req.param('id');
-  	var params = req.params.all();
     var ObjectID = require('mongodb').ObjectID;
   	var newProviderId;
     var bookTime;
@@ -39,14 +39,14 @@ module.exports = {
 
     Booking.findOne({id: bookingId, providerId: providerId})
       .then(function(booking) {
+        console.log({1: booking});
         bookTime = booking.bookTime;
         estimatedDuration = booking.estimatedDuration;
         endTime = bookTime + estimatedDuration;
-        location = booking.location
+        location = booking.location;
         // create an array of services
         services = booking.services;
 
-        console.log({1: booking});
         // Search for a list of provider id whom could not perform job
         return Queries.searchBusyProvider(location.coordinates[0], location.coordinates[1], services, bookTime);        
       })
@@ -70,10 +70,10 @@ module.exports = {
       .then(function(results) {
         console.log({4: results});
         // Update booking info
-        return Booking.update({id: id}, {providerId: newProviderId.toString()});
+        return Booking.update({id: bookingId}, {providerId: newProviderId.toString()});
       })
       .then(function(booking) {
-        res.ok(booking);
+        res.status(204).json();
       })
       .catch(function(err) {
         console.log({5: err});
