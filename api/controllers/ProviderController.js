@@ -37,7 +37,6 @@ module.exports = {
         return Queries.searchFreeProvider(lng, lat, params.services, bookTime, ids);
       })
       .then(function(providers) {
-        console.log(providers);
         if (providers.results[0]) { 
           return res.ok(providers);
         };        

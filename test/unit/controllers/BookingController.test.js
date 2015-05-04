@@ -160,7 +160,6 @@ describe('BookingController', function() {
 
 	function returnBookingId (res) {
 		if ('booking' in res.body) {bookingId2 = res.body.booking.id};
-		console.log(bookingId2);
 	};
 
 });

@@ -49,10 +49,10 @@ http://oseam.herokuapp.com
 
 ##### Get service info (mowing, leaf_removal, weed_control, yard_cleaning)
   * GET: /api/v1/services
-  * Params: name, type, duration (in milliseconds), price
+  * Situational Params: name, type, duration (in milliseconds), price
   * Example GET: /api/v1/services?name=mowing&type=small
 
-##### Fetch provider nearby
+##### Fetch provider nearby (return max 3 providers)
   * POST: /api/v1/providers
   * Params: services (array), address, bookTime, estimatedDuration (calculated from service info above)
 ```Json
@@ -60,8 +60,6 @@ http://oseam.herokuapp.com
   "dis": 0,
   "obj": {
     "_id": "5541c38aeca343890e031819",
-    "email": "xxx@gmail.com",
-    "password": "$2a$10$FhYl2z.fifN8Wiczh7Hd8usSr3rVbhJxF53cbFzDSVUG0.BCw9SIW",
     "firstName": "xxx",
     "lastName": "xxx",
     "abn": "312132",
@@ -134,13 +132,13 @@ http://oseam.herokuapp.com
 }
 ```
 
-##### Update account
+##### Update account (AUTH)
 	* PUT: /api/v1/user/:id
 
-##### Destroy account
+##### Destroy account (AUTH)
 	* DELETE: /api/v1/user/:id
 
-##### Create booking
+##### Create booking (AUTH)
 	* POST: /api/v1/booking
 	* Required params: services (array), estimatedSize, address, bookTime (in milliseconds), estimatedDuration (in milliseconds), wage, providerId (when user selects provider)
   * Additional params: postcode, lat, lng, repeat
@@ -197,7 +195,7 @@ http://oseam.herokuapp.com
   ]
 }
 ```
-##### View list of previous booking by user
+##### View list of previous booking by user (AUTH)
 	* GET: /api/v1/view_booking
   * Params: completed (true or false)
 ```json
@@ -243,20 +241,28 @@ http://oseam.herokuapp.com
 ]
 ```
 
-##### Update booking time
+##### Update booking time (AUTH)
   * PUT: /api/v1/booking/:id
   * Params: bookTime (in milliseconds)
 
-##### Destroy booking
+##### Destroy booking (AUTH)
   * DELETE: /api/v1/booking/:id
 
-##### Logout
+##### Logout (AUTH)
 	* GET: /api/v1/logout
 	* OR: simply clear token in session or local-service
 
+##### Socket io for real-time push notification (user)
+  * EXAMPLE
+```javascript
+var socket = io('/user' + userId);
+socket.on('notification', function(data) {
+  console.log(data);
+});
+```
 # Provider flow
 
-##### Register account
+##### Register account 
   * POST: /api/v1/provider
   * Required params: email, password, firstName, lastName, abn, address, service (in array), 
   * Additional params: businessName, postcode, lat, lng, service
@@ -320,17 +326,17 @@ http://oseam.herokuapp.com
 }
 ```
 
-##### Update account
+##### Update account (AUTH)
   * PUT: /api/v1/provider
 
-##### Destroy account
+##### Destroy account (AUTH)
   * DELETE: /api/v1/provider/:id
 
-##### View queued tasks by provider
+##### View queued tasks by provider (AUTH)
   * GET: /api/v1/provider_task
 
 ##### View job
-  * GET: /api/v1/provider_job
+  * GET: /api/v1/provider_job (AUTH)
   * Params: completed (true or false)
 ```json
 [
@@ -360,19 +366,19 @@ http://oseam.herokuapp.com
 ]
 ```
 
-##### Reject job
+##### Reject job (AUTH)
   * PUT: /api/v1/reject_job/:id (with id = bookingId)
 
-##### Update task
+##### Update task (AUTH)
   * PUT: /api/v1/provider_mowing/:id
   * Similarly: provider_leaf_removal, provider_weed_control, provider_yard_cleaning
   * Params: realSize, startTime, endTime, completed
 
-##### Logout
+##### Logout (AUTH)
   * GET: /api/v1/logout
   * OR: simply clear token in session or local-service
 
-##### Socket io for real-time push notification
+##### Socket io for real-time push notification (provider)
   * EXAMPLE
 ```javascript
 var socket = io('/provider_' + providerId);
@@ -396,24 +402,37 @@ socket.on('notification', function(data) {
   "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhZG1pbiI6eyJjcmVhdGVkQXQiOiIyMDE1LTA1LTAyVDA2OjM2OjE5LjQwOFoiLCJ1cGRhdGVkQXQiOiIyMDE1LTA1LTAyVDA2OjM2OjE5LjQwOFoiLCJpZCI6IjU1NDQ3MDYzODJiOGQwM2IxYzI5MzBkNCJ9LCJpYXQiOjE0MzA1NDg1ODIsImV4cCI6MTQzMDYzNDk4Mn0.9nPheTCWhZFKI_FUohOGPcqADKwZSzwd0Q_SgvczUFs"
 }
 ```
-##### Find user by id
+##### CRUD service point (AUTH)
+  * Endpoint: /api/v1/service
+  * Params: name (eg: cleaning), type (eg: small, medium), duration (in milliseconds), price
+
+##### Find user by id (AUTH)
   * GET: /api/v1/user/:id
 
-##### Find all users
+##### Find all users (AUTH)
   * GET: /api/v1/user
 
-##### Find provider by id
+##### Find provider by id (AUTH)
   * GET: /api/v1/provider/:id
 
-##### Find all providers
+##### Find all providers (AUTH)
   * GET: /api/v1/provider
 
-##### Find booking by id
+##### Find booking by id (AUTH)
   * GET: /api/v1/booking/:id
 
-##### Find all bookings
+##### Find all bookings (AUTH)
   * GET: /api/v1/booking
 
-##### CRUD different services (mowing, leaf_removal, weed_control, yard_cleaning)
+##### CRUD different services (mowing, leaf_removal, weed_control, yard_cleaning) (AUTH)
   * GET: /api/v1/mowing
   * PUT: /api/v1/mowing
+
+##### Socket io for real-time push notification (admin)
+  * EXAMPLE
+```javascript
+var socket = io('/administrator');
+socket.on('notification', function(data) {
+  console.log(data);
+});
+```

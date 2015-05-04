@@ -117,7 +117,6 @@ module.exports = {
       
       Booking.findOne({id: id}).populateAll().exec(function (err, booking) {
 	    if (err) { reject(err); };
-        console.log({hello: booking});
         async.parallel([
             function(callback){
               if (booking.mowing) {

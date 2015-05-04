@@ -10,11 +10,7 @@ module.exports = {
     var userId = req.user.id;
     var params = req.params.all();
 
-    if (!params['address']) return res.badRequest({err: 'No address'});
-    if (!params['bookTime']) return res.badRequest({err: 'No booktime'});
-    if (!params['estimatedDuration']) return res.badRequest({err: 'No estimatedDuration'});
-    if (!params['services']) return res.badRequest({err: 'No services'});
-
+    Params.check;
     if( typeof params.services === 'string' ) {
         params['services'] = [ params.services ];
     };
@@ -38,12 +34,10 @@ module.exports = {
         return Provider.findOne(params.providerId);
       })
       .then(function(provider) {
-        console.log({1: provider});
         // Create Booking by hash of services above
         return Booking.create({userId: userId, bookTime: bookTime, estimatedDuration: estimatedDuration, providerId: provider.id, location: params.location, services: services})
       })
       .then(function(booking) {
-        console.log({2: booking});
         bookingId = booking.id;
         params['booking'] = bookingId;
         // Map array of service
@@ -67,7 +61,6 @@ module.exports = {
 
           })
           .then(function(service) {
-            console.log({3: service});
 
             // Loop through service and update associated service
             if (service.name === 'mowing') {
@@ -85,7 +78,6 @@ module.exports = {
         }, Promise.resolve()); 
       })
       .then(function(services) {
-        console.log({5: services});
 
         var ObjectID = require('mongodb').ObjectID;
 
@@ -94,24 +86,21 @@ module.exports = {
 
       })
       .then(function() {
-        console.log({6: 'step five completed'});
+        // Find booking information that was just created 
         return Booking.findOne({id: bookingId}).populateAll();
       })
       .then(function(booking) {
-        console.log({7: booking});
-
+        // Notify provider about the job
         ProviderNotification.create({providerId: params.providerId, booking: booking}, function (err, providernote) {
-          if (err) console.log(err);
           var nsp = sails.io.of('/provider_' + params.providerId);
           nsp.on('connection', function(socket) {
             socket.emit('notification', providernote);
           });
         });
-
+        // Return JSON of booking
         return res.status(201).json({booking: booking});
       })
       .catch(function(err) {
-        console.log({8: err});
         res.badRequest({err: err});
       })
   
@@ -165,7 +154,6 @@ module.exports = {
                   where: where || undefined
           };
 
-      console.log("This is the options", options);
       Booking.find(options, function(err, booking) {
         if(booking === undefined) return res.notFound();
 
@@ -210,8 +198,6 @@ module.exports = {
 
     Booking.findOne({id: id, userId: req.user.id})
       .then(function(booking) {
-        console.log({1: booking});
-        if (!booking) return res.notFound();
         // Pass value to variables
         bookingServices = booking.services;
         oldBookTime = booking.bookTime;
@@ -223,7 +209,6 @@ module.exports = {
         return Provider.findOne({id: booking.providerId});     
       })
       .then(function(provider) {
-        console.log({2: provider});
         firstProviderId = provider.id;
         // Remove schedule of that provider
         return Queries.updateProviderRemoveSchedule(ObjectID(firstProviderId), oldBookTime, oldEndTime);
@@ -233,12 +218,10 @@ module.exports = {
         return Queries.searchBusyProvider(location.coordinates[0], location.coordinates[1], bookingServices, bookTime);        
       })
       .then(function(ids) {
-        console.log({3: ids});
         // Search nearest provider who provides  services
         return Queries.searchFreeProvider(location.coordinates[0], location.coordinates[1], bookingServices, bookTime, ids);
       })
       .then(function(providers) {
-        console.log({4: providers});
         if (providers.results[0]) { 
           secondProviderId = providers.results[0].obj._id;
         };        
@@ -246,35 +229,57 @@ module.exports = {
           // Update provider and update time if provider is the same
           Queries.updateProviderAddSchedule(ObjectID(firstProviderId), bookTime, endTime)
             .then(function() {
-              console.log({5: 'Ok'});
-
               return Booking.update({id: id}, {bookTime: bookTime})
             })
             .then(function(booking) {
-              console.log({6: booking});
+              // Notify provider about the job
+              ProviderNotification.create({providerId: firstProviderId, booking: booking}, function (err, providernote) {
+                var nsp = sails.io.of('/provider_' + firstProviderId);
+                nsp.on('connection', function(socket) {
+                  socket.emit('notification', providernote);
+                });
+              });
               return res.ok({booking: booking});
             })
         } else {
           // Update provider schedule, update service, update booking if provider is different
           Queries.updateProviderAddSchedule(secondProviderId, bookTime, endTime)
             .then(function() {
-            console.log({7: 'Ok'});
               return Queries.updateServiceWithProviderID(secondProviderId.toString(), id);
             })
             .then(function(services) {
-              console.log({8: services});
               return Booking.update({id: id}, {bookTime: bookTime, providerId: secondProviderId.toString()});
             })
             .then(function(booking) {
-              console.log({9: booking});
+              // Notify provider about the job
+              ProviderNotification.create({providerId: secondProviderId, booking: booking}, function (err, providernote) {
+                var nsp = sails.io.of('/provider_' + secondProviderId);
+                nsp.on('connection', function(socket) {
+                  socket.emit('notification', providernote);
+                });
+              });
+
               return res.ok({booking: booking});
             })
         };
       })
       .catch(function(err) {
-        console.log({10: err});
-
-        res.badRequest(err);
+        if (err[0] = "TypeError: Cannot read property 'services' of undefined") {
+          return res.notFound(err[0]);
+        } else if (err[0] === 'Provider not found') {
+          Booking.findOne({id: bookingId, providerId: providerId}, function(err, booking) {
+            // Notify user about the job
+            AdminNotification.create({booking: booking, mes: "Urgent! User change task schedule but the system can't find another provider to replace."}, function (err, adminnote) {
+              var nsp = sails.io.of('/administrator');
+              nsp.on('connection', function(socket) {
+                socket.emit('notification', adminnote);
+              });
+            });                      
+          return res.badRequest(err[0]);
+          })
+        } else {
+          return res.badRequest(err[0]);
+        }
       })
   },
 
@@ -291,7 +296,6 @@ module.exports = {
 
     Booking.findOne({id: id, userId: req.user.id})
       .then(function(booking) {
-      console.log({1: booking});
         var ObjectID = require('mongodb').ObjectID;
         var providerId = ObjectID(booking.providerId);
         startTime = booking.bookTime;
@@ -301,13 +305,10 @@ module.exports = {
         return Queries.updateProviderRemoveSchedule(providerId, startTime, endTime);
       })
       .then(function(pid) {
-      console.log({2: pid});
-      console.log({test: bookingInfo});
         // Create notification
         return ProviderNotification.create({providerId: pid.toString(), booking: JSON.stringify(bookingInfo), mes: 'Is canceled'})
       })
       .then(function(providerNotification) {
-      console.log({3: providerNotification});
         // Create socket
         var nsp = sails.io.of('/provider_' + providerNotification.providerId);
         nsp.on('connection', function(socket) {

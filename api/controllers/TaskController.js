@@ -17,7 +17,6 @@ module.exports = {
       })
       .then(function(bookings) {
         // Return 200
-        console.log({wew: bookings});
         return res.ok(bookings);
       })
       .catch(function(err) {
@@ -39,7 +38,6 @@ module.exports = {
 
     Booking.findOne({id: bookingId, providerId: providerId})
       .then(function(booking) {
-        console.log({1: booking});
         bookTime = booking.bookTime;
         estimatedDuration = booking.estimatedDuration;
         endTime = bookTime + estimatedDuration;
@@ -51,12 +49,10 @@ module.exports = {
         return Queries.searchBusyProvider(location.coordinates[0], location.coordinates[1], services, bookTime);        
       })
       .then(function(ids) {
-        console.log({2: ids});
         // Search nearest provider who provides  services
         return Queries.searchFreeProvider(location.coordinates[0], location.coordinates[1], services, bookTime, ids);
       })
       .then(function(providers) {
-        console.log({3: providers});
         if (providers.results[0]) {
           newProviderId = providers.results[0].obj._id;
         };
@@ -68,15 +64,31 @@ module.exports = {
         return Queries.updateServiceWithProviderID(newProviderId.toString(), bookingId);
       })
       .then(function(results) {
-        console.log({4: results});
         // Update booking info
         return Booking.update({id: bookingId}, {providerId: newProviderId.toString()});
       })
       .then(function(booking) {
+        // Notify user about the job
+        UserNotification.create({userId: booking.user, booking: booking, mes: "We're sorry, a new provider is replaced"}, function (err, usernote) {
+          var nsp = sails.io.of('/user' + booking.user);
+          nsp.on('connection', function(socket) {
+            socket.emit('notification', usernote);
+          });
+        });
         res.status(204).json();
       })
       .catch(function(err) {
-        console.log({5: err});
+        if (err === 'Provider not found') {
+          Booking.findOne({id: bookingId, providerId: providerId}, function(err, booking) {
+            // Notify user about the job
+            AdminNotification.create({booking: booking, mes: "Urgent! A provider canceled task but the system can't find another provider to replace."}, function (err, adminnote) {
+              var nsp = sails.io.of('/administrator');
+              nsp.on('connection', function(socket) {
+                socket.emit('notification', adminnote);
+              });
+            });                      
+          })
+        }
         res.badRequest(err);
       })
   },
