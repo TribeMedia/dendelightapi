@@ -37,7 +37,7 @@
     "mongodb": "2.0.28"
   },
   "scripts": {
-    "start": "sails lift --prod",
+    "start": "sails lift",
     "debug": "node debug app.js"
   },
   "main": "app.js",
