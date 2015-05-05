@@ -9,14 +9,10 @@ module.exports = {
 
   attributes: {
   	userId: {
-  		type: 'string',
-  		required: true,
-      string: true
+      model: 'User'
   	},
     providerId: {
-      type: 'string',
-      required: true,
-      string: true
+      model: 'Provider'
     }, 
     bookTime: {
       type: 'float',

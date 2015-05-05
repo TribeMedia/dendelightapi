@@ -51,7 +51,14 @@ module.exports = {
       type: 'string',
       string: true,
       protected: true
-
+    },
+    bookings: {
+      collection: 'Booking',
+      via: 'userId'
+    },
+    notifications: {
+      collection: 'UserNotification',
+      via: 'userId'
     }
   },
 

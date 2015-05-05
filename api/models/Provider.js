@@ -89,8 +89,15 @@ module.exports = {
       type: 'string',
       string: true,
       protected: true
-    }
-    
+    },
+    bookings: {
+      collection: 'Booking',
+      via: 'providerId'
+    },
+    notifications: {
+      collection: 'ProviderNotification',
+      via: 'providerId'
+    }    
   },
 
   seedData:[

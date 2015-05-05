@@ -9,8 +9,7 @@ module.exports = {
 
   attributes: {
   	userId: {
-  		type: 'string',
-      string: true
+      model: 'User',
   	}, 
     booking: {
       type: 'json',
