@@ -2,10 +2,12 @@
 * <a href="#requirements">Requirements</a>
 * <a href="#how-to-install-dependencies">How to install & run</a>
 * <a href="#online-api-test">Online API test</a>
+* <a href="#use-cases">Use cases</a>
 * <a href="#location">Location</a>
 * <a href="#get-different-service-information">Service Information</a>
 * <a href="#user-flow">User Flow</a>
 * <a href="#provider-flow">Provider Flow</a>
+* <a href="#socketio">Socketio</a>
 * <a href="#admin-flow">Admin Flow</a>
 
 # Requirements
@@ -32,6 +34,35 @@ $ npm start
 # Online API test
 http://oseam.herokuapp.com
 
+# Use cases
+
+##### User
+1. Landing.
+2. User select service. Example:
+  a. Select Mowing
+  b. Fetch mowing infor (GET: /api/v1/services?name=mowing)
+  c. User select type of service (estimatedSize, treeNumber, ect...)
+  d. User get estimatedDuration to perform service
+3. If user is interested, he/she can providers nearby
+  a. User enter address to fetch provider nearby (POST: /api/v1/providers)
+  b. If Geolocation is enable, get address by latlng
+  c. Store info in local-storage for booking purpose (services, address, bookTime, estimatedDuration, wage, providerId, estimatedSize (optional), treeNumber (optional))
+4. If user choose booking, move to sign-up/sign-in location.
+5. After successfully login, progress to booking. Eg: Confirm booking...
+6. User is able to manage previous booking.
+  a. Update bookTime
+  b. Delete booking
+7. User is notified if provider is changed through socketIO
+
+##### Provider
+1. Landing
+2. Go to provider signin/signup
+3. Provider is notified when user book him/her to provide task through socketIO
+4. Provider is able to:
+  a. View job
+  b. Update job. Eg: startTime, endTime, completed
+  c. Reject job. Job is auto assigned to another provider and notify by SocketIO.
+
 # Location
 
 ##### Get lat, lng and postcode by address
@@ -47,7 +78,7 @@ http://oseam.herokuapp.com
 
 # Get different service information
 
-##### Get service info (mowing, leaf_removal, weed_control, yard_cleaning)
+##### Get service info
   * GET: /api/v1/services
   * Situational Params: name, type, duration (in milliseconds), price
   * Example GET: /api/v1/services?name=mowing&type=small
@@ -252,14 +283,6 @@ http://oseam.herokuapp.com
 	* GET: /api/v1/logout
 	* OR: simply clear token in session or local-service
 
-##### Socket io for real-time push notification (user)
-  * EXAMPLE
-```javascript
-var socket = io('/user' + userId);
-socket.on('notification', function(data) {
-  console.log(data);
-});
-```
 # Provider flow
 
 ##### Register account 
@@ -332,9 +355,6 @@ socket.on('notification', function(data) {
 ##### Destroy account (AUTH)
   * DELETE: /api/v1/provider/:id
 
-##### View queued tasks by provider (AUTH)
-  * GET: /api/v1/provider_task
-
 ##### View job
   * GET: /api/v1/provider_job (AUTH)
   * Params: completed (true or false)
@@ -378,14 +398,40 @@ socket.on('notification', function(data) {
   * GET: /api/v1/logout
   * OR: simply clear token in session or local-service
 
-##### Socket io for real-time push notification (provider)
+# Socketio
+
+##### User Notification
   * EXAMPLE
 ```javascript
+<!-- Establish private socket connection with userId -->
+var socket = io('/user' + userId);
+<!-- Listen to socket -->
+socket.on('notification', function(data) {
+  console.log(data);
+  <!-- Do something with data like $scope.notification = $scope.notification.concat(data) -->
+});
+```
+##### Provider Notification
+  * EXAMPLE
+```javascript
+<!-- Establish private socket connection with providerId -->
 var socket = io('/provider_' + providerId);
 socket.on('notification', function(data) {
   console.log(data);
+  <!-- Do something with data like $scope.notification = $scope.notification.concat(data) -->
 });
 ```
+##### Admin notification
+  * EXAMPLE
+```javascript
+var socket = io('/administrator');
+socket.on('notification', function(data) {
+  console.log(data);
+  <!-- Do something with data like $scope.notification = $scope.notification.concat(data) -->
+});
+```
+
+##### TODO: add url to socket connection if used on different server.
 
 # Admin flow
 
@@ -428,11 +474,3 @@ socket.on('notification', function(data) {
   * GET: /api/v1/mowing
   * PUT: /api/v1/mowing
 
-##### Socket io for real-time push notification (admin)
-  * EXAMPLE
-```javascript
-var socket = io('/administrator');
-socket.on('notification', function(data) {
-  console.log(data);
-});
-```
