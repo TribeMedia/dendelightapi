@@ -39,19 +39,19 @@ http://oseam.herokuapp.com
 ##### User
 1. Landing.
 2. User select service. Example:
-  a. Select Mowing
-  b. Fetch mowing infor (GET: /api/v1/services?name=mowing)
-  c. User select type of service (estimatedSize, treeNumber, ect...)
-  d. User get estimatedDuration to perform service
+  * Select Mowing
+  * Fetch mowing infor (GET: /api/v1/services?name=mowing)
+  * User select type of service (estimatedSize, treeNumber, ect...)
+  * User get estimatedDuration to perform service
 3. If user is interested, he/she can providers nearby
-  a. User enter address to fetch provider nearby (POST: /api/v1/providers)
-  b. If Geolocation is enable, get address by latlng
-  c. Store info in local-storage for booking purpose (services, address, bookTime, estimatedDuration, wage, providerId, estimatedSize (optional), treeNumber (optional))
+  * User enter address to fetch provider nearby (POST: /api/v1/providers)
+  * If Geolocation is enable, get address by latlng
+  * Store info in local-storage for booking purpose (services, address, bookTime, estimatedDuration, wage, providerId, estimatedSize (optional), treeNumber (optional))
 4. If user choose booking, move to sign-up/sign-in location.
 5. After successfully login, progress to booking. Eg: Confirm booking...
 6. User is able to manage previous booking.
-  a. Update bookTime
-  b. Delete booking
+  * Update bookTime
+  * Delete booking
 7. User is notified if provider is changed through socketIO
 
 ##### Provider
@@ -59,9 +59,9 @@ http://oseam.herokuapp.com
 2. Go to provider signin/signup
 3. Provider is notified when user book him/her to provide task through socketIO
 4. Provider is able to:
-  a. View job
-  b. Update job. Eg: startTime, endTime, completed
-  c. Reject job. Job is auto assigned to another provider and notify by SocketIO.
+  * View job
+  * Update job. Eg: startTime, endTime, completed
+  * Reject job. Job is auto assigned to another provider and notify by SocketIO.
 
 # Location
 
