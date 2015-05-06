@@ -37,14 +37,14 @@
     "mongodb": "2.0.28"
   },
   "scripts": {
-    "start": "sails lift",
+    "start": "sails lift --prod",
     "debug": "node debug app.js"
   },
   "main": "app.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/tuiqwe/hackathon.git"
+    "url": "https://github.com/jakejarrett/oseam-app/branches"
   },
-  "author": "tuiqwe",
+  "author": "VuongNgo",
   "license": ""
 }
