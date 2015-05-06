@@ -40,16 +40,17 @@ http://oseam.herokuapp.com
 1. Landing.
 2. User select service. Example:
   * Select Mowing
-  * Fetch mowing infor (GET: /api/v1/services?name=mowing)
+  * Fetch mowing info (GET: /api/v1/services?name=mowing)
   * User select type of service (estimatedSize, treeNumber, ect...)
   * User get estimatedDuration to perform service
-3. If user is interested, he/she can providers nearby
+3. If user is interested, he/she can get provider information by
+  * Choose the time they want
   * User enter address to fetch provider nearby (POST: /api/v1/providers)
   * If Geolocation is enable, get address by latlng
   * Store info in local-storage for booking purpose (services, address, bookTime, estimatedDuration, wage, providerId, estimatedSize (optional), treeNumber (optional))
 4. If user choose booking, move to sign-up/sign-in location.
-5. After successfully login, progress to booking. Eg: Confirm booking...
-6. User is able to manage previous booking.
+5. After successfully login, progress to booking. Eg: Confirm booking with information stored in local-storage
+6. User is able to manage previous bookings.
   * Update bookTime
   * Delete booking
 7. User is notified if provider is changed through socketIO
