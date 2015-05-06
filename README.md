@@ -404,8 +404,11 @@ http://oseam.herokuapp.com
 ##### User Notification
   * EXAMPLE
 ```javascript
-<!-- Establish private socket connection with userId -->
-var socket = io('/user' + userId);
+<!-- Subcribe private socket connection with userId -->
+var socket = io.connect('/user' + userId, {
+<!-- Handshake with token to authorize user -->
+  'query': 'token=Bearer ' + token
+});
 <!-- Listen to socket -->
 socket.on('notification', function(data) {
   console.log(data);
@@ -415,8 +418,11 @@ socket.on('notification', function(data) {
 ##### Provider Notification
   * EXAMPLE
 ```javascript
-<!-- Establish private socket connection with providerId -->
-var socket = io('/provider_' + providerId);
+<!-- Subcribe private socket connection with providerId -->
+var socket = io.connect('/user' + providerId, {
+<!-- Handshake with token to authorize provider -->
+  'query': 'token=Bearer ' + token
+});
 socket.on('notification', function(data) {
   console.log(data);
   <!-- Do something with data like $scope.notification = $scope.notification.concat(data) -->
@@ -425,7 +431,10 @@ socket.on('notification', function(data) {
 ##### Admin notification
   * EXAMPLE
 ```javascript
-var socket = io('/administrator');
+var socket = io.connect('/administrator', {
+<!-- Handshake with token to authorize admin -->
+  'query': 'token=Bearer ' + token
+});
 socket.on('notification', function(data) {
   console.log(data);
   <!-- Do something with data like $scope.notification = $scope.notification.concat(data) -->

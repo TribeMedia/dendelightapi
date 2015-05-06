@@ -30,7 +30,7 @@ module.exports.sockets = {
   * to a shared, remote messaging queue (usually Redis)                      *
   *                                                                          *
   * Luckily, Socket.io (and consequently Sails.js) apps support Redis for    *
-  * sockets by default. To enable a remote redis pubsub server, uncomment    *
+  * sockets by default. To enable a remote redis pubsub server, uncomment    * 
   * the config below.                                                        *
   *                                                                          *
   * Worth mentioning is that, if `adapter` config is `redis`, but host/port  *
@@ -106,12 +106,70 @@ module.exports.sockets = {
   * app's security.                                                          *
   *                                                                          *
   ***************************************************************************/
-  // beforeConnect: function(handshake, cb) {
-  //   // `true` allows the connection
-  //   return cb(null, true);
-  //
-  //   // (`false` would reject the connection)
-  // },
+  beforeConnect: function(handshake, cb) {
+    var jwt = require('jsonwebtoken');
+    var secret = sails.config.session.secret;
+    var token;
+
+      if (handshake.query.token) {
+        var parts = handshake.query.token.split(' ');
+        if (parts.length == 2) {
+          var scheme = parts[0],
+            credentials = parts[1];
+
+          if (/^Bearer$/i.test(scheme)) {
+            token = credentials;
+          }
+        } else {
+          return cb(null, false);
+        }
+      } else {
+        return cb(null, false);
+      }
+
+      jwt.verify(token, secret, function(err, decoded) {
+        if (err) return cd(null, false);
+
+        if (!decoded.user || !decoded.provider || !decoded.admin) {
+          return cb(null, false);
+        } else if (decoded.user) {
+          User.findOne({id: decoded.user.id, accessToken: token}, function (err, user) {
+            if (err) return cb(null, false);      
+
+            if (!user) {
+              return cb(null, false);
+            } else {
+              // `true` allows the connection
+              return cb(null, true);
+            }
+          })
+        } else if (decoded.provider) {
+          Provider.findOne({id: decoded.provider.id, accessToken: token}, function (err, provider) {
+            if (err) return cb(null, false);      
+
+            if (!provider) {
+              return cb(null, false);
+            } else {
+              // `true` allows the connection
+              return cb(null, true);
+            }
+          })
+        } else if (decoded.admin) {
+          Admin.findOne({id: decoded.admin.id, accessToken: token}, function (err, admin) {
+            if (err) return cb(null, false);      
+
+            if (!admin) {
+              return cb(null, false);
+            } else {
+              // `true` allows the connection
+              return cb(null, true);
+            }
+          })
+        }
+      });
+  
+    // (`false` would reject the connection)
+  },
 
 
   /***************************************************************************
