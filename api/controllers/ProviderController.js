@@ -156,13 +156,32 @@ module.exports = {
       return res.badRequest('No id provided.');
       };
 
-    Provider.update(id, criteria, function (err, provider) {
-      if(provider.length === 0) return res.notFound();
+    if (req.file('avatar')) {
+      req.file('avatar').upload({
+        adapter: require('skipper-s3'),
+        key: sails.config.aws.key,
+        secret: sails.config.aws.secret,
+        bucket: sails.config.aws.bucket
+      }, function (err, filesUploaded) {
+        if (err) return res.badRequest(err);
+        criteria['avatar'] = filesUploaded[0].extra.Location;
+        Provider.update(id, criteria, function (err, provider) {
+          if(provider.length === 0) return res.notFound();
 
-      if (err) return badRequest(err);
+          if (err) return badRequest(err);
 
-      res.ok({provider: provider});
-    });
+          res.ok({provider: provider});
+        });
+      });
+    } else {
+      Provider.update(id, criteria, function (err, provider) {
+        if(provider.length === 0) return res.notFound();
+
+        if (err) return badRequest(err);
+
+        res.ok({provider: provider});
+      });      
+    }
   },
 
   // a DESTROY action. Return 204 status

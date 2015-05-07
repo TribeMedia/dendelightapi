@@ -171,6 +171,7 @@ http://oseam.herokuapp.com
 
 ##### Update account (AUTH)
 	* PUT: /api/v1/user/:id
+  * Params: avatar (file)
 
 ##### Destroy account (AUTH)
 	* DELETE: /api/v1/user/:id
@@ -364,6 +365,7 @@ http://oseam.herokuapp.com
 
 ##### Update account (AUTH)
   * PUT: /api/v1/provider
+  * Params: avatar (file)
 
 ##### Destroy account (AUTH)
   * DELETE: /api/v1/provider/:id

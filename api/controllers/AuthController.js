@@ -58,11 +58,11 @@ module.exports = {
       } else {                  
         var token = jwt.sign({user: user}, secret, { expiresInMinutes: 60*24 });
         
-        User.update(user, {accessToken: token}, function (err, user) {
+        User.update(user.id, {accessToken: token}, function (err, users) {
           if (err) return res.badRequest(err);
           
           return res.ok({
-            user: user[0],
+            user: users[0],
             token: token
           });
         })        

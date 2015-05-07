@@ -106,15 +106,36 @@ module.exports = {
     if (!id) {
       return res.badRequest('No id provided.');
       };
+    
+    if (req.file('avatar')) { 
+      req.file('avatar').upload({
+        adapter: require('skipper-s3'),
+        key: sails.config.aws.key,
+        secret: sails.config.aws.secret,
+        bucket: sails.config.aws.bucket
+      }, function (err, filesUploaded) {
+        if (err) return res.badRequest(err);
+        criteria['avatar'] = filesUploaded[0].extra.Location;
+        User.update(id, criteria, function (err, user) {
+          if(user.length === 0) return res.notFound();
 
-    User.update(id, criteria, function (err, user) {
-      if(user.length === 0) return res.notFound();
+          if (err) return res.badRequest(err);
 
-      if (err) return res.badRequest(err);
+          res.ok({user: user});
 
-      res.ok({user: user});
+        });
+      });
+    } else {
+        User.update(id, criteria, function (err, user) {
+          if(user.length === 0) return res.notFound();
 
-    });
+          if (err) return res.badRequest(err);
+
+          res.ok({user: user});
+
+        });      
+    };
+
   },
 
   // a DESTROY action. Return 204 status

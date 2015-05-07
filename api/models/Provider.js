@@ -97,7 +97,10 @@ module.exports = {
     notifications: {
       collection: 'ProviderNotification',
       via: 'providerId'
-    }    
+    },
+    avatar: {
+      type: 'string'
+    }        
   },
 
   seedData:[

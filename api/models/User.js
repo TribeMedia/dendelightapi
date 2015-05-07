@@ -59,6 +59,9 @@ module.exports = {
     notifications: {
       collection: 'UserNotification',
       via: 'userId'
+    },
+    avatar: {
+      type: 'string'
     }
   },
 
