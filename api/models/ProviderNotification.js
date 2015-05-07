@@ -10,6 +10,7 @@ module.exports = {
   attributes: {
   	providerId: {
   		model: 'Provider',
+      required: true
   	}, 
     booking: {
       type: 'json',

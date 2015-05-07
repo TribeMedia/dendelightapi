@@ -84,9 +84,23 @@ module.exports.policies = {
     reject_job: 'isProvider',
     view_booking: 'isUser'
   },
-  NotificationController: {
-    provider_notification: 'isProvider',
-    provider_read_notification: 'isProvider'
+  UserNotificationController: {
+    create: 'isAdmin',
+    find: 'isAdmin',
+    destroy: 'isAdmin',
+    user_find: 'isUser',
+    user_update: 'isUser'
+  },
+  ProviderNotificationController: {
+    create: 'isAdmin',
+    find: 'isAdmin',
+    destroy: 'isAdmin',
+    provider_find: 'isProvider',
+    provider_update: 'isProvider'
+  },
+  AdminNotificationController: {
+    admin_find: 'isAdmin',
+    admin_update: 'isAdmin'
   }
   /***************************************************************************
   *                                                                          *

@@ -53,7 +53,9 @@ http://oseam.herokuapp.com
 6. User is able to manage previous bookings.
   * Update bookTime
   * Delete booking
-7. User is notified if provider is changed through socketIO
+7. User notification
+  * Get initial notification (GET: /api/v1/read_unotification)
+  * Subcribe socketIo for real-time push notification
 
 ##### Provider
 1. Landing
@@ -63,6 +65,9 @@ http://oseam.herokuapp.com
   * View job
   * Update job. Eg: startTime, endTime, completed
   * Reject job. Job is auto assigned to another provider and notify by SocketIO.
+5. Provider notification
+  * Get initial notification (GET: /api/v1/read_pnotification)
+  * Subcribe socketIo for real-time push notification
 
 # Location
 
@@ -280,6 +285,13 @@ http://oseam.herokuapp.com
 ##### Destroy booking (AUTH)
   * DELETE: /api/v1/booking/:id
 
+##### Get initial notifications (AUTH)
+  * GET: /api/v1/read_unotification
+  * Params: read (true/false)
+
+##### Update notifications to read (AUTH)
+  * GET: /api/v1/update_unotification
+
 ##### Logout (AUTH)
 	* GET: /api/v1/logout
 	* OR: simply clear token in session or local-service
@@ -395,6 +407,13 @@ http://oseam.herokuapp.com
   * Similarly: provider_leaf_removal, provider_weed_control, provider_yard_cleaning
   * Params: realSize, startTime, endTime, completed
 
+##### Get initial notifications (AUTH)
+  * GET: /api/v1/read_pnotification
+  * Params: read (true/false)
+
+##### Update notifications to read (AUTH)
+  * GET: /api/v1/update_pnotification
+
 ##### Logout (AUTH)
   * GET: /api/v1/logout
   * OR: simply clear token in session or local-service
@@ -484,3 +503,29 @@ socket.on('notification', function(data) {
   * GET: /api/v1/mowing
   * PUT: /api/v1/mowing
 
+##### Get initial notifications (AUTH)
+  * GET: /api/v1/read_anotification
+  * Params: read (true/false)
+
+##### Update notifications to read (AUTH)
+  * GET: /api/v1/update_anotification
+
+##### Create user_notification
+  * POST: /api/v1/user_notification
+  * Params: userId, booking, mes
+
+##### View user_notifications
+  * GET: /api/v1/user_notification
+
+##### Destroy user_notification
+  * DELETE: /api/v1/user_notification/:id  
+
+##### Create provider_notification
+  * POST: /api/v1/provider_notification
+  * Params: userId, booking, mes
+
+##### View user_notifications
+  * GET: /api/v1/provider_notification
+
+##### Destroy provider_notification
+  * DELETE: /api/v1/provider_notification/:id    

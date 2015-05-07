@@ -88,15 +88,6 @@ module.exports.routes = {
   // Delete booking
   'delete /api/v1/booking/:id?': 'BookingController.destroy',
 
-  // Create quote
-  'post /api/v1/quote': 'QuoteController.create',
-  // Find quote
-  'get /api/v1/quote/:id?': 'QuoteController.find',
-  // Update quote
-  'put /api/v1/quote/:id?': 'QuoteController.update',
-  // Delete quote
-  'delete /api/v1/quote/:id?': 'QuoteController.destroy',
-
   // Fetch service
   'get /api/v1/services': 'ServiceController.fetch',
   // Create service
@@ -137,11 +128,33 @@ module.exports.routes = {
   // Delete YardCleaning
   'delete /api/v1/yard_cleaning/:id?': 'YardCleaningController.destroy',
 
-  // View notification
-  'get /api/v1/provider_notification': 'NotificationController.provider_notification',
-  // Update notification to read
-  'put /api/v1/provider_read_notification': 'NotificationController.provider_read_notification',
-  
+  // Create UserNotification
+  'post /api/v1/user_notification': 'UserNotificationController.create',
+  // Find UserNotifications
+  'get /api/v1/user_notification/:id?': 'UserNotificationController.find',
+  // Destroy UserNotification
+  'delete /api/v1/user_notification/:id?': 'UserNotificationController.destroy',
+  // User find their own notification
+  'get /api/v1/read_unotification': 'UserNotificationController.user_find',
+  // Update notification to read: true
+  'get /api/v1/update_unotification': 'UserNotificationController.user_update',
+
+  // Create ProviderNotification
+  'post /api/v1/provider_notification': 'ProviderNotificationController.create',
+  // Find UserNotifications
+  'get /api/v1/provider_notification/:id?': 'ProviderNotificationController.find',
+  // Destroy ProviderNotification
+  'delete /api/v1/provider_notification/:id?': 'ProviderNotificationController.destroy',
+  // Provider find their own notification
+  'get /api/v1/read_pnotification': 'ProviderNotificationController.provider_find',
+  // Update notification to read: true
+  'get /api/v1/update_pnotification': 'ProviderNotificationController.provider_update',
+
+  // Admin find their own notification
+  'get /api/v1/read_anotification': 'AdminNotificationController.admin_find',
+  // Update notification to read: true
+  'get /api/v1/update_anotification': 'AdminNotificationController.admin_update',
+
   // View job
   'get /api/v1/provider_job': 'TaskController.provider_job',
   // Reject job
