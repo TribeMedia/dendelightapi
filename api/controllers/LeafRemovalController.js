@@ -83,12 +83,22 @@ module.exports = {
       return res.badRequest('No id provided.');
       };
 
-    LeafRemoval.update(id, criteria, function (err, leafremoval) {
-      if(leafremoval.length === 0) return res.notFound();
-
+    LeafRemoval.update(id, criteria, function (err, leafremovals) {
       if (err) return res.badRequest(err);
+      if(leafremovals.length === 0) return res.notFound();
 
-      res.ok({leafremoval: leafremoval});
+      if (leafremovals[0].endTime) {
+        var realDuration = leafremovals[0].endTime - leafremovals[0].startTime;
+        var price = realDuration / 360000 * leafremovals[0].wage;
+        LeafRemoval.update(id, {realDuration: realDuration, price: price}, function (err, services) {
+          if (err) return res.badRequest(err);
+          if(services.length === 0) return res.notFound();
+
+          return res.ok({leafremoval: services[0]});
+        })
+      };
+
+      res.ok({leafremoval: leafremovals[0]});
 
     });
   },

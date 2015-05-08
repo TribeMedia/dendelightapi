@@ -44,7 +44,8 @@ module.exports.policies = {
     create: 'isUser',
     find: 'isAdmin',
     update: 'isUser',
-    destroy: 'isUser'
+    destroy: 'isUser',
+    provider_update: 'isProvider'
   },
   ServiceController: {
     fetch: true,

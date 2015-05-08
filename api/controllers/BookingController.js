@@ -283,6 +283,39 @@ module.exports = {
       })
   },
 
+  // Provider update booking to completed: true and a request for payment is created.
+  provider_update: function (req, res) {
+    var id = req.param('id');
+    var providerId = req.provider.id;
+    var book;
+
+    Booking.findOne({id: id, providerId: providerId}).populateAll()
+      .then(function(booking) {
+        return ServiceLoop.check(booking);
+      })
+      .then(function(result) {
+        var price = _.reduce(result, function(total, n) { return total + n; });
+        return Booking.update(id, {price: price, completed: true})
+      })
+      .then(function(bookings) {
+        book = bookings[0];
+        return UserCharge.create({userId: book.userId, providerId: book.providerId, amount: book.price})
+      })
+      .then(function(userCharge) {
+        // Notify user about the job
+        UserNotification.create({userId: book.userId, booking: book, mes: "Our wonderful provider had completed job. Please progress to payment and let us know if there is any issue."}, function (err, usernote) {
+          var nsp = sails.io.of('/user' + book.userId);
+          nsp.on('connection', function(socket) {
+            socket.emit('notification', usernote);
+          });
+        });
+        res.ok({booking: book});
+      })
+      .catch(function(err) {
+        res.notFound(err);
+      })
+  },
+
   // a DESTROY action. Return 204 status
   destroy: function (req, res) {
     var id = req.param('id');

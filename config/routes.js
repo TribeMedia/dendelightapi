@@ -87,6 +87,8 @@ module.exports.routes = {
   'put /api/v1/booking/:id?': 'BookingController.update',
   // Delete booking
   'delete /api/v1/booking/:id?': 'BookingController.destroy',
+  // Provider update booking after completed his task
+  'get /api/v1/provider_booking/:id?': 'BookingController.provider_update',
 
   // Fetch service
   'get /api/v1/services': 'ServiceController.fetch',

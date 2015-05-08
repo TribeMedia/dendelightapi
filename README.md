@@ -409,6 +409,9 @@ http://oseam.herokuapp.com
   * Similarly: provider_leaf_removal, provider_weed_control, provider_yard_cleaning
   * Params: realSize, startTime, endTime, completed
 
+##### Update booking after completed all task
+  * GET: /api/v1/provider_booking/:id (with id = bookingId)
+
 ##### Get initial notifications (AUTH)
   * GET: /api/v1/read_pnotification
   * Params: read (true/false)

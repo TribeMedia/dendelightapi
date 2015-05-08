@@ -107,7 +107,7 @@ module.exports = {
       return res.badRequest('No id provided.');
       };
     
-    if (req.file('avatar')) { 
+    if (req.file('avatar').isNoop === false) { 
       req.file('avatar').upload({
         adapter: require('skipper-s3'),
         key: sails.config.aws.key,

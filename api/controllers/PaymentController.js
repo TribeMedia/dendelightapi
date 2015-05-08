@@ -2,10 +2,12 @@ var TEST_SECRET = sails.config.stripe.testSecretKey;
 var stripe = require('stripe')(TEST_SECRET);
 
 module.exports = {
-  charge: function (req, res, next) {
-    var source = req.source;
-    var provider = req.provider_id;
-    var amount = req.amount;
+  charge: function (req, res) {
+    var userId = req.user.id;
+    var params = req.params.all();
+    var source = params.source;
+    var provider = params.providerId;
+    var amount = params.amount;
 
     Provider.findOne(provider, function(err, provider) {
       if (err) {
@@ -24,6 +26,7 @@ module.exports = {
             if (err) {
               res.badRequest(err);
             } else {
+              Charge.create()
               res.ok(charge);
             }
           });             

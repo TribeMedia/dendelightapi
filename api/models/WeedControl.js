@@ -51,8 +51,9 @@ module.exports = {
       type: 'float',
       float: true
     },
-    realDuration: function () {
-      return (this.endTime - this.startTime);
+    realDuration: {
+      type: 'float',
+      float: true
     },
     wage: {
       type: 'integer',
@@ -63,12 +64,9 @@ module.exports = {
     estimatedPrice: function () {
       return ((this.estimatedDuration / 360000) * wage);
     },
-    price: function () {
-      return ((this.realDuration / 360000) * wage);
-    },
-    completed: {
-      type: 'boolean',
-      defaultsTo: false,
+    price: {
+      type: 'float',
+      float: true
     }
   },
 

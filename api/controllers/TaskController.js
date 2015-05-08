@@ -69,8 +69,8 @@ module.exports = {
       })
       .then(function(booking) {
         // Notify user about the job
-        UserNotification.create({userId: booking.user, booking: booking, mes: "We're sorry, a new provider is replaced"}, function (err, usernote) {
-          var nsp = sails.io.of('/user' + booking.user);
+        UserNotification.create({userId: booking.userId, booking: booking, mes: "We're sorry, a new provider is replaced"}, function (err, usernote) {
+          var nsp = sails.io.of('/user' + booking.userId);
           nsp.on('connection', function(socket) {
             socket.emit('notification', usernote);
           });

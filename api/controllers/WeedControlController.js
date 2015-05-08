@@ -83,12 +83,22 @@ module.exports = {
       return res.badRequest('No id provided.');
       };
 
-    WeedControl.update(id, criteria, function (err, weedcontrol) {
-      if(weedcontrol.length === 0) return res.notFound();
-
+    WeedControl.update(id, criteria, function (err, weedcontrols) {
       if (err) return res.badRequest(err);
+      if(weedcontrols.length === 0) return res.notFound();
 
-      res.ok({weedcontrol: weedcontrol});
+      if (weedcontrols[0].endTime) {
+        var realDuration = weedcontrols[0].endTime - weedcontrols[0].startTime;
+        var price = realDuration / 360000 * weedcontrols[0].wage;
+        WeedControl.update(id, {realDuration: realDuration, price: price}, function (err, services) {
+          if (err) return res.badRequest(err);
+          if(services.length === 0) return res.notFound();
+
+          return res.ok({weedcontrol: services[0]});
+        })
+      };
+
+      res.ok({weedcontrol: weedcontrols[0]});
 
     });
   },

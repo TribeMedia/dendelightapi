@@ -6,6 +6,7 @@ describe('BookingController', function() {
 	var userToken;
 	var userId;
 	var providerId;
+	var providerToken;
 	var bookingId;
 	var bookingId2;
 	var jwt = require('jsonwebtoken');
@@ -13,6 +14,10 @@ describe('BookingController', function() {
 	before(function(done) {
 		Provider.create({email: "provider_test_booking@gmail.com", password: "14491992", firstName: "Tombook", lastName: "Joebook", abn: '3286382734f', service: ['mowing', 'leaf_removal', 'yard_cleaning'], postcode: 3083, address: '16 Keats Avenue, Kingsbury', location: { type: 'Point', coordinates: [145.036478, -37.718564]}}, function(err, provider) {
 			providerId = provider.id;
+			providerToken = jwt.sign({provider: provider}, secret, { expiresInMinutes: 60*24 });
+			Provider.update(provider.id, {accessToken: providerToken}, function(err, provider) {
+				if (err) console.log(err);
+			});
 		});
 		User.create({email: "user_test_booking@gmail.com", password: "14491992"}, function(err, user) {
 			userId = user.id;
@@ -106,6 +111,17 @@ describe('BookingController', function() {
 				.end(done);
 		})
 
+	});
+
+	describe('#provider_update()', function() {
+		it('should return notFound', function(done) {
+			request(sails.hooks.http.app)
+				.get('/api/v1/provider_booking/' + bookingId2)
+				.set('Content-Type', 'application/json')
+				.set('Authorization', 'Bearer ' + providerToken)
+				.expect(404)
+				.end(done);			
+		})
 	});
 
 	describe('#update()', function() {

@@ -83,12 +83,22 @@ module.exports = {
       return res.badRequest('No id provided.');
       };
 
-    Mowing.update(id, criteria, function (err, mowing) {
-      if(mowing.length === 0) return res.notFound();
-
+    Mowing.update(id, criteria, function (err, mowings) {      
       if (err) return res.badRequest(err);
+      if(mowings.length === 0) return res.notFound();
 
-      res.ok({mowing: mowing});
+      if (mowings[0].endTime) {
+        var realDuration = mowings[0].endTime - mowings[0].startTime;
+        var price = realDuration / 360000 * mowings[0].wage;
+        Mowing.update(id, {realDuration: realDuration, price: price}, function (err, services) {
+          if (err) return res.badRequest(err);
+          if(services.length === 0) return res.notFound();
+
+          return res.ok({mowing: services[0]});
+        })
+      };
+
+      res.ok({mowing: mowings[0]});
 
     });
   },
