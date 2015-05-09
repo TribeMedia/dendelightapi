@@ -107,25 +107,25 @@ module.exports = {
       return res.badRequest('No id provided.');
       };
     
-    if (req.file('avatar').isNoop === false) { 
-      req.file('avatar').upload({
-        adapter: require('skipper-s3'),
-        key: sails.config.aws.key,
-        secret: sails.config.aws.secret,
-        bucket: sails.config.aws.bucket
-      }, function (err, filesUploaded) {
-        if (err) return res.badRequest(err);
-        criteria['avatar'] = filesUploaded[0].extra.Location;
-        User.update(id, criteria, function (err, user) {
-          if(user.length === 0) return res.notFound();
+    // if (req.file('avatar').isNoop === false) { 
+    //   req.file('avatar').upload({
+    //     adapter: require('skipper-s3'),
+    //     key: sails.config.aws.key,
+    //     secret: sails.config.aws.secret,
+    //     bucket: sails.config.aws.bucket
+    //   }, function (err, filesUploaded) {
+    //     if (err) return res.badRequest(err);
+    //     criteria['avatar'] = filesUploaded[0].extra.Location;
+    //     User.update(id, criteria, function (err, user) {
+    //       if(user.length === 0) return res.notFound();
 
-          if (err) return res.badRequest(err);
+    //       if (err) return res.badRequest(err);
 
-          res.ok({user: user});
+    //       res.ok({user: user});
 
-        });
-      });
-    } else {
+    //     });
+    //   });
+    // } else {
         User.update(id, criteria, function (err, user) {
           if(user.length === 0) return res.notFound();
 
@@ -134,7 +134,7 @@ module.exports = {
           res.ok({user: user});
 
         });      
-    };
+    // };
 
   },
 
