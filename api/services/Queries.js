@@ -39,7 +39,9 @@ module.exports = {
 	        reject('Provider not found');
 	      } else {
 	      	var result = _.map(providers.results, function(obj) {
-	      		delete obj.accessToken;
+	      		delete obj.obj.accessToken;
+	      		delete obj.obj.email;
+	      		delete obj.obj.password;
 	      		return obj;
 	      	});
 	        resolve(result);
