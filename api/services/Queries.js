@@ -38,7 +38,11 @@ module.exports = {
 	      } else if (providers.results.length === 0) {
 	        reject('Provider not found');
 	      } else {
-	        resolve(providers);
+	      	var result = _.map(providers.results, function(obj) {
+	      		delete obj.accessToken;
+	      		return obj;
+	      	});
+	        resolve(result);
 	      }
 	    });              
 	  });

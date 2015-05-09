@@ -100,6 +100,10 @@ module.exports = {
     },
     avatar: {
       type: 'string'
+    },
+    wage: {
+      type: 'integer',
+      integer: true
     }        
   },
 
