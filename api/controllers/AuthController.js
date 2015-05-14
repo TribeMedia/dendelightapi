@@ -68,14 +68,8 @@ module.exports = {
   // Service provider login with passport local
   provider_login: function(req, res) {
     passport.authenticate('provider-local', function(err, provider, info) {
-      if ((err) || (!provider)) {
-        res.badRequest(err);
-        
-        return; 
-      };
-      
-      if (provider === false) {
-        res.notFound;
+      if ((err === true) || (provider === false)) {
+        res.badRequest(info);
       } else {                  
         var token = jwt.sign({provider: provider}, secret, { expiresInMinutes: 60*24 });
         

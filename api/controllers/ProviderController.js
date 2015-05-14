@@ -40,7 +40,7 @@ module.exports = {
         return res.ok(providers);
       })
       .catch(function(err) {
-        res.badRequest(err);
+        return res.notFound(err);
       })
   
   },    
@@ -49,7 +49,7 @@ module.exports = {
   create: function (req, res) {
     var params = req.params.all();
 
-    if (!params.address) return res.badRequest({err: 'No address'});
+    if (!params.address) return res.badRequest([{rule: 'address'}, {message: 'Address is required'}]);
     async.waterfall([
       function (callback) {
         if ((params.address) && (!params.lat)) {
@@ -66,7 +66,18 @@ module.exports = {
       function (callback) {
         Provider.create(params).exec(function(err, provider) {
           if ((err) || (!provider)) {
-            return res.badRequest(err);
+            var error = err.toJSON();
+            if (err.Errors) {
+              var errors = _.map(err.Errors, function(n) { return n; });
+              errors = _.flatten(errors, true);
+              return res.badRequest(errors);
+            } else if (error.raw.err.search('email_1  dup key') != -1) {
+              return res.badRequest([{rule: 'email'}, {message: Provider.validationMessages.email.unique}]);
+            } else if (error.raw.err.search('abn_1  dup key') != -1) {
+              return res.badRequest([{rule: 'abn'}, {message: Provider.validationMessages.abn.unique}]);
+            } else {
+              res.badRequest(err);
+            }
           } else {
             return res.status(201).json({provider: provider})
           }

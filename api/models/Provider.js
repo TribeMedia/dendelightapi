@@ -109,9 +109,9 @@ module.exports = {
 //model validation messages definitions
   validationMessages: { //hand for i18n & l10n
       email: {
-          required: 'Email is required',
-          email: 'Provide valid email address',
-          unique: 'Email address is already taken'
+        required: 'Email is required',
+        email: 'Provide valid email address',
+        unique: 'Email address is already taken'
       },
       password: {
           required: 'Password is required',
@@ -133,7 +133,9 @@ module.exports = {
       abn: {
         required: 'ABN is required',
         alphanumeric: 'Incorrect format',
-        
+        unique: 'Wrong ABN',
+        minLength: 'ABN is only 11 chars',
+        maxLength: 'ABN is only 11 chars'
       }
   },
 

@@ -40,7 +40,7 @@ passport.use('provider-local', new LocalStrategy({
     function(email, password, done) {
       Provider.findOne({email: email}, function(err, provider) {
         if (err) {
-          return done(err, null);
+          return done(true, null, err);
         };
 
         if (!provider) {

@@ -101,7 +101,13 @@ module.exports = {
         return res.status(201).json({booking: booking});
       })
       .catch(function(err) {
-        res.badRequest({err: err});
+        if (err.Errors) {
+          var errors = _.map(err.Errors, function(n) { return n; });
+          errors = _.flatten(errors, true);
+          return res.badRequest(errors);
+        } else {
+          res.badRequest(err);
+        }
       })
   
   },

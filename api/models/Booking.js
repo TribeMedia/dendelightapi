@@ -12,7 +12,8 @@ module.exports = {
       model: 'User'
   	},
     providerId: {
-      model: 'Provider'
+      model: 'Provider',
+      required: true
     }, 
     bookTime: {
       type: 'float',
@@ -42,7 +43,8 @@ module.exports = {
       model: 'YardCleaning'
     },
     services: {
-      type: 'array'
+      type: 'array',
+      required: true
     },
     price: {
       type: 'interger',
@@ -54,6 +56,24 @@ module.exports = {
       type: 'boolean',
       defaultsTo: false
     }
+  },
+
+//model validation messages definitions
+  validationMessages: { //hand for i18n & l10n
+      providerId: {
+        required: 'Provider is required',
+      },
+      bookTime: {
+        required: 'Booking time is required',
+        float: 'Incorrect format'
+      },
+      estimatedDuration: {
+        required: 'Estimated duration is required',
+        float: 'Incorrect format'
+      },
+      services: {
+        required: 'Family name is required',
+      }
   },
 
   afterDestroy: function(deletedRecords, next) {
