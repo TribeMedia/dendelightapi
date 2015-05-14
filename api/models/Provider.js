@@ -6,7 +6,6 @@ module.exports = {
   		type: 'email',
   		unique: true,
   		required: true,
-      email: true,
       protected: true
   	},
   	password: {
@@ -105,6 +104,37 @@ module.exports = {
       type: 'integer',
       integer: true
     }        
+  },
+
+//model validation messages definitions
+  validationMessages: { //hand for i18n & l10n
+      email: {
+          required: 'Email is required',
+          email: 'Provide valid email address',
+          unique: 'Email address is already taken'
+      },
+      password: {
+          required: 'Password is required',
+          minLength: 'Password must be more than 6 chars'
+      },
+      firstName: {
+        required: 'Sir name is required',
+        maxLength: 'Name is too long'
+      },
+      lastName: {
+        required: 'Family name is required',
+        maxLength: 'Name is too long'
+      },
+      address: {
+        required: 'Address is required',
+        maxLength: 'Address excess 100 chars',
+        string: 'Incorrect format'
+      },
+      abn: {
+        required: 'ABN is required',
+        alphanumeric: 'Incorrect format',
+        
+      }
   },
 
   seedData:[

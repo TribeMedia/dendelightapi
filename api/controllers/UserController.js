@@ -13,7 +13,8 @@ module.exports = {
       if ((err) || (!user)) {
         var error = err.toJSON();
         if (err.Errors) {
-          return res.badRequest(err.Errors);          
+          if (err.Errors.email) return res.badRequest(err.Errors);          
+          if (err.Errors.password) return res.badRequest(err.Errors);          
         } else if (error.raw.err.search('dup key') != -1) {
           return res.badRequest({email: [{rule: 'email'}, {message: User.validationMessages.email.unique}]});
         } 
