@@ -13,10 +13,11 @@ module.exports = {
       if ((err) || (!user)) {
         var error = err.toJSON();
         if (err.Errors) {
-          if (err.Errors.email) return res.badRequest(err.Errors.email);          
-          if (err.Errors.password) return res.badRequest(err.Errors.password);          
+          var errors = _.map(err.Errors, function(n) { return n; });
+          errors = _.flatten(errors, true);
+          return res.badRequest(errors);
         } else if (error.raw.err.search('dup key') != -1) {
-          return res.badRequest([{rule: 'email'}, {message: User.validationMessages.email.unique}]);
+          return res.badRequest([{rule: 'unique', message: User.validationMessages.email.unique}]);
         } 
       } else {
         return res.status(201).json({user: user})

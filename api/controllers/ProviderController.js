@@ -72,9 +72,9 @@ module.exports = {
               errors = _.flatten(errors, true);
               return res.badRequest(errors);
             } else if (error.raw.err.search('email_1  dup key') != -1) {
-              return res.badRequest([{rule: 'email'}, {message: Provider.validationMessages.email.unique}]);
+              return res.badRequest([{rule: 'unique', message: Provider.validationMessages.email.unique}]);
             } else if (error.raw.err.search('abn_1  dup key') != -1) {
-              return res.badRequest([{rule: 'abn'}, {message: Provider.validationMessages.abn.unique}]);
+              return res.badRequest([{rule: 'unique', message: Provider.validationMessages.abn.unique}]);
             } else {
               res.badRequest(err);
             }
