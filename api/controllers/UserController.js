@@ -15,7 +15,7 @@ module.exports = {
         if (err.Errors) {
           return res.badRequest(err.Errors);          
         } else if (error.raw.err.search('dup key') != -1) {
-          return res.badRequest({email: [rule: email,message: User.validationMessages.email.unique]});
+          return res.badRequest({email: [{rule: email}, {message: User.validationMessages.email.unique}]});
         } 
       } else {
         return res.status(201).json({user: user})
