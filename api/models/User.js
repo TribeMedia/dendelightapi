@@ -10,9 +10,9 @@ module.exports = {
   attributes: {
   	email: {
   		type: 'email',
-  		unique: true,
   		required: true,
       email: true,
+      unique: true,
       protected: true
   	},
   	password: {
@@ -63,6 +63,18 @@ module.exports = {
     avatar: {
       type: 'string'
     }
+  },
+//model validation messages definitions
+  validationMessages: { //hand for i18n & l10n
+      email: {
+          required: 'Email is required',
+          email: 'Provide valid email address',
+          unique: 'Email address is already taken'
+      },
+      password: {
+          required: 'Password is required',
+          minLength: 'Password must be more than 6 chars'
+      }
   },
 
   beforeCreate: function (attrs, next) {

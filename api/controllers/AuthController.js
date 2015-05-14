@@ -47,13 +47,7 @@ module.exports = {
   // User login with passport local
   user_login: function(req, res) {
     passport.authenticate('user-local', function(err, user, info) {
-      if ((err) || (!user)) {
-        res.badRequest(err);
-        
-        return; 
-      };
-      
-      if (user === false) {
+      if ((err === true) || (user === false)) {
         res.badRequest(info);
       } else {                  
         var token = jwt.sign({user: user}, secret, { expiresInMinutes: 60*24 });

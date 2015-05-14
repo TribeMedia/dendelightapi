@@ -9,17 +9,16 @@ module.exports = {
   create: function (req, res) {
     var params = req.params.all();
     
-    User.create({email: params.email, password: params.password}).exec(function(err, user) {
+    User.create({email: params.email, password: params.password}, function(err, user) {
       if ((err) || (!user)) {
-        return res.badRequest(err);
+        var error = err.toJSON();
+        if (err.Errors) {
+          return res.badRequest(err.Errors);          
+        } else if (error.raw.err.search('dup key') != -1) {
+          return res.badRequest({err: User.validationMessages.email.unique});
+        } 
       } else {
-        return res.status(201).json({user: 
-                                      {
-                                        email: user.email,
-                                        verified: user.verified,
-                                        updatedAt: user.updatedAt,
-                                        id: user.id
-                                       }})
+        return res.status(201).json({user: user})
       }
     });
   },

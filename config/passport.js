@@ -11,11 +11,11 @@ passport.use('user-local', new LocalStrategy({
     function(email, password, done) {
       User.findOne({email: email}, function(err, user) {
         if (err) {
-          return done(err, null);
+          return done(true, null, err);
         }; 
         if (!user) {
           return done(null, false, {
-            message: 'Incorrect User'
+            message: "Email is not registered"
           });
         } else {
           bcrypt.compare(password, user.password, function(err, res) {
