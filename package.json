@@ -36,10 +36,11 @@
     "sails-hook-validation": "^0.2.1",
     "sails-mongo": "~0.10.0",
     "skipper-s3": "^0.5.5",
-    "stripe": "3.3.4"
+    "stripe": "3.3.4",
+    "forever": "0.14.1"
   },
   "scripts": {
-    "start": "sails lift",
+    "start": "forever start app.js",
     "debug": "node debug app.js"
   },
   "main": "app.js",
