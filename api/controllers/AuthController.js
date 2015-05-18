@@ -70,8 +70,19 @@ module.exports = {
     passport.authenticate('provider-local', function(err, provider, info) {
       if ((err === true) || (provider === false)) {
         res.badRequest(info);
-      } else {                  
-        var token = jwt.sign({provider: provider}, secret, { expiresInMinutes: 60*24 });
+      } else {
+        var token;                  
+        if (provider.accessToken) {
+          jwt.verify(token, secret, function(err, decoded) {
+            if (err) {
+              token = jwt.sign({provider: provider}, secret, { expiresInMinutes: 60*24 });          
+            } else {
+              token = provider.accessToken;
+            }
+          })
+        } else {
+          token = jwt.sign({provider: provider}, secret, { expiresInMinutes: 60*24 });          
+        }
         
         Provider.update({id: provider.id}, {accessToken: token}, function (err, provider) {
           if (err) return res.badRequest(err);
