@@ -150,7 +150,8 @@ module.exports = {
         address: '400 Swanton Street, Carton',
         location: { type: 'Point', coordinates: [144.963089, -37.807880]},
         avatar: 'https://cheerseeng.s3.amazonaws.com/fe51cc03-9d90-4746-a5ce-26b540e30b41.jpg',
-        postcode: 3053
+        postcode: 3053,
+        wage: 20
       },
       {
         email: 'provider2@oseam.com',
@@ -162,7 +163,8 @@ module.exports = {
         address: '600 Victoria Street, Brunswick East',
         location: { type: 'Point', coordinates: [144.946327, -37.804458]},
         avatar: 'https://cheerseeng.s3.amazonaws.com/9dde429d-6ff2-45f9-9a5d-fdc16c585df1.jpg',
-        postcode: 3057
+        postcode: 3057,
+        wage: 21
       },
       {
         email: 'provider3@oseam.com',
@@ -174,7 +176,8 @@ module.exports = {
         address: '1 Burgundy street, Heidelberg',
         location: { type: 'Point', coordinates: [145.071978, -37.756504]},
         avatar: 'https://cheerseeng.s3.amazonaws.com/4aa88884-a103-4631-b86b-faeac4ca9a6c.jpg',
-        postcode: 3084
+        postcode: 3084,
+        wage: 22
       },
       {
         email: 'provider4@oseam.com',
@@ -186,7 +189,8 @@ module.exports = {
         address: '1 Mary Street, Hawthorn',
         location: { type: 'Point', coordinates: [145.027939, -37.817065]},
         avatar: 'https://cheerseeng.s3.amazonaws.com/f63cc380-2d6e-4721-98a2-ce70be8855e9.jpg',
-        postcode: 3122
+        postcode: 3122,
+        wage: 20        
       },
       {
         email: 'provider5@oseam.com',
@@ -198,7 +202,8 @@ module.exports = {
         address: '1 Neerim Road, Caulfield',
         location: { type: 'Point', coordinates: [145.029717, -37.885509]},
         avatar: 'https://cheerseeng.s3.amazonaws.com/8703bfb1-1d67-437c-a29c-8202dcb21024.jpg',
-        postcode: 3162
+        postcode: 3162,
+        wage: 21        
       },
       {
         email: 'provider6@oseam.com',
@@ -210,7 +215,8 @@ module.exports = {
         address: '1 Clow Street, Dandenong',
         location: { type: 'Point', coordinates: [145.212165, -37.984322]},
         avatar: 'https://cheerseeng.s3.amazonaws.com/fe51cc03-9d90-4746-a5ce-26b540e30b41.jpg',
-        postcode: 3175
+        postcode: 3175,
+        wage: 22        
       },
       {
         email: 'provider7@oseam.com',
@@ -222,7 +228,8 @@ module.exports = {
         address: '1 Clelland Road, Brooklyn',
         location: { type: 'Point', coordinates: [144.832144, -37.823342]},
         avatar: 'https://cheerseeng.s3.amazonaws.com/9dde429d-6ff2-45f9-9a5d-fdc16c585df1.jpg',
-        postcode: 3012
+        postcode: 3012,
+        wage: 23        
       },
       {
         email: 'provider8@oseam.com',
@@ -234,7 +241,8 @@ module.exports = {
         address: '1 Main Street, Thomastown',
         location: { type: 'Point', coordinates: [145.012958, -37.680443]},
         avatar: 'https://cheerseeng.s3.amazonaws.com/4aa88884-a103-4631-b86b-faeac4ca9a6c.jpg',
-        postcode: 3074
+        postcode: 3074,
+        wage: 20        
       },
     ],
 

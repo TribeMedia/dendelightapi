@@ -40,7 +40,7 @@
     "forever": "0.14.1"
   },
   "scripts": {
-    "start": "forever app.js",
+    "start": "sails lift",
     "debug": "node debug app.js"
   },
   "main": "app.js",
