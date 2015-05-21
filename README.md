@@ -137,7 +137,7 @@ http://oseam.herokuapp.com
 ```
 
 ##### User Login. NOTE: in development, login with out verifying account.
-	* POST: /api/v1/user_login
+	* POST: /api/v1/user_login OR /api/v1/login
 	* Params: email, password
   * Json response example
 ```json
@@ -333,7 +333,7 @@ http://oseam.herokuapp.com
 }
 ```
 ##### Provider Login
-  * POST: /api/v1/provider_login
+  * POST: /api/v1/provider_login OR /api/v1/login
   * Parameters: email, password
   * Json response example
 ```json

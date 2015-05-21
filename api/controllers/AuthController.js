@@ -44,23 +44,123 @@ module.exports = {
     });
   },
 
+  // Login
+  login: function(req, res) {
+    passport.authenticate('user-local', function(err, user, info) {
+      if ((err === true) || (user === false)) {
+        passport.authenticate('provider-local', function(err, provider, info) {
+              if ((err === true) || (provider === false)) {
+                res.badRequest(info);
+              } else {
+                var token;                  
+                if (provider.accessToken) {
+                  jwt.verify(provider.accessToken, secret, function(err, decoded) {
+                    if (err) {
+                      token = jwt.sign({provider: provider}, secret, { expiresInMinutes: 60*24 });          
+                      Provider.update({id: provider.id}, {accessToken: token}, function (err, provider) {
+                        if (err) return res.badRequest(err);
+
+                        return res.ok({
+                          provider: provider[0],
+                          token: token
+                        });
+                      })        
+                    } else {
+                      token = provider.accessToken;
+                      return res.ok({
+                        provider: provider,
+                        token: token
+                      });
+                    }
+                  })
+                } else {
+                  token = jwt.sign({provider: provider}, secret, { expiresInMinutes: 60*24 });          
+                  Provider.update({id: provider.id}, {accessToken: token}, function (err, provider) {
+                    if (err) return res.badRequest(err);
+
+                    return res.ok({
+                      provider: provider[0],
+                      token: token
+                    });
+                  })        
+                };
+                
+              }
+            })(req, res);
+      } else {                  
+        var token;                  
+        if (user.accessToken) {
+          jwt.verify(user.accessToken, secret, function(err, decoded) {
+            if (err) {
+              token = jwt.sign({user: user}, secret, { expiresInMinutes: 60*24 });          
+              User.update(user.id, {accessToken: token}, function (err, users) {
+                if (err) return res.badRequest(err);
+                
+                return res.ok({
+                  user: users[0],
+                  token: token
+                });
+              })        
+            } else {
+              token = user.accessToken;
+              return res.ok({
+                user: user,
+                token: token
+              });
+            }
+          })
+        } else {
+          token = jwt.sign({user: user}, secret, { expiresInMinutes: 60*24 });          
+          User.update(user.id, {accessToken: token}, function (err, users) {
+            if (err) return res.badRequest(err);
+            
+            return res.ok({
+              user: users[0],
+              token: token
+            });
+          })        
+        };        
+      }
+    })(req, res);    
+  },
   // User login with passport local
   user_login: function(req, res) {
     passport.authenticate('user-local', function(err, user, info) {
       if ((err === true) || (user === false)) {
         res.badRequest(info);
       } else {                  
-        var token = jwt.sign({user: user}, secret, { expiresInMinutes: 60*24 });
-        
-        User.update(user.id, {accessToken: token}, function (err, users) {
-          if (err) return res.badRequest(err);
-          
-          return res.ok({
-            user: users[0],
-            token: token
-          });
-        })        
-
+        var token;                  
+        if (user.accessToken) {
+          jwt.verify(user.accessToken, secret, function(err, decoded) {
+            if (err) {
+              token = jwt.sign({user: user}, secret, { expiresInMinutes: 60*24 });          
+              User.update(user.id, {accessToken: token}, function (err, users) {
+                if (err) return res.badRequest(err);
+                
+                return res.ok({
+                  user: users[0],
+                  token: token
+                });
+              })        
+            } else {
+              token = user.accessToken;
+              return res.ok({
+                user: user,
+                token: token
+              });
+            }
+          })
+        } else {
+          token = jwt.sign({user: user}, secret, { expiresInMinutes: 60*24 });          
+          User.update(user.id, {accessToken: token}, function (err, users) {
+            if (err) return res.badRequest(err);
+            
+            return res.ok({
+              user: users[0],
+              token: token
+            });
+          })        
+        };        
       }
     })(req, res);
   },
@@ -73,25 +173,37 @@ module.exports = {
       } else {
         var token;                  
         if (provider.accessToken) {
-          jwt.verify(token, secret, function(err, decoded) {
+          jwt.verify(provider.accessToken, secret, function(err, decoded) {
             if (err) {
               token = jwt.sign({provider: provider}, secret, { expiresInMinutes: 60*24 });          
+              Provider.update({id: provider.id}, {accessToken: token}, function (err, provider) {
+                if (err) return res.badRequest(err);
+
+                return res.ok({
+                  provider: provider[0],
+                  token: token
+                });
+              })        
             } else {
               token = provider.accessToken;
+              return res.ok({
+                provider: provider,
+                token: token
+              });
             }
           })
         } else {
           token = jwt.sign({provider: provider}, secret, { expiresInMinutes: 60*24 });          
-        }
-        
-        Provider.update({id: provider.id}, {accessToken: token}, function (err, provider) {
-          if (err) return res.badRequest(err);
+          Provider.update({id: provider.id}, {accessToken: token}, function (err, provider) {
+            if (err) return res.badRequest(err);
 
-          return res.ok({
-            provider: provider[0],
-            token: token
-          });
-        })        
+            return res.ok({
+              provider: provider[0],
+              token: token
+            });
+          })        
+        };
+        
       }
     })(req, res);
   },

@@ -228,8 +228,8 @@ module.exports = {
         return Queries.searchFreeProvider(location.coordinates[0], location.coordinates[1], bookingServices, bookTime, ids);
       })
       .then(function(providers) {
-        if (providers.results[0]) { 
-          secondProviderId = providers.results[0].obj._id;
+        if (providers[0]) { 
+          secondProviderId = providers[0].obj._id;
         };        
         if (firstProviderId === secondProviderId.toString()) {
           // Update provider and update time if provider is the same

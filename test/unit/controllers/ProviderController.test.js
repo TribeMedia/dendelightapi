@@ -42,7 +42,7 @@ describe('ProviderController', function() {
 			request(sails.hooks.http.app)
 				.post('/api/v1/providers')
 				.send({services: ['mowing', 'leaf_removal'], address: '488 George Street, Sydney', bookTime: 1469977804187, estimatedDuration: 1440000})
-				.expect(400)
+				.expect(404)
 				.end(done);			
 		});
 
@@ -50,7 +50,7 @@ describe('ProviderController', function() {
 			request(sails.hooks.http.app)
 				.post('/api/v1/providers')
 				.send({services: ['mowing', 'leaf_removal', 'eating'], address: '16 Keats Avenue, Kingsbury', bookTime: 1469977804187, estimatedDuration: 1440000})
-				.expect(400)
+				.expect(404)
 				.end(done);			
 		});
 

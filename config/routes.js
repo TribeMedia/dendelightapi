@@ -69,6 +69,8 @@ module.exports.routes = {
   'post /api/v1/user_login': 'AuthController.user_login',
   // Provider login 
   'post /api/v1/provider_login': 'AuthController.provider_login',
+  // Login
+  'post /api/v1/login': 'AuthController.login',
   // Logout
   'get /api/v1/logout': 'AuthController.logout',
 

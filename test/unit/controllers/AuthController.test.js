@@ -77,10 +77,14 @@ describe('AuthController', function() {
 				.expect(200)
 				.expect(hasUserAndToken)
 				.end(done);
-		function hasUserAndToken (res) {
-			if (!('user') in res.body) return "missing user key";
-			if (!('token') in res.body) return "missing token";
-		};
+		});
+		it('should parse json response and auth token using normal login', function(done) {
+			request(sails.hooks.http.app)
+				.post('/api/v1/login')
+				.send({email: 'user_login_test@gmail.com', password: '14491992'})
+				.expect(200)
+				.expect(hasUserAndToken)
+				.end(done);
 		});
 		it('should return badRequest', function(done){
 			request(sails.hooks.http.app)
@@ -89,14 +93,17 @@ describe('AuthController', function() {
 				.expect(400)
 				.end(done);
 		});
-		it('should return badRequest', function(done){
+		it('should return badRequest with invalid password', function(done){
 			request(sails.hooks.http.app)
 				.post('/api/v1/user_login')
-				.send({email: 'user_login_test@gmail.com', password: '123456'})
+				.send({email: 'user_login_test@gmail.com', password: '1234567893'})
 				.expect(400)
-				.expect(invalidPassword)
 				.end(done);
 		})
+		function hasUserAndToken (res) {
+			if (!('user') in res.body) return "missing user key";
+			if (!('token') in res.body) return "missing token";
+		};
 	});	
 
 	describe('#provider_login()', function() {
@@ -107,10 +114,14 @@ describe('AuthController', function() {
 				.expect(200)
 				.expect(hasProviderAndToken)
 				.end(done);
-		function hasProviderAndToken (res) {
-			if (!('provider') in res.body) return "missing provider key";
-			if (!('token') in res.body) return "missing token";
-		};
+		});
+		it('should parse json response and auth token with normal login', function(done) {
+			request(sails.hooks.http.app)
+				.post('/api/v1/login')
+				.send({email: 'provider_confirm_test1@gmail.com', password: '14491992'})
+				.expect(200)
+				.expect(hasProviderAndToken)
+				.end(done);
 		});
 		it('should return badRequest', function(done){
 			request(sails.hooks.http.app)
@@ -124,9 +135,12 @@ describe('AuthController', function() {
 				.post('/api/v1/provider_login')
 				.send({email: 'provider_login_test@gmail.com', password: '123456'})
 				.expect(400)
-				.expect(invalidPassword)
 				.end(done);
 		})
+		function hasProviderAndToken (res) {
+			if (!('provider') in res.body) return "missing provider key";
+			if (!('token') in res.body) return "missing token";
+		};
 
 	});
 
@@ -176,6 +190,6 @@ describe('AuthController', function() {
 	});
 
 	function invalidPassword (res) {
-		if (res.body.message === 'Invalid Password') return 'invalid password';
+		if (res.body.message === 'Invalid Password') return res.body.message;
 	}
 });

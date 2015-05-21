@@ -53,8 +53,8 @@ module.exports = {
         return Queries.searchFreeProvider(location.coordinates[0], location.coordinates[1], services, bookTime, ids);
       })
       .then(function(providers) {
-        if (providers.results[0]) {
-          newProviderId = providers.results[0].obj._id;
+        if (providers[0]) {
+          newProviderId = providers[0].obj._id;
         };
         // Update schedule of provider
         return Queries.updateProviderAddSchedule(newProviderId, bookTime, endTime);
