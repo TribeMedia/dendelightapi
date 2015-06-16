@@ -94,9 +94,9 @@ passport.use('admin-local', new LocalStrategy({
 
 // Facebook auth only work online
 passport.use(new FacebookStrategy({
-    clientID: '1727951520764760',
-    clientSecret: 'b6033191cfad82890dbc2162e9976839',
-    callbackURL: "http://oseam.herokuapp.com/api/v1/auth/facebook/callback",
+    clientID: 'xxx',
+    clientSecret: 'xxx',
+    callbackURL: "xxx",
     profileFields: ['emails', 'id', 'displayName', 'photos']
   },
   function(accessToken, refreshToken, profile, done) {
