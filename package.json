@@ -46,8 +46,8 @@
   "main": "app.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jakejarrett/oseam-app/branches"
+    "url": "https://github.com/vuongngo/dendelightapi"
   },
   "author": "VuongNgo",
-  "license": ""
+  "license": "MIT"
 }
